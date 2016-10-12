@@ -126,6 +126,7 @@ from the master branch on a bi-weekly schedule occurring every other Thursday.
   * hab-sup-static - `habitat/components/sup/static`
   * hab-director - `habitat/components/director`
 1. [Build Mac Components](#how-to-build-mac-components)
+1. [Build Windows Components](#how-to-build-windows-components)
 
 ## Publish Release
 
@@ -201,6 +202,26 @@ target component.
 	$ sudo ./mac-build.sh
 	```
 
+# How-To: Build Windows Components
+
+1. Ensure no pre-existing old virtual machine, then turn on and enter the system
+
+    ```
+    $ cd ~/code/habitat/components/hab/win
+    $ vagrant destroy
+    $ vagrant up
+    $ RDP to the Windows VM (tears)
+    ```
+
+1. Have the secret core origin key ready for pasting into the terminal. The `win-build.ps1` script will interactively prompt for pasting the key contents if no core origin key is installed on the VM.
+
+1. Build Hab for Windows from an administrator powershell console on the VM
+
+    ```
+    $ cd /src/components/hab/win
+    $ ./win-build.ps1
+    ```
+
 # How-To: Release to Bintray
 
 1. On your workstation, change your code directory and enter a studio
@@ -222,13 +243,15 @@ target component.
     $ hab pkg exec core/hab-bintray-publish publish-studio
     ```
 
-1. Publish the Linux and Mac artifacts by selecting the appropriate `.hart` file
+1. Publish the Linux, Mac and Windows artifacts by selecting the appropriate `.hart` file
 
     ```
     $ hab pkg exec core/hab-bintray-publish publish-hab \
       ./results/core-hab-0.10.2-20160930230245-x86_64-linux.hart
     $ hab pkg exec core/hab-bintray-publish publish-hab \
       ./habitat/components/hab/mac/results/core-hab-0.10.2-20160930230245-x86_64-darwin.hart
+    $ hab pkg exec core/hab-bintray-publish publish-hab \
+      ./habitat/components/hab/win/results/core-hab-0.10.2-20160930230245-x86_64-windows.hart      
     ```
 
 More documentation for the Bintray releasing software can be found in the component's [Readme](components/bintray-publish/README.md).

@@ -65,12 +65,12 @@ if (get-command -Name rustup.exe -ErrorAction SilentlyContinue) {
     $cargo = 'rustup run stable-x86_64-pc-windows-msvc cargo'
 }
 else {
-    $env:PATH = New-PathString -StartingPath $env:PATH -Path "C:\Program Files (x86)\Rust\bin"
+    $env:PATH = New-PathString -StartingPath $env:PATH -Path "C:\Program Files\Rust stable MSVC 1.12\bin"
     if (-not (get-command rustc -ErrorAction SilentlyContinue)) {
         write-host "installing rust"
-        Invoke-WebRequest -UseBasicParsing -Uri 'https://static.rust-lang.org/dist/rust-1.12.0-x86_64-pc-windows-msvc.msi' -OutFile './rust-12-stable.exe'
-        start-process -filepath ./rust-12-stable.exe -argumentlist  '/VERYSILENT', '/NORESTART', '/DIR="C:\Program Files (x86)\Rust"' -Wait
-        $env:PATH = New-PathString -StartingPath $env:PATH -Path "C:\Program Files (x86)\Rust\bin"
+        Invoke-WebRequest -UseBasicParsing -Uri 'https://static.rust-lang.org/dist/rust-1.12.0-x86_64-pc-windows-msvc.msi' -OutFile "$env:TEMP/rust-12-stable.msi"
+        start-process -filepath MSIExec.exe -argumentlist "/qn", "/i", "$env:TEMP\rust-12-stable.msi" -Wait
+        $env:PATH = New-PathString -StartingPath $env:PATH -Path "C:\Program Files\Rust stable MSVC 1.12\bin"
         while (-not (get-command cargo -ErrorAction SilentlyContinue)) {
             Write-Warning "`tWaiting for `cargo` to be available."
             start-sleep -Seconds 1
@@ -103,12 +103,38 @@ $env:OPENSSL_LIB_DIR            = $ChocolateyHabitatLibDir
 $env:OPENSSL_INCLUDE_DIR        = $ChocolateyHabitatIncludeDir
 $env:OPENSSL_STATIC             = $true
 
-
-# Start the build
 if (-not (Test-AppVeyor)) {
+    # Start the build
     Push-Location "$psscriptroot\.."
     invoke-expression "$cargo clean"
-    Invoke-Expression "$cargo build" 
+    Invoke-Expression "$cargo build --release" 
     Pop-Location
+
+    # Create the archive
+    $pkgRoot = "results"
+    New-Item -ItemType Directory -Path $pkgRoot -ErrorAction SilentlyContinue
+
+    $pkgRelease = (Get-Date).ToString('yyyyMMddhhmmss')
+    $pkgVersion = (Get-Content -Path ..\..\..\VERSION | Out-String).Trim()
+    $pkgArtifact = "$pkgRoot/core-hab-$pkgVersion-$pkgRelease-x86_64-windows"
+    Compress-Archive -Path @(
+        '..\..\..\target\Release\hab.exe',
+        'C:\Windows\System32\vcruntime140.dll',
+        'C:\ProgramData\chocolatey\lib\habitat_native_dependencies\builds\bin\*.dll'
+        ) -DestinationPath "$pkgArtifact.Zip"
+
+    # Import origin key
+    if (!(Test-Path "/hab/cache/keys/core-*.sig.key")) {
+        Write-Host "System is missing core origin signing key"
+        Write-Host "You will be prompted to paste in the secret key now."
+        Write-Host ""
+        $originKey = Read-Host "Paste your key now"
+        $originKey | & '..\..\..\target\Release\hab.exe' origin key import
+    }
+
+    # Create signed .hart file
+    & '..\..\..\target\Release\hab.exe' pkg sign --origin core "$pkgArtifact.Zip" "$pkgArtifact.hart"
+    Remove-Item -Path "$pkgArtifact.Zip"
+
     exit $LASTEXITCODE
 }
