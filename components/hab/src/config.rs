@@ -81,10 +81,44 @@ fn cli_config_path(use_sudo_user: bool) -> PathBuf {
     PathBuf::from(FS_ROOT_PATH).join(CLI_CONFIG_PATH)
 }
 
+#[derive(Clone, Debug, RustcEncodable)]
+enum ConfigError {
+    MissingConfigurationValue,
+}
+
+#[derive(Clone, Debug, RustcEncodable)]
+struct ConfigValue {
+    config_file: Option<String>,
+    environment: Option<String>,
+    cli_parameter: Option<String>,
+}
+
+impl ConfigValue {
+    fn get(self) -> Result<String, ConfigError> {
+        match self {
+            ConfigValue { cli_parameter: Some(value), .. } => Ok(value),
+            ConfigValue { environment: Some(value), .. } => Ok(value),
+            ConfigValue { config_file: Some(value), .. } => Ok(value),
+            _ => Err(ConfigError::MissingConfigurationValue),
+        }
+    }
+}
+
+impl Default for ConfigValue {
+    fn default() -> Self {
+        ConfigValue {
+            cli_parameter: None,
+            environment: None,
+            config_file: None,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, RustcEncodable)]
 pub struct Config {
-    pub auth_token: Option<String>,
-    pub origin: Option<String>,
+    pub auth_token: ConfigValue,
+    pub origin: ConfigValue,
+    pub depot_url: ConfigValue,
 }
 
 impl ConfigFile for Config {
@@ -92,8 +126,9 @@ impl ConfigFile for Config {
 
     fn from_toml(toml: toml::Value) -> Result<Self> {
         let mut cfg = Config::default();
-        try!(toml.parse_into("auth_token", &mut cfg.auth_token));
-        try!(toml.parse_into("origin", &mut cfg.origin));
+        try!(toml.parse_into("auth_token", &mut cfg.auth_token.config_file));
+        try!(toml.parse_into("origin", &mut cfg.origin.config_file));
+        try!(toml.parse_into("depot_url", &mut cfg.depot_url.config_file));
         Ok(cfg)
     }
 }
@@ -101,8 +136,9 @@ impl ConfigFile for Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            auth_token: None,
-            origin: None,
+            auth_token: ConfigValue::default(),
+            origin: ConfigValue::default(),
+            depot_url: ConfigValue::default(),
         }
     }
 }

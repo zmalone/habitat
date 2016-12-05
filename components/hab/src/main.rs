@@ -501,6 +501,9 @@ fn raw_parse_args() -> (Vec<OsString>, Vec<OsString>) {
 /// HABITAT_AUTH_TOKEN env var. If not, check the CLI config to see if there is a default auth
 /// token set. If that's empty too, then error.
 fn auth_token_param_or_env(m: &ArgMatches) -> Result<String> {
+    let mut config = try!config::load());
+    config.auth_token.cli_parameter = m.value_of("AUTH_TOKEN");
+    config.auth_token.get()
     match m.value_of("AUTH_TOKEN") {
         Some(o) => Ok(o.to_string()),
         None => {
