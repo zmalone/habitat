@@ -13,7 +13,7 @@ name = "hab-sup"
 doc = false
 
 [[test]]
-name = "functional"
+name = "integration"
 
 [dependencies]
 ansi_term = "*"

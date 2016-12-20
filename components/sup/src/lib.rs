@@ -52,6 +52,8 @@ extern crate tempdir;
 extern crate rustc_serialize;
 extern crate toml;
 extern crate ansi_term;
+#[macro_use]
+extern crate clap;
 extern crate regex;
 extern crate libc;
 extern crate url;

@@ -22,6 +22,7 @@
 
 use std::io;
 use std::mem;
+use std::cell::RefCell;
 use std::net::{IpAddr, Ipv4Addr, ToSocketAddrs, SocketAddr, SocketAddrV4};
 use std::ops::{Deref, DerefMut};
 use std::option;

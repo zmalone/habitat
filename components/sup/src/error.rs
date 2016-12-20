@@ -49,6 +49,7 @@ use std::string;
 use std::sync::mpsc;
 
 use ansi_term::Colour::Red;
+use clap;
 use handlebars;
 use hcore::package::Identifiable;
 use butterfly;
@@ -99,6 +100,7 @@ impl SupError {
 #[derive(Debug)]
 pub enum Error {
     ButterflyError(butterfly::error::Error),
+    ClapError(clap::Error),
     CommandNotImplemented,
     DbInvalidPath,
     DepotClient(depot_client::Error),
@@ -153,6 +155,7 @@ impl fmt::Display for SupError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let content = match self.err {
             Error::ButterflyError(ref err) => format!("Butterfly error: {}", err),
+            Error::ClapError(ref e) => format!("Clap error: {}", e),
             Error::ExecCommandNotFound(ref c) => {
                 format!("`{}' was not found on the filesystem or in PATH", c)
             }
@@ -249,6 +252,7 @@ impl error::Error for SupError {
     fn description(&self) -> &str {
         match self.err {
             Error::ButterflyError(ref err) => err.description(),
+            Error::ClapError(ref err) => err.description(),
             Error::ExecCommandNotFound(_) => "Exec command was not found on filesystem or in PATH",
             Error::HandlebarsRenderError(ref err) => err.description(),
             Error::HandlebarsTemplateFileError(ref err) => err.description(),
@@ -325,6 +329,12 @@ impl From<net::AddrParseError> for SupError {
 impl From<butterfly::error::Error> for SupError {
     fn from(err: butterfly::error::Error) -> SupError {
         sup_error!(Error::ButterflyError(err))
+    }
+}
+
+impl From<clap::Error> for SupError {
+    fn from(err: clap::Error) -> SupError {
+        sup_error!(Error::ClapError(err))
     }
 }
 
