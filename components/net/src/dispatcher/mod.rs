@@ -69,7 +69,7 @@ pub trait Dispatcher: Sized + Send {
         // wrongfully implements the `init()` callback or omits an override implementation where
         // the default implementation isn't enough to initialize the dispatcher's state.
         debug_assert!(state.is_initialized(), "Dispatcher state not initialized!");
-        let mut raw = zmq::Message::new().unwrap();
+        let mut raw = zmq::Message::new();
         let mut sock = self.context().socket(zmq::DEALER).unwrap();
         let mut envelope = Envelope::default();
         try!(sock.connect(Self::message_queue()));

@@ -35,8 +35,7 @@ path = "../net"
 path = "../core"
 
 [dependencies.zmq]
-git = "https://github.com/habitat-sh/rust-zmq.git"
-tag = "windows_fix_pr"
+git = "https://github.com/erickt/rust-zmq.git"
 
 [features]
 functional = []

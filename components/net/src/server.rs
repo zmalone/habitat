@@ -214,8 +214,8 @@ pub trait Service: NetIdent {
             try!(self.conn_mut().register(&addr));
         }
         let mut ready = 0;
-        let mut rt = try!(zmq::Message::new());
-        let mut hb = try!(zmq::Message::new());
+        let mut rt = zmq::Message::new();
+        let mut hb = zmq::Message::new();
         while ready < hb_addrs.len() {
             try!(self.conn_mut().heartbeat.recv(&mut rt, 0));
             try!(self.conn_mut().heartbeat.recv(&mut hb, 0));
