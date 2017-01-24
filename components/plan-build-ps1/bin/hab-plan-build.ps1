@@ -1114,8 +1114,8 @@ function _Save-Artifact {
     New-Item $tempPkg -ItemType Directory -Force | Out-Null
     Copy-Item $pkg_prefix $tempPkg -Recurse
 
-    & "$_7z_cmd" a -ttar "$tarf" $tempBase
-    & "$_7z_cmd" a -txz "$xzf" "$tarf"
+    & "$_7z_cmd" a -ttar "$tarf" $tempBase | Out-Null
+    & "$_7z_cmd" a -txz "$xzf" "$tarf" | Out-Null
     & $HAB_BIN pkg sign --origin "$pkg_origin" "$xzf" "$pkg_artifact"
     Remove-Item "$tarf", "$xzf" -Force
     Remove-Item $tempBase -Recurse -Force
