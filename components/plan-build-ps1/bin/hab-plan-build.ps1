@@ -662,10 +662,17 @@ function _Set-Path {
   Write-BuildLine "Setting PATH=$env:PATH"
 }
 
-# TODO: When we switch to powershell core, we must use
-# System.Security.Cryptography.SHA256 which is not an IDisposable
+function _Get-SHA256Converter {
+  if($PSVersionTable.PSEdition -eq 'Core') {
+    [System.Security.Cryptography.SHA256]::Create()
+  }
+  else {
+    New-Object -TypeName Security.Cryptography.SHA256Managed
+  }
+}
+
 function _Get-Sha256($src) {
-  $converter = New-Object -TypeName Security.Cryptography.SHA256Managed
+  $converter = _Get-SHA256Converter
   try {
     $bytes = $converter.ComputeHash(($in = (Get-Item $src).OpenRead()))
     return ([System.BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
