@@ -241,6 +241,7 @@ function New-Studio {
 
   $pathArray = @(
     "$PSScriptRoot\hab",
+    "$PSScriptRoot\7zip",
     "$PSScriptRoot",
     "$env:WINDIR\system32",
     "$env:WINDIR"
