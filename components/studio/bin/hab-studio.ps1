@@ -258,6 +258,7 @@ function Enter-Studio {
   New-Studio
   Write-HabInfo "Entering Studio at $HAB_STUDIO_ROOT"
   $env:HAB_STUDIO_ENTER_ROOT = $HAB_STUDIO_ROOT
+  $env:HAB_ROOT_PATH = "Habitat:\hab"
   & "$PSScriptRoot\powershell\powershell.exe" -NoProfile -ExecutionPolicy bypass -NoLogo -NoExit -Command {
     function prompt {
       Write-Host "[HAB-STUDIO]" -NoNewLine -ForegroundColor Green
