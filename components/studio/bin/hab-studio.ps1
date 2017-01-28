@@ -248,6 +248,21 @@ function New-Studio {
   )
 
   $env:PATH = [String]::Join(";", $pathArray)
+
+  if($env:HAB_ORIGIN_KEYS) {
+    $keys = @()
+    $env:HAB_ORIGIN_KEYS.Split(" ") | % {
+      $keys += & hab origin key export $_ --type=secret | Out-String
+    }
+
+    $env:FS_ROOT=$HAB_STUDIO_ROOT
+    try {
+      $keys | % { $_ | & hab origin key import }
+    }
+    finally {
+      $env:FS_ROOT=$null
+    }
+  }
 }
 
 function Enter-Studio {
@@ -258,7 +273,7 @@ function Enter-Studio {
   New-Studio
   Write-HabInfo "Entering Studio at $HAB_STUDIO_ROOT"
   $env:HAB_STUDIO_ENTER_ROOT = $HAB_STUDIO_ROOT
-  $env:HAB_ROOT_PATH = "Habitat:\hab"
+  $env:HAB_ROOT_PATH = "$HAB_STUDIO_ROOT/hab"
   & "$PSScriptRoot\powershell\powershell.exe" -NoProfile -ExecutionPolicy bypass -NoLogo -NoExit -Command {
     function prompt {
       Write-Host "[HAB-STUDIO]" -NoNewLine -ForegroundColor Green
