@@ -10,18 +10,23 @@ $pkg_bin_dirs = @("bin")
 $pkg_deps = @()
 $pkg_build_deps = @()
 
-$bin = "hab-plan-build.ps1"
+$bin = @("Habitat-Build.psm1")
 
 function Invoke-Build {
     # Embed the release version of the program.
     (Get-Content "$PLAN_CONTEXT\bin\${bin}" -Encoding Ascii) -replace
         "@VERSION@", "$pkg_version/$pkg_release" |
         Out-File "$bin" -Encoding ascii
+
+    (Get-Content "$PLAN_CONTEXT\bin\Habitat-Build.psd1" -Encoding Ascii) -replace
+        "@VERSION@", $pkg_version |
+        Out-File "Habitat-Build.psd1" -Encoding ascii        
 }
 
 function Invoke-Install {
     New-Item "$pkg_prefix\bin" -ItemType Directory -Force | Out-Null
     Copy-Item "$bin" "$pkg_prefix\bin\$bin" -Force
+    Copy-Item "Habitat-Build.psd1" "$pkg_prefix\bin\Habitat-Build.psd1" -Force
 }
 
 # Turn the remaining default phases into no-ops

@@ -1,11 +1,3 @@
-param (
-    [string]
-    $Context = ".",
-
-    [string]
-    $DepotUrl
-)
-
 # # License and Copyright
 # ```
 # Copyright: Copyright (c) 2015 Chef Software, Inc.
@@ -26,103 +18,6 @@ param (
 #
 #
 
-# ## Default variables
-
-# The short version of the program name which is used in logging output
-$program = $MyInvocation.MyCommand
-# The current version of this program
-$HAB_PLAN_BUILD = "@VERSION@"
-# The root path of the Habitat file system. If the `$HAB_ROOT_PATH` environment
-# variable is set, this value is overridden, otherwise it is set to its default
-if (Test-Path Env:\HAB_ROOT_PATH) {
-    $script:HAB_ROOT_PATH = "$env:HAB_ROOT_PATH"
-} else {
-    $script:HAB_ROOT_PATH = "\hab"
-}
-# The default path where source artifacts are downloaded, extracted, & compiled
-$HAB_CACHE_SRC_PATH = "${HAB_ROOT_PATH}\cache\src"
-# The default download root path for package artifacts, used on package
-# installation
-$HAB_CACHE_ARTIFACT_PATH = "${HAB_ROOT_PATH}\cache\artifacts"
-# The default path where cryptographic keys are stored. If the
-# `$HAB_CACHE_KEY_PATH` environment variable is set, this value is overridden,
-# otherwise it is set to its default.
-if (Test-Path Env:\HAB_CACHE_KEY_PATH) {
-    $script:HAB_CACHE_KEY_PATH = "$env:HAB_CACHE_KEY_PATH"
-} else {
-    $script:HAB_CACHE_KEY_PATH = "${HAB_ROOT_PATH}\cache\keys"
-}
-# Export the key path for other programs and subshells to use
-$env:HAB_CACHE_KEY_PATH = "$script:HAB_CACHE_KEY_PATH"
-# The root path containing all locally installed packages
-$script:HAB_PKG_PATH = "${HAB_ROOT_PATH}\pkgs"
-# The first argument to the script is a Plan context directory, containing a
-# `plan.sh` file
-$script:PLAN_CONTEXT = "$Context"
-# The default Habitat Depot from where to download dependencies. If the URL was
-# provided as an option use that, if not use any set `HAB_DEPOT_URL`
-# environment variable, and otherwise use the default provided.
-if ($DepotUrl) {
-    $script:HAB_DEPOT_URL = "$DepotUrl"
-} elseif (Test-Path Env:\HAB_DEPOT_URL) {
-    $script:HAB_DEPOT_URL = "$env:HAB_DEPOT_URL"
-} else {
-    $script:HAB_DEPOT_URL = "https://willem.habitat.sh/v1/depot"
-}
-# Export the Depot URL so all other programs and subshells use this same one
-$env:HAB_DEPOT_URL = "$script:HAB_DEPOT_URL"
-# The value of `$env:Path` on initial start of this program
-$script:INITIAL_PATH = "$env:Path"
-# The target architecture this plan will be built for
-$script:pkg_arch = "x86_64"
-# The target system (i.e. operating system variant) this plan will be built for
-$script:pkg_sys = "windows"
-# The full target tuple this plan will be built for
-$script:pkg_target = "${pkg_arch}-${pkg_sys}"
-# The package's origin (i.e. acme)
-$script:pkg_origin = ""
-# The package's name (i.e. myapp)
-$script:pkg_name = ""
-# The package's version (i.e. 1.2.3)
-$script:pkg_version = ""
-# Each release is a timestamp - `YYYYMMDDhhmmss`
-$script:pkg_release = "$(Get-Date -UFormat "%Y%m%d%H%M%S")"
-# The default build deps setting - an empty array
-$script:pkg_build_deps = @()
-# The default runtime deps setting - an empty array
-$script:pkg_deps = @()
-# The path inside a package that contains libraries - used in `LD_RUN_PATH` and
-# `LD_FLAGS`.
-$script:pkg_lib_dirs = @()
-# The path inside a package that contains binary programs - used in `PATH`
-$script:pkg_bin_dirs = @()
-# The path inside a package that contains header files - used in `CFLAGS`
-$script:pkg_include_dirs = @()
-# The path(s) inside a package that contain pkg-config (.pc) files
-$script:pkg_pconfig_dirs = @()
-# The command to run the service - must not fork or return
-$script:pkg_svc_run = ''
-# An array of ports to expose.
-$script:pkg_expose = @()
-# The user to run the service as
-$script:pkg_svc_user = "hab"
-# The group to run the service as
-$script:pkg_svc_group = "$pkg_svc_user"
-
-# Initially set $pkg_svc_* variables. This happens before the Plan is sourced,
-# meaning that `$pkg_name` is not yet set. However, `$pkg_svc_run` wants
-# to use these variables, so what to do? We'll set up these svc variables
-# with the `$pkg_svc_run` variable as the customer-in-mind and pass over
-# it once the Plan has been loaded. For good meaure, all of these variables
-# will need to be set again.
-$script:pkg_svc_path="$HAB_ROOT_PATH\svc\@__pkg_name__@"
-$script:pkg_svc_data_path="$pkg_svc_path\data"
-$script:pkg_svc_files_path="$pkg_svc_path\files"
-$script:pkg_svc_var_path="$pkg_svc_path\var"
-$script:pkg_svc_config_path="$pkg_svc_path\config"
-$script:pkg_svc_static_path="$pkg_svc_path\static"
-
-
 # ## Private/Internal helper functions
 #
 # These functions are part of the private/internal API of this program and
@@ -131,14 +26,6 @@ $script:pkg_svc_static_path="$pkg_svc_path\static"
 # support can be provided as a result. Thank you for your
 # understanding--maintaining a tiny but robust public interface is not an easy
 # task.
-
-<#
-function _On-Exit {
-
-}
-
-trap { _On-Exit }
-#>
 
 function _Assert-OriginKeyPresent {
     $cache = "$HAB_CACHE_KEY_PATH"
@@ -1152,194 +1039,305 @@ function Invoke-End {
 function Invoke-DefaultEnd {
 }
 
+function Invoke-HabitatBuild {
+  param (
+      [string]
+      $Context = ".",
 
-# # Main Flow
+      [string]
+      $DepotUrl
+  )
+  # ## Default variables
 
-# Expand the context path to an absolute path
-if (-Not (Test-Path "$Context")) {
-    _Exit-With "Context must be an existing directory" 10
+  # The short version of the program name which is used in logging output
+  $program = $MyInvocation.MyCommand
+  # The current version of this program
+  $HAB_PLAN_BUILD = "@VERSION@"
+  # The root path of the Habitat file system. If the `$HAB_ROOT_PATH` environment
+  # variable is set, this value is overridden, otherwise it is set to its default
+  if (Test-Path Env:\HAB_ROOT_PATH) {
+      $script:HAB_ROOT_PATH = "$env:HAB_ROOT_PATH"
+  } else {
+      $script:HAB_ROOT_PATH = "\hab"
+  }
+  # The default path where source artifacts are downloaded, extracted, & compiled
+  $HAB_CACHE_SRC_PATH = "${HAB_ROOT_PATH}\cache\src"
+  # The default download root path for package artifacts, used on package
+  # installation
+  $HAB_CACHE_ARTIFACT_PATH = "${HAB_ROOT_PATH}\cache\artifacts"
+  # The default path where cryptographic keys are stored. If the
+  # `$HAB_CACHE_KEY_PATH` environment variable is set, this value is overridden,
+  # otherwise it is set to its default.
+  if (Test-Path Env:\HAB_CACHE_KEY_PATH) {
+      $script:HAB_CACHE_KEY_PATH = "$env:HAB_CACHE_KEY_PATH"
+  } else {
+      $script:HAB_CACHE_KEY_PATH = "${HAB_ROOT_PATH}\cache\keys"
+  }
+  # Export the key path for other programs and subshells to use
+  $env:HAB_CACHE_KEY_PATH = "$script:HAB_CACHE_KEY_PATH"
+  # The root path containing all locally installed packages
+  $script:HAB_PKG_PATH = "${HAB_ROOT_PATH}\pkgs"
+  # The first argument to the script is a Plan context directory, containing a
+  # `plan.sh` file
+  $script:PLAN_CONTEXT = "$Context"
+  # The default Habitat Depot from where to download dependencies. If the URL was
+  # provided as an option use that, if not use any set `HAB_DEPOT_URL`
+  # environment variable, and otherwise use the default provided.
+  if ($DepotUrl) {
+      $script:HAB_DEPOT_URL = "$DepotUrl"
+  } elseif (Test-Path Env:\HAB_DEPOT_URL) {
+      $script:HAB_DEPOT_URL = "$env:HAB_DEPOT_URL"
+  } else {
+      $script:HAB_DEPOT_URL = "https://willem.habitat.sh/v1/depot"
+  }
+  # Export the Depot URL so all other programs and subshells use this same one
+  $env:HAB_DEPOT_URL = "$script:HAB_DEPOT_URL"
+  # The value of `$env:Path` on initial start of this program
+  $script:INITIAL_PATH = "$env:Path"
+  # The target architecture this plan will be built for
+  $script:pkg_arch = "x86_64"
+  # The target system (i.e. operating system variant) this plan will be built for
+  $script:pkg_sys = "windows"
+  # The full target tuple this plan will be built for
+  $script:pkg_target = "${pkg_arch}-${pkg_sys}"
+  # The package's origin (i.e. acme)
+  $script:pkg_origin = ""
+  # The package's name (i.e. myapp)
+  $script:pkg_name = ""
+  # The package's version (i.e. 1.2.3)
+  $script:pkg_version = ""
+  # Each release is a timestamp - `YYYYMMDDhhmmss`
+  $script:pkg_release = "$(Get-Date -UFormat "%Y%m%d%H%M%S")"
+  # The default build deps setting - an empty array
+  $script:pkg_build_deps = @()
+  # The default runtime deps setting - an empty array
+  $script:pkg_deps = @()
+  # The path inside a package that contains libraries - used in `LD_RUN_PATH` and
+  # `LD_FLAGS`.
+  $script:pkg_lib_dirs = @()
+  # The path inside a package that contains binary programs - used in `PATH`
+  $script:pkg_bin_dirs = @()
+  # The path inside a package that contains header files - used in `CFLAGS`
+  $script:pkg_include_dirs = @()
+  # The path(s) inside a package that contain pkg-config (.pc) files
+  $script:pkg_pconfig_dirs = @()
+  # The command to run the service - must not fork or return
+  $script:pkg_svc_run = ''
+  # An array of ports to expose.
+  $script:pkg_expose = @()
+  # The user to run the service as
+  $script:pkg_svc_user = "hab"
+  # The group to run the service as
+  $script:pkg_svc_group = "$pkg_svc_user"
+
+  # Initially set $pkg_svc_* variables. This happens before the Plan is sourced,
+  # meaning that `$pkg_name` is not yet set. However, `$pkg_svc_run` wants
+  # to use these variables, so what to do? We'll set up these svc variables
+  # with the `$pkg_svc_run` variable as the customer-in-mind and pass over
+  # it once the Plan has been loaded. For good meaure, all of these variables
+  # will need to be set again.
+  $script:pkg_svc_path="$HAB_ROOT_PATH\svc\@__pkg_name__@"
+  $script:pkg_svc_data_path="$pkg_svc_path\data"
+  $script:pkg_svc_files_path="$pkg_svc_path\files"
+  $script:pkg_svc_var_path="$pkg_svc_path\var"
+  $script:pkg_svc_config_path="$pkg_svc_path\config"
+  $script:pkg_svc_static_path="$pkg_svc_path\static"
+
+
+  # # Main Flow
+
+  # Expand the context path to an absolute path
+  if (-Not (Test-Path "$Context")) {
+      _Exit-With "Context must be an existing directory" 10
+  }
+  $script:PLAN_CONTEXT = (Get-Item $Context).FullName
+
+  # Now to ensure a `plan.ps1` exists where we expect it. There are 2 possible
+  # candidate locations relative to the `$PLAN_CONTEXT` directory: a `./plan.ps1`
+  # or a `./habitat/plan.ps1`. Only one or the other location is allowed so that
+  # a Plan author isn't confused if they edit one to have this program read
+  # the other.
+
+  # We'll make sure that both are not present, and if so abort.
+  if ((Test-Path "$PLAN_CONTEXT\plan.ps1") -and (Test-Path "$PLAN_CONTEXT\habitat\plan.ps1")) {
+      $places = "$PLAN_CONTEXT\plan.sh and $PLAN_CONTEXT\habitat/plan.sh"
+      _Exit-With "A Plan file was found at $places. Only one is allowed at a time" 42
+  }
+  # We check if the provided path has a `plan.sh` in it in either location. If
+  # not, we'll quickly bail.
+  if (-Not (Test-Path "$PLAN_CONTEXT\plan.ps1")) {
+      if (Test-Path "$PLAN_CONTEXT\habitat\plan.ps1") {
+          $PLAN_CONTEXT = "$PLAN_CONTEXT\habitat"
+      } else {
+          $places = "$PLAN_CONTEXT\plan.sh or $PLAN_CONTEXT\habitat/plan.sh"
+          _Exit-With "Plan file not found at $places" 42
+      }
+  }
+
+  # We want to fail the build for both termionating and non terminating errors
+  $ErrorActionPreference = "Stop"
+
+  # Change into the `$PLAN_CONTEXT` directory for proper resolution of relative
+  # paths in `plan.ps1`
+  Push-Location "$PLAN_CONTEXT"
+
+  try {
+      # Load the Plan
+      Write-BuildLine "Loading $PLAN_CONTEXT\plan.ps1"
+      . "$PLAN_CONTEXT\plan.ps1"
+      Write-BuildLine "Plan loaded"
+      # @TODO fin - what to do when dot souring fails? can it?
+
+      # If the `HAB_ORIGIN` environment variable is set, override the value of
+      # `$pkg_origin`.
+      if (Test-Path Env:\HAB_ORIGIN) {
+          $script:pkg_origin = "$env:HAB_ORIGIN"
+      }
+
+      # Validate metadata
+      Write-BuildLine "Validating plan metadata"
+
+      foreach ($var in @("pkg_origin", "pkg_name", "pkg_version", "pkg_source")) {
+          if (-Not (Test-Path variable:$var)) {
+              _Exit-With "Failed to build. '$var' must be set." 1
+          } elseif ((Get-Variable $var).Value -eq "") {
+              _Exit-With "Failed to build. '$var' must be set and non-empty." 1
+          }
+      }
+
+      # Test to ensure package name contains only valid characters
+      if (-Not ("$pkg_name" -match '^[A-Za-z0-9_-]+$')) {
+          _Exit-With "Failed to build. Package name '$pkg_name' contains invalid characters." 1
+      }
+
+      # Pass over `$pkg_svc_run` to replace any `$pkg_name` placeholder tokens
+      # from prior pkg_svc_* variables that were set before the Plan was loaded.
+      if ("$pkg_svc_run" -ne "") {
+          $pkg_svc_run = "$pkg_svc_run".Replace("@__pkg_name__@", "$pkg_name")
+      }
+
+      # Set `$pkg_filename` to the basename of `$pkg_source`, if it is not already
+      # set by the `plan.ps1`.
+      if ("$pkg_filename" -eq "") {
+          $script:pkg_filename = "$(Split-Path $pkg_source -Leaf)"
+      }
+
+      # Set `$pkg_dirname` to the `$pkg_name` and `$pkg_version`, if it is not
+      # already set by the `plan.ps1`.
+      if ("$pkg_dirname" -eq "") {
+          $script:pkg_dirname = "${pkg_name}-${pkg_version}"
+      }
+
+      # Set `$pkg_prefix` if not already set by the `plan.ps1`.
+      if ("$pkg_prefix" -eq "") {
+          $script:pkg_prefix = "$HAB_PKG_PATH\$pkg_origin\$pkg_name\$pkg_version\$pkg_release"
+      }
+
+      # Determine the final output path for the package artifact
+      $script:pkg_output_path = "$(Get-Location)\results"
+
+      # Set $pkg_svc variables a second time, now that the Plan has been sourced and
+      # we have access to `$pkg_name`.
+      $script:pkg_svc_path="$HAB_ROOT_PATH\svc\$pkg_name"
+      $script:pkg_svc_data_path="$pkg_svc_path\data"
+      $script:pkg_svc_files_path="$pkg_svc_path\files"
+      $script:pkg_svc_var_path="$pkg_svc_path\var"
+      $script:pkg_svc_config_path="$pkg_svc_path\config"
+      $script:pkg_svc_static_path="$pkg_svc_path\static"
+
+      # Set the package artifact name
+      $_artifact_ext="hart"
+      $script:pkg_artifact="$HAB_CACHE_ARTIFACT_PATH\${pkg_origin}-${pkg_name}-${pkg_version}-${pkg_release}-${pkg_target}.${_artifact_ext}"
+
+      # Run `do_begin`
+      Write-BuildLine "$program setup"
+      Invoke-Begin
+
+      # Determine if we have all the commands we need to work
+      _Get-SystemCommands
+
+      # Enure that the origin key is available for package signing
+      _Assert-OriginKeyPresent
+
+      _Set-HabBin
+
+      # Download and resolve the depdencies
+      _Complete-DependencyResolution
+
+      # Set the complete `Path` environment.
+      _Set-Path
+
+      # Download the source
+      New-Item "$HAB_CACHE_SRC_PATH" -ItemType Directory -Force | Out-Null
+      Invoke-Download
+
+      # Verify the source
+      Invoke-Verify
+
+      # Clean the cache
+      Invoke-Clean
+
+      # Unpack the source
+      Invoke-Unpack
+
+      # Set up the build environment
+      _Set-Environment
+
+      # Prepare the source
+      Invoke-PrepareWrapper
+
+      # Build the source
+      Invoke-BuildWrapper
+
+      # Check the source
+      Invoke-CheckWrapper
+
+      # Install the source
+      Invoke-InstallWrapper
+
+      # Copy the configuration
+      Invoke-BuildConfig
+
+      # Copy the service management scripts
+      Invoke-BuildService
+
+      # Write the manifest
+      _Write-Manifest
+
+      # Render the linking and dependency files
+      _Write-Metadata
+
+      # Generate the artifact and write to artifact cache
+      _Save-Artifact
+
+      # Copy produced artifact to a local relative directory
+      _Copy-BuildOutputs
+
+      # Cleanup
+      Write-BuildLine "$program cleanup"
+      Invoke-End
+  }
+  finally {
+      Pop-Location
+  }
+
+  # Print the results
+  Write-BuildLine
+  Write-BuildLine "Source Cache: $HAB_CACHE_SRC_PATH\$pkg_dirname"
+  Write-BuildLine "Installed Path: $pkg_prefix"
+  Write-BuildLine "Artifact: $pkg_output_path\$(Split-Path $pkg_artifact -Leaf)"
+  Write-BuildLine "Build Report: $pkg_output_path\last_build.env"
+  Write-BuildLine "SHA256 Checksum: $_pkg_sha256sum"
+  Write-BuildLine "Blake2b Checksum: $_pkg_blake2bsum"
+
+  # Exit cleanly
+  Write-BuildLine
+  Write-BuildLine "I love it when a plan.ps1 comes together."
+  Write-BuildLine
 }
-$script:PLAN_CONTEXT = (Get-Item $Context).FullName
 
-# Now to ensure a `plan.ps1` exists where we expect it. There are 2 possible
-# candidate locations relative to the `$PLAN_CONTEXT` directory: a `./plan.ps1`
-# or a `./habitat/plan.ps1`. Only one or the other location is allowed so that
-# a Plan author isn't confused if they edit one to have this program read
-# the other.
+new-alias Build Invoke-HabitatBuild
 
-# We'll make sure that both are not present, and if so abort.
-if ((Test-Path "$PLAN_CONTEXT\plan.ps1") -and (Test-Path "$PLAN_CONTEXT\habitat\plan.ps1")) {
-    $places = "$PLAN_CONTEXT\plan.sh and $PLAN_CONTEXT\habitat/plan.sh"
-    _Exit-With "A Plan file was found at $places. Only one is allowed at a time" 42
-}
-# We check if the provided path has a `plan.sh` in it in either location. If
-# not, we'll quickly bail.
-if (-Not (Test-Path "$PLAN_CONTEXT\plan.ps1")) {
-    if (Test-Path "$PLAN_CONTEXT\habitat\plan.ps1") {
-        $PLAN_CONTEXT = "$PLAN_CONTEXT\habitat"
-    } else {
-        $places = "$PLAN_CONTEXT\plan.sh or $PLAN_CONTEXT\habitat/plan.sh"
-        _Exit-With "Plan file not found at $places" 42
-    }
-}
+Export-ModuleMember Invoke-HabitatBuild, Get-HabPackagePath, Write-BuildLine
 
-# We want to fail the build for both termionating and non terminating errors
-$ErrorActionPreference = "Stop"
-
-# Change into the `$PLAN_CONTEXT` directory for proper resolution of relative
-# paths in `plan.ps1`
-Push-Location "$PLAN_CONTEXT"
-
-try {
-    # Load the Plan
-    Write-BuildLine "Loading $PLAN_CONTEXT\plan.ps1"
-    . "$PLAN_CONTEXT\plan.ps1"
-    Write-BuildLine "Plan loaded"
-    # @TODO fin - what to do when dot souring fails? can it?
-
-    # If the `HAB_ORIGIN` environment variable is set, override the value of
-    # `$pkg_origin`.
-    if (Test-Path Env:\HAB_ORIGIN) {
-        $script:pkg_origin = "$env:HAB_ORIGIN"
-    }
-
-    # Validate metadata
-    Write-BuildLine "Validating plan metadata"
-
-    foreach ($var in @("pkg_origin", "pkg_name", "pkg_version", "pkg_source")) {
-        if (-Not (Test-Path variable:script:$var)) {
-            _Exit-With "Failed to build. '$var' must be set." 1
-        } elseif ((Get-Variable $var -Scope script).Value -eq "") {
-            _Exit-With "Failed to build. '$var' must be set and non-empty." 1
-        }
-    }
-
-    # Test to ensure package name contains only valid characters
-    if (-Not ("$pkg_name" -match '^[A-Za-z0-9_-]+$')) {
-        _Exit-With "Failed to build. Package name '$pkg_name' contains invalid characters." 1
-    }
-
-    # Pass over `$pkg_svc_run` to replace any `$pkg_name` placeholder tokens
-    # from prior pkg_svc_* variables that were set before the Plan was loaded.
-    if ("$pkg_svc_run" -ne "") {
-        $pkg_svc_run = "$pkg_svc_run".Replace("@__pkg_name__@", "$pkg_name")
-    }
-
-    # Set `$pkg_filename` to the basename of `$pkg_source`, if it is not already
-    # set by the `plan.ps1`.
-    if ("$pkg_filename" -eq "") {
-        $script:pkg_filename = "$(Split-Path $pkg_source -Leaf)"
-    }
-
-    # Set `$pkg_dirname` to the `$pkg_name` and `$pkg_version`, if it is not
-    # already set by the `plan.ps1`.
-    if ("$pkg_dirname" -eq "") {
-        $script:pkg_dirname = "${pkg_name}-${pkg_version}"
-    }
-
-    # Set `$pkg_prefix` if not already set by the `plan.ps1`.
-    if ("$pkg_prefix" -eq "") {
-        $script:pkg_prefix = "$HAB_PKG_PATH\$pkg_origin\$pkg_name\$pkg_version\$pkg_release"
-    }
-
-    # Determine the final output path for the package artifact
-    $script:pkg_output_path = "$(Get-Location)\results"
-
-    # Set $pkg_svc variables a second time, now that the Plan has been sourced and
-    # we have access to `$pkg_name`.
-    $script:pkg_svc_path="$HAB_ROOT_PATH\svc\$pkg_name"
-    $script:pkg_svc_data_path="$pkg_svc_path\data"
-    $script:pkg_svc_files_path="$pkg_svc_path\files"
-    $script:pkg_svc_var_path="$pkg_svc_path\var"
-    $script:pkg_svc_config_path="$pkg_svc_path\config"
-    $script:pkg_svc_static_path="$pkg_svc_path\static"
-
-    # Set the package artifact name
-    $_artifact_ext="hart"
-    $script:pkg_artifact="$HAB_CACHE_ARTIFACT_PATH\${pkg_origin}-${pkg_name}-${pkg_version}-${pkg_release}-${pkg_target}.${_artifact_ext}"
-
-    # Run `do_begin`
-    Write-BuildLine "$program setup"
-    Invoke-Begin
-
-    # Determine if we have all the commands we need to work
-    _Get-SystemCommands
-
-    # Enure that the origin key is available for package signing
-    _Assert-OriginKeyPresent
-
-    _Set-HabBin
-
-    # Download and resolve the depdencies
-    _Complete-DependencyResolution
-
-    # Set the complete `Path` environment.
-    _Set-Path
-
-    # Download the source
-    New-Item "$HAB_CACHE_SRC_PATH" -ItemType Directory -Force | Out-Null
-    Invoke-Download
-
-    # Verify the source
-    Invoke-Verify
-
-    # Clean the cache
-    Invoke-Clean
-
-    # Unpack the source
-    Invoke-Unpack
-
-    # Set up the build environment
-    _Set-Environment
-
-    # Prepare the source
-    Invoke-PrepareWrapper
-
-    # Build the source
-    Invoke-BuildWrapper
-
-    # Check the source
-    Invoke-CheckWrapper
-
-    # Install the source
-    Invoke-InstallWrapper
-
-    # Copy the configuration
-    Invoke-BuildConfig
-
-    # Copy the service management scripts
-    Invoke-BuildService
-
-    # Write the manifest
-    _Write-Manifest
-
-    # Render the linking and dependency files
-    _Write-Metadata
-
-    # Generate the artifact and write to artifact cache
-    _Save-Artifact
-
-    # Copy produced artifact to a local relative directory
-    _Copy-BuildOutputs
-
-    # Cleanup
-    Write-BuildLine "$program cleanup"
-    Invoke-End
-}
-finally {
-    Pop-Location
-}
-
-# Print the results
-Write-BuildLine
-Write-BuildLine "Source Cache: $HAB_CACHE_SRC_PATH\$pkg_dirname"
-Write-BuildLine "Installed Path: $pkg_prefix"
-Write-BuildLine "Artifact: $pkg_output_path\$(Split-Path $pkg_artifact -Leaf)"
-Write-BuildLine "Build Report: $pkg_output_path\last_build.env"
-Write-BuildLine "SHA256 Checksum: $_pkg_sha256sum"
-Write-BuildLine "Blake2b Checksum: $_pkg_blake2bsum"
-
-# Exit cleanly
-Write-BuildLine
-Write-BuildLine "I love it when a plan.ps1 comes together."
-Write-BuildLine
+Export-ModuleMember -Alias Build

@@ -12,7 +12,6 @@ function Invoke-Build {
     $_.Replace("@author@", $pkg_maintainer).Replace("@version@", $pkg_version)
   } | Add-Content -Path hab-studio.ps1
   Copy-Item $PLAN_CONTEXT/bin/hab-studio.bat hab-studio.bat
-  Copy-Item $PLAN_CONTEXT/bin/build.bat build.bat
 }
 
 function Invoke-Install {
@@ -22,7 +21,6 @@ function Invoke-Install {
 
   Copy-Item hab-studio.ps1 "$pkg_prefix/bin/hab-studio.ps1"
   Copy-Item hab-studio.bat "$pkg_prefix/bin/hab-studio.bat"
-  Copy-Item build.bat "$pkg_prefix/bin/build.bat"
 
   Copy-Item "$(Get-HabPackagePath powershell)/bin/*" "$pkg_prefix/bin/powershell" -Recurse
   Copy-Item "$(Get-HabPackagePath hab)/bin/*" "$pkg_prefix/bin/hab"

@@ -234,6 +234,7 @@ function New-Studio {
   }
 
   Set-Location $HAB_STUDIO_ROOT
+  $env:HAB_ROOT_PATH = "$HAB_STUDIO_ROOT\hab"
   if(!(Test-Path src) -and !($doNotMount)) {
     mkdir src | Out-Null
     New-Item -Name src -ItemType Junction -target $SRC_PATH.Path
@@ -273,13 +274,14 @@ function Enter-Studio {
   New-Studio
   Write-HabInfo "Entering Studio at $HAB_STUDIO_ROOT"
   $env:HAB_STUDIO_ENTER_ROOT = $HAB_STUDIO_ROOT
-  $env:HAB_ROOT_PATH = "$HAB_STUDIO_ROOT/hab"
+  $env:HAB_MODULE_PATH = "$PSScriptRoot\Habitat-Build.psd1"
   & "$PSScriptRoot\powershell\powershell.exe" -NoProfile -ExecutionPolicy bypass -NoLogo -NoExit -Command {
     function prompt {
       Write-Host "[HAB-STUDIO]" -NoNewLine -ForegroundColor Green
       " $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel +1)) "
     }
     New-PSDrive -Name "Habitat" -PSProvider FileSystem -Root $env:HAB_STUDIO_ENTER_ROOT | Out-Null
+    Import-Module $env:HAB_MODULE_PATH
     Set-Location "Habitat:\src"
   }
 }
