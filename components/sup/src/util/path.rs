@@ -34,7 +34,7 @@ const INTERPRETER_IDENT: &'static str = "core/busybox-static";
 const INTERPRETER_COMMAND: &'static str = "busybox";
 
 #[cfg(target_os = "windows")]
-const INTERPRETER_IDENT: &'static str = "core/powershell";
+const INTERPRETER_IDENT: &'static str = "mwrock/powershell";
 #[cfg(target_os = "windows")]
 const INTERPRETER_COMMAND: &'static str = "powershell";
 

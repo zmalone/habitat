@@ -43,7 +43,7 @@ mod inner {
     const CMD_ENVVAR: &'static str = "HAB_BUTTERFLY_BINARY";
 
     pub fn start(ui: &mut UI, args: Vec<OsString>) -> Result<()> {
-        let butterfly_ident = "core/hab-butterfly";
+        let butterfly_ident = "mwrock/hab-butterfly";
         let command = match henv::var(CMD_ENVVAR) {
             Ok(command) => PathBuf::from(command),
             Err(_) => {
