@@ -1,12 +1,12 @@
 $pkg_name = "hab-sup"
-$pkg_origin = "core"
+$pkg_origin = "mwrock"
 $pkg_version = "$(Get-Content $PLAN_CONTEXT/../../VERSION)"
 $pkg_maintainer = "The Habitat Maintainers <humans@habitat.sh>"
 $pkg_license = @("Apache-2.0")
 $pkg_source = "https://s3-us-west-2.amazonaws.com/habitat-win-deps/hab-win-deps.zip"
 $pkg_shasum="0a99b1e171ff1075cca139cf9f695685f7a04b122f1704f82f2b852561847710"
 $pkg_bin_dirs = @("bin")
-$pkg_build_deps = @("core/rust")
+$pkg_build_deps = @("mwrock/rust")
 
 function Invoke-Prepare {
     $env:PLAN_VERSION               = "$pkg_version/$pkg_release"

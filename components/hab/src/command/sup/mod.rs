@@ -41,7 +41,7 @@ mod inner {
 
     const SUP_CMD: &'static str = "hab-sup";
     const SUP_CMD_ENVVAR: &'static str = "HAB_SUP_BINARY";
-    const SUP_PACKAGE_IDENT: &'static str = "core/hab-sup";
+    const SUP_PACKAGE_IDENT: &'static str = "mwrock/hab-sup";
 
     const FEAT_STATIC: &'static str = "HAB_FEAT_SUP_STATIC";
     const SUP_STATIC_PACKAGE_IDENT: &'static str = "core/hab-sup-static";

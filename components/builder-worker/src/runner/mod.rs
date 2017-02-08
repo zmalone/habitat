@@ -59,7 +59,7 @@ lazy_static! {
     // public API function to load the PackageInstall of a dep for the given `origin`/`name`
     // combination. If we can't, then we should fall back to the latest of core/hab-studio because
     // that means we're just in a dev shell.
-    static ref STUDIO_PKG: PackageIdent = PackageIdent::from_str("core/hab-studio").unwrap();
+    static ref STUDIO_PKG: PackageIdent = PackageIdent::from_str("mwrock/hab-studio").unwrap();
 }
 
 #[derive(Debug)]
