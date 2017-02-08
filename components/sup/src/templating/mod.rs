@@ -23,6 +23,7 @@ impl Template {
     pub fn new() -> Self {
         let mut handlebars = Handlebars::new();
         handlebars.register_helper("pkgPathFor", Box::new(helpers::pkg_path_for));
+        handlebars.register_helper("eachAlive", Box::new(helpers::EachAliveHelper));
         handlebars.register_helper("toUppercase", Box::new(helpers::to_uppercase));
         handlebars.register_helper("toLowercase", Box::new(helpers::to_lowercase));
         handlebars.register_helper("strReplace", Box::new(helpers::str_replace));

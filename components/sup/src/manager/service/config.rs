@@ -171,6 +171,7 @@ impl ServiceConfig {
         let mut should_restart = false;
         for config in config_files {
             debug!("Rendering template {}", &config);
+            debug!("Rendering with {}", &final_data);
             let template_data = try!(template.render(&config, &final_data));
             let template_hash = try!(crypto::hash::hash_string(&template_data));
             let filename = pi.svc_config_path().join(&config).to_string_lossy().into_owned();

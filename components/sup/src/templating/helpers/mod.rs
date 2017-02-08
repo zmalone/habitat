@@ -21,6 +21,9 @@ use handlebars::{Handlebars, Helper, RenderContext, RenderError};
 use serde_json;
 use toml;
 
+pub mod each_alive_helper;
+pub use self::each_alive_helper::EachAliveHelper;
+
 type RenderResult = Result<(), RenderError>;
 
 pub fn pkg_path_for(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> RenderResult {
