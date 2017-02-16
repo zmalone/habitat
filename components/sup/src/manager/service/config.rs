@@ -31,10 +31,11 @@ use hcore::package::{PackageIdent, PackageInstall};
 use hcore::service::ServiceGroup;
 use toml;
 
-use manager::ManagerConfig;
+use config::GossipListenAddr;
 use manager::census::{Census, CensusList};
 use error::{Error, Result};
 use fs;
+use http_gateway;
 use supervisor::RuntimeConfig;
 use templating::Template;
 use util::{self, convert};
@@ -79,15 +80,16 @@ impl ServiceConfig {
     /// fail, and indeed, we want it to - it causes the program to crash if we can not render the
     /// first pass of the configuration file.
     pub fn new(package: &PackageInstall,
-               mgr_cfg: &ManagerConfig,
                runtime_cfg: &RuntimeConfig,
                config_root: PathBuf,
-               bindings: Vec<(String, ServiceGroup)>)
+               bindings: Vec<(String, ServiceGroup)>,
+               gossip_listen: &GossipListenAddr,
+               http_listen: &http_gateway::ListenAddr)
                -> Result<ServiceConfig> {
         Ok(ServiceConfig {
             pkg: Pkg::new(package, runtime_cfg)?,
             hab: Hab::new(),
-            sys: Sys::new(mgr_cfg),
+            sys: Sys::new(gossip_listen, http_listen),
             cfg: Cfg::new(package, &config_root)?,
             svc: Svc::default(),
             bind: Bind::default(),
@@ -528,7 +530,7 @@ impl Pkg {
 pub struct Sys(SysInfo);
 
 impl Sys {
-    fn new(manager_cfg: &ManagerConfig) -> Sys {
+    fn new(gossip_listen: &GossipListenAddr, http_listen: &http_gateway::ListenAddr) -> Sys {
         let ip = match util::sys::ip() {
             Ok(ip) => ip.to_string(),
             Err(e) => {
@@ -548,10 +550,10 @@ impl Sys {
         Sys(SysInfo {
             ip: ip,
             hostname: hostname,
-            gossip_ip: manager_cfg.gossip_listen.ip().to_string(),
-            gossip_port: manager_cfg.gossip_listen.port().to_string(),
-            http_gateway_ip: manager_cfg.http_listen.ip().to_string(),
-            http_gateway_port: manager_cfg.http_listen.port().to_string(),
+            gossip_ip: gossip_listen.ip().to_string(),
+            gossip_port: gossip_listen.port().to_string(),
+            http_gateway_ip: http_listen.ip().to_string(),
+            http_gateway_port: http_listen.port().to_string(),
         })
     }
 
