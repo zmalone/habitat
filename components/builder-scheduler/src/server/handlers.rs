@@ -19,6 +19,10 @@ use protocol::net::{self, ErrCode};
 use protocol::scheduler as proto;
 use zmq;
 
+use protocol::jobsrv::{Job, JobGet, JobSpec};
+use hab_net::routing::Broker;
+use protocol::vault::*;
+
 use super::ServerState;
 use error::Result;
 
@@ -30,6 +34,33 @@ pub fn schedule(req: &mut Envelope, sock: &mut zmq::Socket, state: &mut ServerSt
     let mut group = proto::Group::new();
     group.set_group_id(0);
     group.set_state(proto::GroupState::Pending);
+
+    let mut project_get = ProjectGet::new();
+    let project_id = format!("{}/{}",
+                             msg.get_ident().get_origin(),
+                             msg.get_ident().get_name());
+    project_get.set_id(project_id.clone());
+
+    println!("Retreiving project: {}", project_id);
+    let mut conn = Broker::connect().unwrap();
+    let project = match conn.route::<ProjectGet, Project>(&project_get) {
+        Ok(project) => project,
+        Err(err) => {
+            println!("Unable to retrieve project: {:?}", project_id);
+            group.set_state(proto::GroupState::Failed);
+            try!(req.reply_complete(sock, &group));
+            return Ok(());
+        }
+    };
+
+    let mut job_spec: JobSpec = JobSpec::new();
+    job_spec.set_owner_id(0);
+    job_spec.set_project(project);
+
+    match conn.route::<JobSpec, Job>(&job_spec) {
+        Ok(job) => println!("Job created: {:?}", job),
+        Err(err) => println!("Job creation error: {:?}", err),
+    }
 
     try!(req.reply_complete(sock, &group));
     Ok(())
