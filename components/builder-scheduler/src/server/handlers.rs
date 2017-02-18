@@ -32,8 +32,7 @@ pub fn schedule(req: &mut Envelope, sock: &mut zmq::Socket, state: &mut ServerSt
     println!("Scheduling: {:?}", msg);
 
     let mut group = proto::Group::new();
-    group.set_group_id(0);
-    group.set_state(proto::GroupState::Pending);
+    state.datastore().create_group(&mut group)?;
 
     let mut project_get = ProjectGet::new();
     let project_id = format!("{}/{}",
@@ -48,18 +47,26 @@ pub fn schedule(req: &mut Envelope, sock: &mut zmq::Socket, state: &mut ServerSt
         Err(err) => {
             println!("Unable to retrieve project: {:?}", project_id);
             group.set_state(proto::GroupState::Failed);
+            state.datastore().set_group_state(&group)?;
             try!(req.reply_complete(sock, &group));
             return Ok(());
         }
     };
 
     let mut job_spec: JobSpec = JobSpec::new();
-    job_spec.set_owner_id(0);
+    job_spec.set_owner_id(group.get_group_id());
     job_spec.set_project(project);
 
     match conn.route::<JobSpec, Job>(&job_spec) {
-        Ok(job) => println!("Job created: {:?}", job),
-        Err(err) => println!("Job creation error: {:?}", err),
+        Ok(job) => {
+            println!("Job created: {:?}", job);
+            state.datastore().add_group_job(&group, &job)?;
+        }
+        Err(err) => {
+            group.set_state(proto::GroupState::Failed);
+            state.datastore().set_group_state(&group)?;
+            println!("Job creation error: {:?}", err)
+        }
     }
 
     try!(req.reply_complete(sock, &group));

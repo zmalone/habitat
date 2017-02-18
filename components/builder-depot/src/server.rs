@@ -605,8 +605,8 @@ fn schedule_package(req: &mut Request) -> IronResult<Response> {
     let mut request = Schedule::new();
     request.set_ident(ident.clone());
     match conn.route::<Schedule, Group>(&request) {
-        Ok(_) => {
-            let mut response = render_json(status::Ok, &ident);
+        Ok(group) => {
+            let mut response = render_json(status::Ok, &group);
             dont_cache_response(&mut response);
             Ok(response)
         }
@@ -1170,7 +1170,7 @@ pub fn router(depot: Depot) -> Result<Chain> {
             if depot.config.insecure {
                 XHandler::new(schedule_package)
             } else {
-                XHandler::new(schedule_package).before(worker.clone())
+                XHandler::new(schedule_package).before(basic.clone())
             }
         },
 

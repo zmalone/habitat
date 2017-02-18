@@ -54,8 +54,8 @@ pub struct ServerState {
 }
 
 impl ServerState {
-    fn datastore(&self) -> &DataStore {
-        self.datastore.as_ref().unwrap()
+    fn datastore(&mut self) -> &mut DataStore {
+        self.datastore.as_mut().unwrap()
     }
 }
 
