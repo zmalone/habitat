@@ -13,7 +13,7 @@ doc = false
 [dependencies]
 env_logger = "*"
 log = "*"
-protobuf = "*"
+protobuf = "1.1.0"
 rand = "*"
 toml = { version = "*", features = ["serde"], default-features = false }
 

@@ -100,6 +100,7 @@ impl GitHubClient {
     pub fn contents(&self, token: &str, owner: &str, repo: &str, path: &str) -> Result<Contents> {
         let url = Url::parse(&format!("{}/repos/{}/{}/contents/{}", self.url, owner, repo, path))
             .unwrap();
+        println!("github url: {:?}", url);
         let mut rep = try!(http_get(url, token));
         let mut body = String::new();
         try!(rep.read_to_string(&mut body));
@@ -199,7 +200,7 @@ impl GitHubClient {
 }
 
 
-#[derive(Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Contents {
     pub name: String,
     pub path: String,

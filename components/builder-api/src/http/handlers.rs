@@ -265,7 +265,9 @@ pub fn project_create(req: &mut Request) -> IronResult<Response> {
                           &repo,
                           &project.get_plan_path()) {
         Ok(contents) => {
-            match base64::decode(&contents.content) {
+            println!("create project: contents = {:?}", contents);
+            let s = &contents.content.replace("\n", "");
+            match base64::decode(s) {
                 Ok(ref bytes) => {
                     match Plan::from_bytes(bytes) {
                         Ok(plan) => project.set_id(format!("{}/{}", origin.get_name(), plan.name)),
@@ -274,7 +276,10 @@ pub fn project_create(req: &mut Request) -> IronResult<Response> {
                         }
                     }
                 }
-                Err(_) => return Ok(Response::with((status::UnprocessableEntity, "rg:pc:4"))),
+                Err(e) => {
+                    println!("base64 decode failure: {:?}", e);
+                    return Ok(Response::with((status::UnprocessableEntity, "rg:pc:4")));
+                }
             }
         }
         Err(_) => return Ok(Response::with((status::UnprocessableEntity, "rg:pc:2"))),
@@ -282,6 +287,7 @@ pub fn project_create(req: &mut Request) -> IronResult<Response> {
 
     project.set_owner_id(session.get_id());
     request.set_project(project);
+    println!("Sending ProjectCreate message");
     match conn.route::<ProjectCreate, Project>(&request) {
         Ok(response) => {
             log_event!(req,

@@ -14,16 +14,15 @@
 
 use std::result;
 use message::Routable;
-use sharding::InstaId;
 
 pub use message::scheduler::*;
 use serde::{Serialize, Serializer};
 
 impl Routable for Schedule {
-    type H = InstaId;
+    type H = String;
 
     fn route_key(&self) -> Option<Self::H> {
-        Some(InstaId(0))
+        Some(self.get_ident().to_string())
     }
 }
 

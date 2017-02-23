@@ -128,6 +128,7 @@ impl BrokerConn {
     /// * Could not serialize message
     pub fn route_async<M: Routable>(&mut self, msg: &M) -> Result<()> {
         let route_hash = msg.route_key().map(|key| key.hash(&mut self.hasher));
+        println!("route_async routing msg");
         let req = protocol::Message::new(msg).routing(route_hash).build();
         let bytes = req.write_to_bytes().unwrap();
         try!(self.sock.send_str("RQ", zmq::SNDMORE));

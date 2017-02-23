@@ -309,9 +309,14 @@ pub fn project_create(req: &mut Envelope,
                       sock: &mut zmq::Socket,
                       state: &mut ServerState)
                       -> Result<()> {
+    println!("project_create handler called");
     let mut project = try!(req.parse_msg::<proto::ProjectCreate>()).take_project();
+    println!("Writing to datastore");
     match state.datastore.projects.write(&mut project) {
-        Ok(true) => try!(req.reply_complete(sock, &project)),
+        Ok(true) => {
+            println!("datastore write successful");
+            try!(req.reply_complete(sock, &project))
+        }
         Ok(false) => {
             let err = net::err(ErrCode::ENTITY_CONFLICT, "vt:project-create:0");
             try!(req.reply_complete(sock, &err));
@@ -339,10 +344,15 @@ pub fn project_get(req: &mut Envelope,
                    sock: &mut zmq::Socket,
                    state: &mut ServerState)
                    -> Result<()> {
+    println!("project_get called");
     let mut msg: proto::ProjectGet = try!(req.parse_msg());
     match state.datastore.projects.find(&msg.take_id()) {
-        Ok(ref project) => try!(req.reply_complete(sock, project)),
+        Ok(ref project) => {
+            println!("project_get successfully retreived project");
+            try!(req.reply_complete(sock, project))
+        }
         Err(dbcache::Error::EntityNotFound) => {
+            println!("project_get entity not found");
             let err = net::err(ErrCode::ENTITY_NOT_FOUND, "vt:project-get:0");
             try!(req.reply_complete(sock, &err));
         }

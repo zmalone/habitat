@@ -28,6 +28,7 @@ fn generate_protocols() {
         .arg(out_dir)
         .args(&protocol_files())
         .output();
+    println!("cmd: {:?}", cmd);
     match cmd {
         Ok(out) => {
             if !out.status.success() {

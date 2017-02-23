@@ -37,6 +37,7 @@ const HTTP_THREAD_COUNT: usize = 128;
 
 /// Create a new `iron::Chain` containing a Router and it's required middleware
 pub fn router(config: Arc<Config>) -> Result<Chain> {
+    let basic = Authenticated::new(&*config);
     let admin = Authenticated::new(&*config).require(privilege::ADMIN);
     let router = router!(
         status: get "/status" => status,
@@ -47,7 +48,7 @@ pub fn router(config: Arc<Config>) -> Result<Chain> {
             XHandler::new(feature_grants_list).before(admin.clone())
         },
         edit_feature_teams: post "/features/:id/teams" => {
-            XHandler::new(feature_grant).before(admin.clone())
+            XHandler::new(feature_grant).before(basic.clone())
         },
         delete_feature_team: delete "/features/:feature/teams/:id" => {
             XHandler::new(feature_revoke).before(admin.clone())

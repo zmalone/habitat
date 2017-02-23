@@ -106,7 +106,10 @@ impl Server {
                     try!(self.fe_sock.recv(&mut self.req, 0));
                     match self.req.as_str() {
                         Some("RP") => self.state = SocketState::Forwarding,
-                        Some("RQ") => self.state = SocketState::Routing,
+                        Some("RQ") => {
+                            println!("received RQ");
+                            self.state = SocketState::Routing
+                        }
                         _ => {
                             warn!("framing error");
                             self.state = SocketState::Cleaning;
@@ -131,6 +134,7 @@ impl Server {
                         continue;
                     }
                     debug!("received req, {:?}/{:?}", self.req.as_str(), self.req.len());
+                    println!("calling parse_from_bytes");
                     match parse_from_bytes(&self.req) {
                         Ok(msg) => self.envelope.msg = msg,
                         Err(e) => {
