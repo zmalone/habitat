@@ -1309,7 +1309,7 @@ download_file() {
   fi
 
   build_line "Downloading '$url' to '$dst'"
-  $_wget_cmd $url -O $dst
+  $_curl_cmd $url -O $dst
   build_line "Downloaded '$dst'";
   popd > /dev/null
 }
@@ -1635,6 +1635,26 @@ _set_path() {
   build_line "Setting PATH=$PATH"
 }
 
+# Checks input string to see if it is a file and returns the result.
+_file_downloaded() {
+  local file_or_path=$1
+  test -f "$HAB_CACHE_SRC_PATH/$file_or_path"
+  return $?
+}
+
+do_copy_dir() {
+  do_default_copy_dir
+  return $?
+}
+
+do_default_copy_dir() {
+  local src_dir="$1"
+  local dest_dir="$2"
+  cp -r "$src_dir" "$dest_dir"
+  return 0
+}
+
+
 # Download the software from `$pkg_source` and place it in
 # `$HAB_CACHE_SRC_PATH/${$pkg_filename}`. If the source already exists in the
 # cache, verify that the checksum is what we expect, and skip the download.
@@ -1646,17 +1666,20 @@ do_download() {
 
 # Default implementation for the `do_download()` phase.
 do_default_download() {
-  if [[ $pkg_source == "."* ]]; then
-    # File is a local path, so is already downloaded.
-    cp -r $pkg_source $HAB_CACHE_SRC_PATH/$pkg_filename
-    return 0
+  download_file $pkg_source $pkg_filename $pkg_shasum
+  local ret=$?
+  # Curl returns 0 and is a no-op for local directories. Check to see if any
+  # files were downloaded, or
+  if [[ $(_file_downloaded $pkg_filename) ]]; then
+   : #no-op
   else
-    # File needs to be fetched.
-    download_file $pkg_source $pkg_filename $pkg_shasum
-    return $?
+   do_copy_dir $pkg_source $HAB_CACHE_SRC_PATH/$pkg_filename
+   ret=$?
   fi
+  return $ret
 }
 
+}
 # Verify that the package we have in `$HAB_CACHE_SRC_PATH/$pkg_filename` has
 # the `$pkg_shasum` we expect. Delegates most of the implementation to the
 # `do_default_verify()` function.
