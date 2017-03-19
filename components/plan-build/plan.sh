@@ -12,6 +12,7 @@ pkg_deps=(
   core/binutils
   core/bzip2
   core/coreutils
+  core/curl-static-musl
   core/file
   core/findutils
   core/gawk
@@ -22,7 +23,6 @@ pkg_deps=(
   core/sed
   core/tar
   core/unzip
-  core/wget
   core/xz
 )
 

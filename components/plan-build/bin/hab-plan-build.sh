@@ -543,15 +543,15 @@ _find_system_commands() {
   fi
   debug "Setting _sort_cmd=$_sort_cmd"
 
-  if exists wget; then
-    _wget_cmd=$(command -v wget)
+  if exists curl; then
+    _curl_cmd=$(command -v curl)
     if [[ "${HAB_NONINTERACTIVE:-}" == "true" ]]; then
-      _wget_cmd="$_wget_cmd --no-verbose"
+      _curl_cmd="$_curl_cmd --location --silent --show-error"
     fi
   else
     exit_with "We require wget to download sources; aborting" 1
   fi
-  debug "Setting _wget_cmd=$_wget_cmd"
+  debug "Setting _curl_cmd=$_curl_cmd"
 
   if exists gsha256sum; then
     _shasum_cmd=$(command -v gsha256sum)
