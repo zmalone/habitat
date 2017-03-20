@@ -102,7 +102,7 @@
 # ```
 #
 # ### pkg_source
-# Where to download the source from. Any valid `wget` url will work.
+# Where to download the source from. Any valid `curl` uri will work.
 # ```
 # pkg_source=http://downloads.sourceforge.net/project/libpng/$pkg_name/${pkg_version}/${pkg_name}-${pkg_version}.tar.gz
 # ```
@@ -517,7 +517,7 @@ _ensure_origin_key_present() {
 #
 # * `$_hab_cmd` (hab cli for signing, hashing, and possibly installing)
 # * `$_sort_cmd` (GNU version from coreutils)
-# * `$_wget_cmd` (wget on system)
+# * `$_curl_cmd` (curl on system)
 # * `$_shasum_cmd` (either gsha256sum or sha256sum on system)
 # * `$_tar_cmd` (GNU version of tar)
 # * `$_mktemp_cmd` (GNU version from coreutils)
@@ -546,10 +546,12 @@ _find_system_commands() {
   if exists curl; then
     _curl_cmd=$(command -v curl)
     if [[ "${HAB_NONINTERACTIVE:-}" == "true" ]]; then
-      _curl_cmd="$_curl_cmd --location --silent --show-error"
+      _curl_cmd="$_curl_cmd --silent --location --show-error"
+    else
+      _curl_cmd="$_curl_cmd --location --show-error"
     fi
   else
-    exit_with "We require wget to download sources; aborting" 1
+    exit_with "We require curl to download sources; aborting" 1
   fi
   debug "Setting _curl_cmd=$_curl_cmd"
 
@@ -1277,7 +1279,7 @@ function _port_is_valid() {
 # file-on-disk is removed and a normal download proceeds as though no previous
 # file existed. This is designed to restart an interrupted download.
 #
-# Any valid `wget` URL will work.
+# Any valid `wget` URI will work.
 #
 # ```sh
 # download_file http://example.com/file.tar.gz file.tar.gz
@@ -1309,7 +1311,7 @@ download_file() {
   fi
 
   build_line "Downloading '$url' to '$dst'"
-  $_curl_cmd $url -O $dst
+  $_curl_cmd $url -o $dst
   build_line "Downloaded '$dst'";
   popd > /dev/null
 }
@@ -1643,7 +1645,9 @@ _file_downloaded() {
 }
 
 do_copy_dir() {
-  do_default_copy_dir
+  local src_dir="$1"
+  local dest_dir="$2"
+  do_default_copy_dir "$src_dir" "$dest_dir"
   return $?
 }
 
@@ -1670,16 +1674,15 @@ do_default_download() {
   local ret=$?
   # Curl returns 0 and is a no-op for local directories. Check to see if any
   # files were downloaded, or
-  if [[ $(_file_downloaded $pkg_filename) ]]; then
-   : #no-op
-  else
+  _file_downloaded $pkg_filename
+  local file_exists=$?
+  if [[ file_exists -eq 1 ]]; then
    do_copy_dir $pkg_source $HAB_CACHE_SRC_PATH/$pkg_filename
    ret=$?
   fi
   return $ret
 }
 
-}
 # Verify that the package we have in `$HAB_CACHE_SRC_PATH/$pkg_filename` has
 # the `$pkg_shasum` we expect. Delegates most of the implementation to the
 # `do_default_verify()` function.
@@ -2582,14 +2585,14 @@ _set_path
 # Ensure the cache folder is created.
 mkdir -pv "$HAB_CACHE_SRC_PATH"
 
-# Clean the cache
-do_clean
-
 # Download the source.
 do_download
 
 # Verify the source
 do_verify
+
+# Clean the cache
+do_clean
 
 # Unpack the source
 do_unpack
