@@ -1637,27 +1637,35 @@ _set_path() {
   build_line "Setting PATH=$PATH"
 }
 
-# Checks input string to see if it is a file and returns the result.
-_file_downloaded() {
-  local file_or_path=$1
-  test -f "$HAB_CACHE_SRC_PATH/$file_or_path"
+GET_SOURCE_CMD=""
+_set_get_source_cmd() {
+  case "$pkg_source" in
+    http://*|https://*|ftp://*)
+      # existing behavior, delegate to wget
+      GET_SOURCE_CMD="do_default_download"
+      ;;
+    file://*)
+      # for local tarballs, etc.
+      GET_SOURCE_CMD="do_default_copy"
+  esac
+}
+
+do_copy() {
+  local src_dir="$1"
+  do_default_copy_dir "$src_dir"
   return $?
 }
 
-do_copy_dir() {
-  local src_dir="$1"
-  local dest_dir="$2"
-  do_default_copy_dir "$src_dir" "$dest_dir"
+# Copy files and directories to $HAB_CACHE_SRC_PATH.
+# If we use a relative path, we need to set $pkg_filename
+do_default_copy() {
+  local src="${pkg_source/#file:\/\//}"
+  if [[ "$src" == "./" ]] || [[ "$src" == "../" ]]; then
+    pkg_filename=${pkg_filename:-$pkg_name-$pkg_version}
+  fi
+  cp -r "$src" "$HAB_CACHE_SRC_PATH/$pkg_filename"
   return $?
 }
-
-do_default_copy_dir() {
-  local src_dir="$1"
-  local dest_dir="$2"
-  cp -r "$src_dir" "$dest_dir"
-  return 0
-}
-
 
 # Download the software from `$pkg_source` and place it in
 # `$HAB_CACHE_SRC_PATH/${$pkg_filename}`. If the source already exists in the
@@ -1671,16 +1679,6 @@ do_download() {
 # Default implementation for the `do_download()` phase.
 do_default_download() {
   download_file $pkg_source $pkg_filename $pkg_shasum
-  local ret=$?
-  # Curl returns 0 and is a no-op for local directories. Check to see if any
-  # files were downloaded, or
-  _file_downloaded $pkg_filename
-  local file_exists=$?
-  if [[ file_exists -eq 1 ]]; then
-   do_copy_dir $pkg_source $HAB_CACHE_SRC_PATH/$pkg_filename
-   ret=$?
-  fi
-  return $ret
 }
 
 # Verify that the package we have in `$HAB_CACHE_SRC_PATH/$pkg_filename` has
@@ -2585,8 +2583,11 @@ _set_path
 # Ensure the cache folder is created.
 mkdir -pv "$HAB_CACHE_SRC_PATH"
 
-# Download the source.
-do_download
+# Set the download or copy command variable.
+_set_get_source_cmd
+
+# Download or copy the source.
+$($GET_SOURCE_CMD)
 
 # Verify the source
 do_verify
