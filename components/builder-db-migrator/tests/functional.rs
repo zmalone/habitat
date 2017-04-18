@@ -8,5 +8,7 @@ pub mod redis_tests {
     #[test]
     fn upload_a_package_and_then_install_it() {
         setup::origin_setup();
+        setup::key_install();
+        setup::simple_service();
     }
 }
