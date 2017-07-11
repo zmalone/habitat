@@ -241,7 +241,13 @@ pub trait Service: NetIdent {
 
 		loop {
 			let five_seconds = std_time::Duration::new(5, 0);
-			println!("bite me");
+            println!("bite me");
+
+            try!(self.conn_mut().heartbeat.send(
+                &reg.write_to_bytes().unwrap(),
+                0,
+            ));
+
 			thread::sleep(five_seconds);
 		}
 

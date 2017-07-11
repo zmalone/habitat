@@ -169,10 +169,10 @@ impl Application for Server {
 
     fn run(&mut self) -> Result<()> {
         try!(self.be_sock.bind(BE_LISTEN_ADDR));
- //       let broker = {
- //           let cfg = self.config.read().unwrap();
- //           Broker::run(Self::net_ident(), cfg.route_addrs())
- //       };
+        let broker = {
+            let cfg = self.config.read().unwrap();
+            Broker::run(Self::net_ident(), cfg.route_addrs())
+        };
         let datastore = {
             let cfg = self.config.read().unwrap();
             DataStore::new(cfg.deref())?
@@ -185,8 +185,8 @@ impl Application for Server {
         try!(sup.start());
         try!(self.connect());
         info!("builder-originsrv is ready to go.");
- //       try!(zmq::proxy(&mut self.router.socket, &mut self.be_sock));
-//        broker.join().unwrap();
+        try!(zmq::proxy(&mut self.router.socket, &mut self.be_sock));
+        broker.join().unwrap();
         Ok(())
     }
 }
