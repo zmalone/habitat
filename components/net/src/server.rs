@@ -16,6 +16,8 @@ use std::cell::UnsafeCell;
 use std::error;
 use std::result;
 use std::sync::{Arc, RwLock};
+use std::thread;
+use std::time as std_time;
 
 use core::os::process;
 use fnv::FnvHasher;
@@ -232,8 +234,15 @@ pub trait Service: NetIdent {
         for addr in addrs {
             try!(self.conn_mut().connect(&addr));
         }
+
         println!("Connected");
-        Ok(())
+
+        loop {
+	        let five_seconds = std_time::Duration::new(5, 0);
+            println!("bite me");
+            thread::sleep(five_seconds);
+
+        }
     }
 }
 

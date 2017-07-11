@@ -185,8 +185,8 @@ impl Application for Server {
         try!(sup.start());
         try!(self.connect());
         info!("builder-originsrv is ready to go.");
-        try!(zmq::proxy(&mut self.router.socket, &mut self.be_sock));
-        broker.join().unwrap();
+ //       try!(zmq::proxy(&mut self.router.socket, &mut self.be_sock));
+//        broker.join().unwrap();
         Ok(())
     }
 }
