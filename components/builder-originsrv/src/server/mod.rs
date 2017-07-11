@@ -169,10 +169,10 @@ impl Application for Server {
 
     fn run(&mut self) -> Result<()> {
         try!(self.be_sock.bind(BE_LISTEN_ADDR));
-        let broker = {
-            let cfg = self.config.read().unwrap();
-            Broker::run(Self::net_ident(), cfg.route_addrs())
-        };
+ //       let broker = {
+ //           let cfg = self.config.read().unwrap();
+ //           Broker::run(Self::net_ident(), cfg.route_addrs())
+ //       };
         let datastore = {
             let cfg = self.config.read().unwrap();
             DataStore::new(cfg.deref())?

@@ -237,12 +237,16 @@ pub trait Service: NetIdent {
 
         println!("Connected");
 
-        loop {
-	        let five_seconds = std_time::Duration::new(5, 0);
-            println!("bite me");
-            thread::sleep(five_seconds);
+        let mut hb_message = false;
 
-        }
+		loop {
+			let five_seconds = std_time::Duration::new(5, 0);
+			println!("bite me");
+			thread::sleep(five_seconds);
+		}
+
+        hb_message = false;
+
     }
 }
 
