@@ -1,0 +1,43 @@
+Habitat provides basic health monitoring for your running service; however, if you want to 
+perform custom smoke tests or other status checks, you can customize your plan to To do that, we must create a health check hook. Hooks are scripts that respond to specific events during the lifecycle of a running service.
+
+The `init` and `run` hooks are responsible for defining behavior during initialization and when the child service/application starts up. The Ruby scaffolding creates these for you to handle connecting to a backend database. However, to create the health check hook, we have to perform the following operations:
+
+  > Note: These steps can also be done outside of the studio environment.
+
+1. Inside the studio, change directory to `/myrailsapp/habitat/hooks` and make a new sub-directory called hooks.
+
+       $ cd /myrailsapp/habitat/hooks
+
+2. Create a new file named `health_check`.
+
+       $ touch health_check
+
+3. Open `health_check` in your text editor.
+4. Hooks use [shebangs](https://en.wikipedia.org/wiki/Shebang_(Unix)) to decide which interpreter to use when running their scripts. In the case of the hooks in our plan, we will use the system shell, so add the following to the `health_check` hook file:
+
+       #!/bin/sh
+       #
+       set -x
+
+       # default return code is 0
+       rc=0
+
+       # This request will test whether our index page can be retrieved. 
+       hab pkg exec core/curl curl --head --fail --max-time 1 http://localhost:{{cfg.app.port}}/
+
+       case $? in
+         # Zero exit status means curl got back a 200 end everything is ok.
+         0)
+           rc=0 ;;
+         # Anything else is critical.
+         *)
+           rc=2 ;;
+       esac
+
+       exit $rc
+       
+
+    This perform a basic smoke test to check whether our index page is available for requests.
+
+5. Save the `health_check` hook file.
