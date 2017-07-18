@@ -6,8 +6,8 @@ sidebar_links:
     link: "/tutorials/sample-app/overview/"
   - title: Basic concepts
     link: "/tutorials/sample-app/windows/basic-concepts/"
-  - title: Choose your environment
-    link: "/tutorials/sample-app/choose-environment/"
+#  - title: Choose your environment
+#    link: "/tutorials/sample-app/choose-environment/"
   - title: Create your plan using scaffolding
     link: "/tutorials/sample-app/windows/use-scaffolding/"
   - title: Add health monitoring to your plan

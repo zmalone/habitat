@@ -4,10 +4,10 @@ sidebar_links:
   links:
   - title: Introduction
     link: "/tutorials/sample-app/overview/"
-  - title: Choose your environment
-    link: "/tutorials/sample-app/choose-environment/"
   - title: Basic concepts
     link: "/tutorials/sample-app/linux/basic-concepts/"
+#  - title: Choose your environment
+#    link: "/tutorials/sample-app/choose-environment/"
   - title: Create your plan using scaffolding
     link: "/tutorials/sample-app/linux/use-scaffolding/"
   - title: Add health monitoring to your plan

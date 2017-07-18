@@ -9,10 +9,10 @@ the tooling that you can begin placing your apps in a natural Habitat of their o
 
 In this tutorial you learned how to...
 
-- Set up your Habitat workspace
 - Create your first plan
-- Add hooks and configuration
-- Build and start your first package
+- Add a health monitoring hook to your plan
+- Build your rails two-tier web application
+- Update configuration values dynamically to start the services up successfully
 
 There are many more great features to explore in Habitat! As you venture out, we recommend you keep the following resources at your side. The docs are always being updated and we've got a great community that is ready and willing to help.
 
@@ -24,5 +24,5 @@ If you've got the time now, then we recommend you crack open the docs and try yo
 <hr>
 <ul class="main-content--button-nav">
   <li><a href="/docs" class="button cta">Go to the Docs</a></li>
-  <li><a href="/tutorials/sample-app-process-build/">Back to previous step</a></li>
+  <li><a href="/tutorials/mac/update-app">Back to previous step</a></li>
 </ul>

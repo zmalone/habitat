@@ -1,35 +1,48 @@
-Creating a plan starts with identifying and referencing the application code that you want to package and automate. Habitat provides several different ways to refer and include application code in your package: by downloading a tarball of the source and compiling it when building the package, by referring to a local source directory, or by using a pre-built binary and bundling it up in your package.
+Creating a plan starts with identifying and referencing the application code that you want to package and automate. 
+Habitat provides several different ways to refer and include application code in your package: by downloading a tarball 
+of the source and compiling it when building the package, by referring to a local source directory, or by using a pre-built 
+binary and bundling it up in your package.
 
-To demonstrate Habitat code residing in the same repo as your source code, you are going to clone a simple Rails web application and then add your plan to that web application. By having the Habitat plan live in the same directory as your source code, the Habitat package for your application can be built right alongside your source code for testing and deployment purposes.
+To demonstrate Habitat code residing in the same repo as your source code, you are going to clone a simple Rails web 
+application and then add your plan to that web application. By having the Habitat plan live in the same directory as your 
+source code, the Habitat package for your application can be built right alongside your source code for testing and deployment purposes.
 
 ## Clone the project
-The Ruby-on-Rails web application in this tutorial is a simple web app that connects to a backend PostgreSQL database. It was created by running `rails new mywebapp --database=postgresql` to reference the use of postgreSQL instead of the default database for most rails apps, SQLite3. A new root "Hello World" index page and a model were added to the site to support pulling and displaying data from the PostgreSQL database.
 
+The Ruby-on-Rails web application in this tutorial is a simple web app that connects to a backend PostgreSQL database. It was created 
+by running `rails new mywebapp --database=postgresql` to reference the use of postgreSQL instead of the default database for most rails 
+apps, SQLite3. A new root "Hello World" index page and a model were added to the site to support pulling and displaying data from the 
+PostgreSQL database.
+
+Open a new terminal window on your workstation and perform the following steps:
 <% if is_windows %>
 1. Change the default Git for Windows CRLF line endings setting to be LF line endings.
-D!R!Beta79
 
        $ git config --global core.eol lf
        $ git config --global core.autocrlf input
 <% end %>
 
-1. Clone the `habitat-example-plans` repo onto your local machine. In this example, a directory called `habitat-example-plans` will be created in the `$HOME` directory.
+1. Clone the `habitat-example-plans` repo onto your local machine. In this example, a directory called `habitat-example-plans` will be created 
+in the `$HOME` directory.
 
        $ cd ~
        $ git clone https://github.com/habitat-sh/habitat-example-plans
-
-   > Note: Use `git clone https://github.com/habitat-sh/habitat-example-plans -b dw/railstutorial` until new tutorial changes are merged into the example plans repo.
 
 1. After you have successfully cloned the repo, change directory to the `myrailsapp` directory.
 
        $ cd ~/habitat-example-plans/myrailsapp
 
 ## Start with the basics
-Now that you have cloned the `habitat-example-plans` repo, it is time to define the plan for `myrailsapp`. A plan is a directory comprised of shell scripts and optional configuration files that define how you download, configure, make, install, and manage the lifecycle of the software in the Habitat package. 
 
-At a bare minimum, a plan must have a `plan.sh` at the root of the directory. This file specifies where the source code or binary is, how it should be built by the build script for Habitat, and how the supervisor should start it at runtime.
+Now that you have cloned the `habitat-example-plans` repo, it is time to define the plan for `myrailsapp`. A plan is a directory comprised 
+of shell scripts and optional configuration files that define how you download, configure, make, install, and manage the lifecycle of the 
+software in the Habitat package. 
 
-The easiest way to create a plan is to use the `hab plan init` subcommand. This subcommand will create a plan directory that contains your plan.sh file and any runtime hooks and/or templated configuration data.
+At a bare minimum, a plan must have a `plan.sh` at the root of the directory. This file specifies where the source code or binary is, how 
+it should be built, and how the supervisor should start it at runtime.
+
+The easiest way to create a plan is to use the `hab plan init` subcommand. This subcommand will create a plan directory that contains your plan.sh 
+file and placeholders for any configuration customization that you may want to add later.
 
 To create your plan, do the following in your terminal window:
 
@@ -37,17 +50,20 @@ To create your plan, do the following in your terminal window:
 
        $ cd ~/habitat-example-plans/myrailsapp
 
-2. Run `hab plan init`. It will create a new `habitat` sub-directory with a plan.sh that references the name of the parent directory in the `pkg_name` variable. Also included are a `default.toml` file as well as `config` and `hooks` directories for you to populate as needed.
+2. Run `hab plan init`. It will create a new `habitat` sub-directory with a plan.sh that references the name of the parent directory in the `pkg_name` 
+variable. Also included are a `default.toml` file as well as `config` and `hooks` directories for you to populate as needed.
 
        $ hab plan init
 
-   Also, the origin name that you used when you ran `hab setup` during [Download and Install]() will be used to populate the `pkg_origin` variable in your plan.sh file. See [hab plan init](/docs/reference/habitat-cli#hab-plan-init) for more information on how to use this subcommand.
+   Also, the origin name that you used when you ran `hab setup` during [Download and Install]() will be used to populate the `pkg_origin` variable in 
+   your plan.sh file. See [hab plan init](/docs/reference/habitat-cli#hab-plan-init) for more information on how to use this subcommand.
 
 3. Now that you have created a basic plan, change directories into your `habitat` sub-directory and open plan.sh in your text editor.
 
        $ cd habitat 
 
-4. The plan.sh file created by `hab plan init` is a generic plan.sh for creating plans. It contains extra information and settings that will not be needed in this tutorial. Remove everything below `pkg_version="0.1.0"`.
+4. The plan.sh file created by `hab plan init` is a generic plan.sh for creating plans. It contains extra information and settings that will not be needed 
+in this tutorial. Open a text editor and remove everything below `pkg_version="0.1.0"`.
 
    Your `plan.sh` should now look like this:
 
@@ -63,24 +79,51 @@ To create your plan, do the following in your terminal window:
 
        # Required unless overridden by the `HAB_ORIGIN` environment variable.
        # The origin is used to denote a particular upstream of a package.
-       pkg_origin=<youroriginname>
+       pkg_origin=<originname>
 
        # Required.
        # Sets the version of the package.
        pkg_version="0.1.0"
 
        
-   The `pkg_origin`, `pkg_name`, and `pkg_version` settings form the package identifier information. Other settings are described in the [Plan syntax guide](/docs/reference/plan-syntax).
+   The `pkg_origin`, `pkg_name`, and `pkg_version` settings form the package identifier information. Other settings are described in the 
+   [Plan syntax guide](/docs/reference/plan-syntax).
 
-5.  In order to use scaffolding, you simply add the `pkg_scaffolding` variable to your plan.sh and set it to the scaffolding package you wish to use. In this tutorial, we are going to use the Ruby scaffolding, so add the following line to your plan.sh:
+5.  In order to use scaffolding, you simply add the `pkg_scaffolding` variable to your plan.sh and set it to the scaffolding package you wish to use. 
+In this tutorial, we are going to use the Ruby scaffolding, so add the following line to your plan.sh:
 
         pkg_scaffolding=core/scaffolding-ruby
 
-    Scaffoldings are packages and scripts that help you build your applications, services, and processes into a package which runs consistently on a wide range of containers, virtual machines, or bare metal machines. Scaffoldings define default configuration settings as well as init and run hooks for your package. 
+    Scaffoldings are packages and scripts that help you build your applications, services, and processes into a package which runs consistently on a wide 
+    range of containers, virtual machines, or bare metal machines. Scaffoldings define default configuration settings as well as init and run hooks for your package. 
     
-    And in the case of the Ruby scaffolding, if you set up PostgreSQL as your database (as we did in this tutorial), it will create configuration and credential information to use in connecting to that database.
-    
-    
-    For more information on scaffoldings, see the scaffolding [concepts topic](/docs/concepts-scaffolding).
+    And in the case of the Ruby scaffolding, if you set up PostgreSQL as your database (as we did in this tutorial), it will create configuration and credential 
+    information to use in connecting to that database. For more information on scaffoldings, see the scaffolding [concepts topic](/docs/concepts-scaffolding).
+  
+6. Finally, you need to add a runtime dependency on `core/curl` because it will be used when the supervisor managing the myrailsapp performs its health check.
 
+       pkg_deps=( core/curl )
 
+Your final plan should look like the following:
+
+    # This file is the heart of your application's habitat.
+    # See full docs at https://www.habitat.sh/docs/reference/plan-syntax/
+
+    # Required.
+    # Sets the name of the package. This will be used in along with `pkg_origin`,
+    # and `pkg_version` to define the fully-qualified package name, which determines
+    # where the package is installed to on disk, how it is referred to in package
+    # metadata, and so on.
+    pkg_name=myrailsapp
+
+    # Required unless overridden by the `HAB_ORIGIN` environment variable.
+    # The origin is used to denote a particular upstream of a package.
+    pkg_origin=example
+
+    # Required.
+    # Sets the version of the package.
+    pkg_version="0.1.0"
+    pkg_scaffolding=core/scaffolding-ruby
+    pkg_deps=( core/curl )
+
+Now it is time to add custom health monitoring to your plan.
