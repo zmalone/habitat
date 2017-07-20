@@ -89,7 +89,7 @@ in this tutorial. Open a text editor and remove everything below `pkg_version="0
    The `pkg_origin`, `pkg_name`, and `pkg_version` settings form the package identifier information. Other settings are described in the 
    [Plan syntax guide](/docs/reference/plan-syntax).
 
-5.  In order to use scaffolding, you simply add the `pkg_scaffolding` variable to your plan.sh and set it to the scaffolding package you wish to use. 
+5. In order to use scaffolding, you simply add the `pkg_scaffolding` variable to your plan.sh and set it to the scaffolding package you wish to use. 
 In this tutorial, we are going to use the Ruby scaffolding, so add the following line to your plan.sh:
 
         pkg_scaffolding=core/scaffolding-ruby
@@ -100,11 +100,23 @@ In this tutorial, we are going to use the Ruby scaffolding, so add the following
     And in the case of the Ruby scaffolding, if you set up PostgreSQL as your database (as we did in this tutorial), it will create configuration and credential 
     information to use in connecting to that database. For more information on scaffoldings, see the scaffolding [concepts topic](/docs/concepts-scaffolding).
   
-6. Finally, you need to add a runtime dependency on `core/curl` because it will be used when the supervisor managing the myrailsapp performs its health check.
+6. As part of the health_check hook that you will create in the next step, you need to add a runtime dependency on `core/curl`.
 
        pkg_deps=( core/curl )
 
-Your final plan should look like the following:
+## Add in data binding support
+
+Data binding is accomplished when one service provides a setting, or collection of settings, that other services can consume and use at runtime. The `core/postgresql` 
+package exposes a `port` configuration value that can be used by consuming services, such as the rails application you are building in this tutorial. The Ruby scaffolding 
+will create a default connection string to the PostgreSQL service and will use this value when making that connection.
+
+To enable the `myrailsapp` to use the exported `port` value from `core/postgresql`, add the following line to your plan.sh file:
+
+    pkg_binds=( [database]="port" )
+
+## Final plan example
+
+Your plan should look like the following:
 
     # This file is the heart of your application's habitat.
     # See full docs at https://www.habitat.sh/docs/reference/plan-syntax/
@@ -125,5 +137,6 @@ Your final plan should look like the following:
     pkg_version="0.1.0"
     pkg_scaffolding=core/scaffolding-ruby
     pkg_deps=( core/curl )
+    pkg_binds=( [database]="port" )
 
 Now it is time to add custom health monitoring to your plan.
