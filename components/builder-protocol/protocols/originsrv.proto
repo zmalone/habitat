@@ -405,3 +405,16 @@ message OriginIntegrationGetNames {
 message OriginIntegrationNames {
   repeated string names = 1;
 }
+
+message OriginIntegration {
+  optional string origin = 1;
+  optional string integration = 2;
+  optional string name = 3;
+  optional string body = 4;
+}
+
+message OriginIntegrationGet {
+  optional string origin = 1;
+  optional string integration = 2;
+  optional string name = 3;
+}
