@@ -16,6 +16,7 @@ We add the following software to augment the Linux From Scratch toolchain:
 
 * Statically built [BusyBox](https://www.busybox.net/) - used for the unzip implementation
 * Statically built [Wget](https://www.gnu.org/software/wget/) with OpenSSL support - used by the build program to download sources
+* Statically built [rq](https://github.com/dflemstr/rq) (Record Query) used by the build program for pkg exports
 * A copy of curl’s [cacert.pem](https://curl.haxx.se/ca/cacert.pem) certificates - used by wget when connecting to SSL-enabled websites
 
 Finally, we place a recent last-known-good copy of the `hab` binary inside `tools/bin`.
@@ -57,20 +58,39 @@ mv ${tarxz/.xz/} ${dst/.xz/}
 xz --compress -9 --threads=0 --verbose ${dst/.xz/}
 ~~~
 
+If you upload a new version of this tarball for broader use with the Studio software, it is worth updating the source location in the Studio's [hab-studio-type-stage1.sh](https://github.com/habitat-sh/habitat/blob/master/components/studio/libexec/hab-studio-type-stage1.sh) code (the line with `${STAGE1_TOOLS_URL}`). Note that simply to use or test a new tarball with Studio, you should only need to set the following before using `hab studio` commands:
+
+* `export STAGE1_TOOLS_URL=habitat-studio-stage1-20160612022150.tar.xz`
+
+and finally, place this tarball under `/tmp` which will help the Studio code find this tarball as if it was previously downloaded, and it will be used directly.
+
 ## Part III: Stage 1
 
-In this stage, we rebuild all the base packages needed by Habitat using the tools (compiler, etc.) from the existing tools tarball. You will need to have a depot locally running on your system, the latest version of the studio, and you'll need a copy of the core-plans on your local disk.
+In this stage, we rebuild all the base packages needed by Habitat using the tools (compiler, etc.) from the existing tools tarball. You will need to have a depot locally running on your system, the latest version of the studio, and you'll need a copy of the [habitat](https://github.com/habitat-sh/habitat) and [core-plans](https://github.com/habitat-sh/core-plans) repos on your local disk. For our work, we will assume that everything is being run under a common parent directory called `habitat-sh/`. Assuming we want to rebuild the Habitat software as of the last release tag (we'll use `0.20.0` here) and the core plans from latest, here's how to get set up:
 
 ~~~
+mkdir habitat-sh
+cd habitat-sh
+git clone https://github.com/habitat-sh/habitat.git
+(cd habitat && git checkout 0.20.0)
+git clone https://github.com/habitat-sh/core-plans.git
+~~~
+
+Next, let's get our minimum Habitat software to start us off:
+
+~~~
+# Completely clean this build host--this will purge all Habitat software,
+# caches, and keys from this host!
 rm -rf /hab
-./components/hab/install.sh
-hab install ~ubuntu/results/core-hab-studio-0.6.0-20160701030246-x86_64-linux.hart
+
+# Install the latest version of the 'hab' program
+./habitat/components/hab/install.sh
+
+# Generate a 'core' origin key, if not already imported or created
 hab origin key generate core
 ~~~
 
-~~~
-git clone https://github.com/habitat-sh/core-plans.git plans
-~~~
+Finally, we export several environment variables before entering the Studio:
 
 ~~~
 export STUDIO_TYPE=stage1
@@ -82,13 +102,13 @@ hab studio enter
 Now in the stage1 Studio:
 
 ~~~
-export BUILD=/src/components/plan-build/bin/hab-plan-build.sh
+export BUILD=/src/habitat/components/plan-build/bin/hab-plan-build.sh
 export NO_INSTALL_DEPS=true
 export DB_PREFIX=stage1-
-rm -f /src/plans/tmp/${DB_PREFIX}*.db
-cd /src/plans
+rm -f /src/tmp/${DB_PREFIX}*.db
+cd /src
 
-time record ${DB_PREFIX}base make base
+time record ${DB_PREFIX}base ./core-plans/bin/build-base-plans.sh
 ~~~
 
 ~~~
@@ -119,10 +139,10 @@ hab studio enter
 
 ~~~
 export DB_PREFIX=stage2-
-rm -f /src/plans/tmp/${DB_PREFIX}*.db
-cd /src/plans
+rm -f /src/tmp/${DB_PREFIX}*.db
+cd /src
 
-time record ${DB_PREFIX}base make base
+time record ${DB_PREFIX}base ./core-plans/bin/build-base-plans.sh
 ~~~
 
 ~~~
