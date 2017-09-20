@@ -1,9 +1,9 @@
 ul.channels {
   margin-top: 8px;
+  position: relative;
+  cursor: pointer;
 
   li.channel {
-    display: inline-block;
-    margin-right: 4px;
     font-size: rem(11);
     font-weight: bold;
     font-family: $base-font-family;
@@ -12,6 +12,18 @@ ul.channels {
     color: $hab-blue;
     background-color: $hab-blue-light;
     border: 1px solid $hab-blue-light;
+    display: inline-block;
+    margin-right: 4px;
+    text-align: center;
+    white-space: nowrap;
+
+    position: absolute;
+    overflow: hidden;
+    max-width: 20px;
+
+    transition: max-width;
+    transition-duration: .3s;
+    transition-timing-function: linear;
 
     &.unstable {
       background-color: $hab-white;
@@ -23,6 +35,15 @@ ul.channels {
       background-color: $hab-blue;
       border: 1px solid $hab-blue;
       color: $hab-white;
+    }
+  }
+
+  &.expanded {
+
+    li.channel {
+      position: static;
+      overflow: auto;
+      max-width: 900px;
     }
   }
 }

@@ -1,5 +1,5 @@
-<ul class="channels">
-  <li class="channel {{ channel }}" *ngFor="let channel of channels">
+<ul class="channels" (click)="toggle()" [class.expanded]="expanded">
+  <li class="channel {{ channel }}" *ngFor="let channel of channels" [ngStyle]="stylesFor(channel)">
     <span>{{ channel }}</span>
   </li>
 </ul>
