@@ -1,8 +1,4 @@
----
-title: Export a package
----
-
-# Export a package
+# <a name="pkg-exports">Export a package</a>
 Packages can be exported into multiple external, immutable runtime formats. This topic will be updated as more formats are supported in the future. Currently there are exports for: docker, ACI, mesos, tar. 
 
 The command to export a package is `hab pkg export <FORMAT> <PKG_IDENT>`. [Habitat CLI Reference Guide](/docs/reference/habitat-cli/#hab-pkg-export/)
@@ -45,9 +41,3 @@ You can create an Application Container Image (ACI) for any package by performin
        SIGN=true hab pkg export aci yourorigin/yourpackage
 
 5. The `.aci` can now be moved to any runtime capable of running ACIs (e.g. [rkt](https://coreos.com/rkt/) on CoreOS) for execution.
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/run-packages-monitoring">Monitoring</a></li>
-</ul>

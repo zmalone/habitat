@@ -15,6 +15,20 @@ sidebar_links:
       link: "/docs/install-faq"
     - title: Using Habitat
       link: "#using-habitat"
+    - title: Service Groups
+      link: "#service-groups"
+    - title: Topologies
+      link: "#topologies"
+    - title: Config Updates
+      link: "#config-updates"
+    - title: File Uploads
+      link: "#file-uploads"
+    - title: Encryption
+      link: "#using-encryption"
+    - title: Binding
+      link: "#using-binding"
+    - title: Update Strategies
+      link: "#using-updates"
   - title: Developing Packages <span>&plus;</span>
     link: "/docs/developing-packages"
     sub_links:
@@ -26,6 +40,10 @@ sidebar_links:
       link: "#plan-builds"
     - title: Troubleshooting Builds
       link: "#debug-builds"
+    - title: Export a Package
+      link: "#pkg-exports"
+    - title: Share via Builder
+      link: "#sharing-pkgs"
   - title: Commands (CLI) <span>&plus;</span>
     link: "/docs/habitat-cli"
     sub_links:
@@ -90,12 +108,20 @@ sidebar_links:
       - title: hab user key generate
         link: "hab-user-key-generate"
   - title: Best Practices <span>&plus;</span>
-    link: "/docs"
+    link: "/docs/best-practices"
     sub_links:
-    - title: Another Thing
-      link: "/docs"
-    - title: Blerg
-      link: "/also-blerg"
+    - title: Container Orchestration
+      link: "#container-orchestration"
+    - title: Kubernetes
+      link: "#kubernetes"
+    - title: "ECS and Habitat"
+      link: "#ecs-and-habitat"   
+    - title: "DCOS and Apache Mesos"
+      link: "#mesos-dcos"   
+    - title: Continuous Deployment
+      link: "#continuous-deployment"
+    - title: "Binary Wrapper Packages"  
+      link: "#binary-wrapper"
   - title: Glossary <span>&plus;</span>
     link: "/docs/glossary"
     sub_links:
@@ -119,5 +145,18 @@ sidebar_links:
       link: "#glossary-services"
     - title: Builder
       link: "#glossary-builder"
+  - title: Internals <span>&plus;</span>
+    link: "/docs/internals"
+    sub_links:
+    - title: Supervisor
+      link: "#supervisor-internals"
+    - title: Leader Election
+      link: "#election-internals"
+    - title: Crypto
+      link: "#crypto-internals"
+    - title: Bottstrapping Habitat
+      link: "#bootstrap-internals"
+  - title: Contribute
+    link: "/docs/contribute"
   - title: Find .harts
     link: "https://bldr.habitat.sh/#/explore"

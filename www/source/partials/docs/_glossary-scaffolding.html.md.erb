@@ -17,3 +17,23 @@ While we are targeting many platforms for automated scaffolding we currently sup
 * core/scaffolding-go
 * core/scaffolding-python
 * core/scaffolding-java
+
+## Scaffolding Internals
+
+A language or framework Scaffolding is shipped as a Habitat package, which means that each Scaffolding runtime dependency becomes a build dependency for the application being built.
+
+### lib/scaffolding.sh File
+
+To create scaffolding, a package must contain a `lib/scaffolding.sh` file which gets sourced by the build program running Bash.
+
+### scaffolding_load() Function
+
+A optional function named `scaffolding_load()` may be created in `lib/scaffolding.sh` which will be called early in the build program which allows a Scaffolding author to control and augment the `pkg_deps` and `pkg_build_deps` arrays. At this point, no other build or run dependencies have been resolved so the code in this function can only rely on what the build program provides or software pulled in via the Scaffolding's Plan.
+
+### Default Build Phases Implementations
+
+The remainder of the `lib/scaffolding.sh` contains one or more default implementations for the build phases. These include, but are not limited to:
+
+* `do_default_prepare()`
+* `do_default_build()`
+* `do_default_install()`

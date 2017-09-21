@@ -1,8 +1,5 @@
----
-title: Cryptography
----
 
-# Cryptography
+# <a name="crypto-internals">Cryptography</a>
 
 Habitat implements cryptography using a Rust [implementation](https://github.com/jedisct1/libsodium) of [NaCl](https://nacl.cr.yp.to/) called `libsodium`. `libsodium` provides a fast, modern framework for encryption, decryption, signing, and verification.
 
@@ -33,9 +30,3 @@ outputs:
 The `.hart` file format is designed in this way to allow you to extract both the signature and the payload separately for inspection. To extract only the `xz`-compressed content, bypassing the signature, you could type this:
 
        tail -n +6 somefile.hart | xzcat | tar x
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/internals-bootstrapping">Bootstrapping Habitat</a></li>
-</ul>

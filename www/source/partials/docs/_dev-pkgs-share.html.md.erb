@@ -1,20 +1,16 @@
----
-title: How to share packages
----
+# <a name="sharing-pkgs">Sharing packages</a>
 
-# Sharing packages
+While you can build and run Habitat packages without sharing them on [Builder](/docs/glossary#glossary-builder), uploading them enables you to collaborate with the Habitat community. In addition, Builder is necessary to do [continuous deployment](/docs/best-practices#continuous-deployment) with Habitat.
 
-While you can build and run Habitat packages without sharing them on a [depot](/docs/concepts-depot/), uploading them to a depot enables you to collaborate with the Habitat community. In addition, a depot is necessary to do [continuous deployment](/docs/continuous-deployment-overview/) with Habitat.
+You interact with Builder by performing the following operations:
 
-You interact with a depot by performing the following operations:
-
-* Creating an account in a depot
+* Creating an account in Builder
 * Creating an origin, or being invited to join an origin that already exists.
-* Setting up `hab` to authenticate to the depot.
+* Setting up `hab` to authenticate to Builder.
 * Uploading the keys for that origin.
 * Uploading one or more packages into that origin.
 
-We will use the public depot provided by the Habitat project for this section. However, it is planned to be able to run your own depot. Today the Habitat team does not officially support private package depots.
+We will use the public depot service provided by the Habitat project's Builder instance for this section. Today the Habitat team does not officially support private or on-premise Builder.
 
 ## Creating an account in the depot
 
@@ -65,9 +61,3 @@ You may also supply a `--url` argument to the `hab start` command to instruct th
 or
 
        hab start core/postgresql --url http://mydepot.example.com/v1/depot/channels/mychannel
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/continuous-deployment-overview">Continuous deployment</a></li>
-</ul>

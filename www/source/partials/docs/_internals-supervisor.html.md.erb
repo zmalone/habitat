@@ -1,8 +1,4 @@
----
-title: Supervisor Internals
----
-
-# Supervisor Internals
+# <a name="supervisor-internals">Supervisor Internals</a>
 
 The Habitat supervisor is similar in some ways to well-known process supervisors like [systemd](https://www.freedesktop.org/wiki/Software/systemd/), [runit](http://smarden.org/runit/) or [smf](https://en.wikipedia.org/wiki/Service_Management_Facility). For example, it accepts and passes POSIX signals to its child processes; restarts child processes if and when they fail; ensures that children processes terminate cleanly, and so on.
 
@@ -103,9 +99,3 @@ Whats good about this system:
 
 * Many more details about the operation of SWIM can be found in its [paper](https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf).
 * For information about the newscast approach to rumor dissemination, please refer to the [paper](http://www.cs.unibo.it/bison/publications/ap2pc03.pdf).
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/internals-leader-election">Leader Election</a></li>
-</ul>

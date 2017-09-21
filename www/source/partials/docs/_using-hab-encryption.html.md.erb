@@ -1,8 +1,4 @@
----
-title: Running packages with security
----
-
-# Supervisor Security
+# <a name="using-encryption">Supervisor and Encryption</a>
 
 By default, a supervisor will run with no security. It will communicate with other supervisors in cleartext, and it will allow any user to apply new configuration without authentication. While this is beneficial for quickly illustrating the concepts of Habitat, users will want to run production deployments of Habitat supervisor networks with more security.
 
@@ -88,9 +84,3 @@ To aid the user in the visual identification of the many varieties of keys in us
 | Public user key | BOX-PUB-1 | username-YYYYMMDDRRRRRR.pub |
 
 Keys that contain `SEC` in their header should be guarded carefully. Keys that contain `PUB` in their header can be distributed freely with no risk of information compromise.
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/run-packages-binding">Binding</a></li>
-</ul>

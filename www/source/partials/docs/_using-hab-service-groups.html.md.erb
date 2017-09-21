@@ -1,8 +1,4 @@
----
-title: Run packages in a service group
----
-
-# Run packages in a service group
+# <a name="service-groups">Run packages in a service group</a>
 A service group is a logical grouping of services with the same package and topology type connected together
 in a ring. They are created to share configuration and file updates among the services within those groups
 and can be segmented based on workflow or deployment needs (QA, Production, and so on). Updates can also be
@@ -58,9 +54,3 @@ an existing ring where the other service was a member.
 
 > Note: It is important that you specified the group value above. If not, then your new service would have
 joined the **myapp.default** service group, but remained a gossip peer of the previous service.
-
-<hr>
-<ul class="main-content--link-nav">
-  <li>Continue to the next topic</li>
-  <li><a href="/docs/run-packages-topologies">Topologies</a></li>
-</ul>
