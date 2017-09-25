@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## <a name="glossary-scaffolding">Scaffolding</a>
 
 Scaffolding is default implementations of the build phases and runtime hooks for your application. Each scaffolding understands how your application was built, which allows it to can create the appropriate hooks and add in the correct runtime dependnencies when creating the package for your application. Scaffoldings also provide some default health check hooks where appropriate to ensure your application is functioning reliably. Customized Scaffolding can be created to facilitate re-usability of common patterns in your organization for developing, building, and running your applications.
@@ -21,12 +22,27 @@ You can also use the cli command `hab plan init -s [SCAFFOLDING] [PKG_NAME]` to 
 ## Available Scaffolding
 
 * [core/scaffolding-ruby](https://github.com/habitat-sh/core-plans/blob/master/scaffolding-ruby/)
+=======
+# <a name="glossary-scaffolding">Scaffolding</a>
+
+Habitat Scaffolding are standardized plans for automated building and running your application. Each scaffolding is tuned to the way your application was built, which allows it to create the appropriate <a href="#glossary-hooks">hooks</a> and add in the correct runtime dependnencies when building the package for your application. Scaffoldings also provide some default health check hooks where appropriate to ensure your application is functioning reliably. Customized Scaffolding can be created to facilitate re-usability of common patterns in your organization for developing, building, and running your applications.
+
+> Note: Currently only the Ruby and Node.js Scaffolding packages automatically add in the appropriate dependencies and configuration settings based on how your application is currently being built. This behavior will be pushed into the other available Scaffolding implementations soon.
+
+
+## Scaffolding Types
+
+While we are targeting many platforms for automated scaffolding we currently support Ruby (rails) and Node.js
+
+* [core/scaffolding-ruby](https://github.com/habitat-sh/core-plans/blob/master/scaffolding-ruby/doc/reference.md)
+>>>>>>> First iteration of docs refactor
 * [core/scaffolding-node](https://github.com/habitat-sh/core-plans/tree/master/scaffolding-node)
 
 ### Coming Soon!
 
 * core/scaffolding-go
 * core/scaffolding-python
+<<<<<<< HEAD
 * core/scaffolding-java
 
 ## Variables
@@ -52,3 +68,6 @@ The remainder of the `lib/scaffolding.sh` contains one or more default implement
 * `do_default_prepare()`
 * `do_default_build()`
 * `do_default_install()`
+=======
+* core/scaffolding-java
+>>>>>>> First iteration of docs refactor
