@@ -13,7 +13,7 @@ In this post we will take a look at running Redis and backing it up via Shield.
 
 ## Running Redis
 
-To play around with the starkandwayne/redis release you can bring it up in the Habitat Studio:
+To play around with the starkandwayne/redis release you can bring it up in the habitat studio:
 
 ```console
 $ hab studio enter
@@ -31,7 +31,7 @@ OK
 "world"
 ```
 
-Typing `sl` will give you the log output of the background supervisor that got started when you entered the Studio:
+Typing `sl` will give you the log output of the background supervisor that got started when you entered the studio:
 
 ```console
 [4][default:/src:0]# sl

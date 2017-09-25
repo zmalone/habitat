@@ -47,7 +47,7 @@ Excellent &mdash; we have a website! We're just about ready to start packaging.
 Before we go further, we need to make sure you've been through the [Download and Install](/download/) docs and set up your machine to build Habitat packages. By now, you'll need to have:
 
 * Downloaded and installed Habitat
-* Created an account on Habitat Builder
+* Created an account on the Habitat Depot
 * Created an Origin for your Habitat packages
 * Configured your workstation by running through `hab setup` (and generated your origin keys, since we'll be using them here to sign the packages we make)
 
@@ -100,11 +100,11 @@ As noted in [the plan docs](/docs/reference/plan-syntax/), the `do_build` step r
 
 Our `do_install` step also overrides Habitat's default behavior, this time by copying `index.html` from its location in our source tree into its final destination in the rendered package &mdash; a folder I've named, somewhat web-conventionally, `dist`). If our site were more complex, or if we'd performed some sort of a build step in `do_build` to produce a compiled web app, we might expand this step to do a bit more work &mdash; but for now, we've done all we need.
 
-Now, Habitat recognizes a number of [environment variables](/docs/reference/environment-vars/) you can use to make your plan-authoring experience a little nicer. Since I do most of my plan development on a Mac, I often use `HAB_DOCKER_OPTS`, which passes whatever value I specify as a string of command-line arguments to Docker when I enter [the Habitat Studio](https://www.habitat.sh/docs/concepts-studio/) (which runs in a Docker container on the Mac). So if I'm building a website package and would like to view my site in a browser, I'll need to map a port from the container to my Mac &mdash; for example, port 80 in the container to 8080 on my machine.  I can do that pretty easily by exporting that variable before running `hab studio enter`.
+Now, Habitat recognizes a number of [environment variables](/docs/reference/environment-vars/) you can use to make your plan-authoring experience a little nicer. Since I do most of my plan development on a Mac, I often use `HAB_DOCKER_OPTS`, which passes whatever value I specify as a string of command-line arguments to Docker when I enter [the Habitat studio](https://www.habitat.sh/docs/concepts-studio/) (which runs in a Docker container on the Mac). So if I'm building a website package and would like to view my site in a browser, I'll need to map a port from the container to my Mac &mdash; for example, port 80 in the container to 8080 on my machine.  I can do that pretty easily by exporting that variable before running `hab studio enter`.
 
-Let's do that now, as it'll come in handy later when we start the web server. And let's also make sure we enter the Studio at a level *above* our two packages so we can work with them both in a single Studio session:
+Let's do that now, as it'll come in handy later when we start the web server. And let's also make sure we enter the studio at a level *above* our two packages so we can work with them both in a single studio session:
 
-    $ export HAB_DOCKER_OPTS="-p 8080:80"   # Maps localhost:8080 to port 80 in the Studio
+    $ export HAB_DOCKER_OPTS="-p 8080:80"   # Maps localhost:8080 to port 80 in the studio
     $ cd ~/hello-hab
     $ hab studio enter
 
@@ -154,7 +154,7 @@ Great! Our website is done. Let's move on to the server.
 
 ## Package the Web Server
 
-Keeping the Habitat Studio open, in a new terminal tab, change to the `server` folder and run `hab plan init` to generate a bare-bones Habitat plan and folder structure:
+Keeping the Habitat studio open, in a new terminal tab, change to the `server` folder and run `hab plan init` to generate a bare-bones Habitat plan and folder structure:
 
     $ cd ~/hello-hab/server
     $ hab plan init
@@ -191,7 +191,7 @@ In `server/habitat/plan.sh`, modify the generated plan file to include only the 
 
 There are a couple of things worth pointing out here (all of which is detailed in the [plan-authoring docs](/docs/reference/plan-syntax/)). One is the specification of `pkg_svc_user`, which we set here as `root` because we'll need the [Nginx master process](http://nginx.org/en/docs/beginners_guide.html) to be able to bind to port 80, which typically requires elevated privileges. (Worker processes, as you'll see later, will be run as a different user.) Another is the declaration of `core/nginx` as a dependency, and then finally, since `core/nginx` takes care of building the Nginx server for us, we're left with nothing to do in our own build and install steps, so we can return zero for both of them.
 
-Now let's run a build just to make sure we're on the right track. Back in our still-open Habitat Studio:
+Now let's run a build just to make sure we're on the right track. Back in our still-open Habitat studio:
 
     [3][default:/src:0]# build server
 
@@ -339,16 +339,16 @@ That was a whole bunch of words to explain what was really just a few lines of c
 
   * How to build a package for a static website and a web server, and how to enable those packages to interoperate and be shipped independently of one another
   * How to expose configurable aspects of a package, and how to apply configuration changes to a service at runtime
-  * How to develop multiple packages in a Habitat Studio
+  * How to develop multiple packages in a Habitat studio
 
 So what's next? In future posts, we might develop our website package into a more sophisticated single-page web app, package a REST API to support it, extend our web-server configuration, add a database, build some containers, deploy, scale ... so many things. In the meantime, you might try a few on your own, like:
 
- * [Uploading both packages](/docs/share-packages-overview/#uploading-packages-to-the-depot) to Builder,
+ * [Uploading both packages](/docs/share-packages-overview/#uploading-packages-to-the-depot) to the Habitat Depot,
  * [Installing them](/docs/reference/habitat-cli/#hab-pkg-install) on a server,
- * [Running the web-server package](/docs/share-packages-overview/#running-packages-from-the-depot) from Builder, and
- * Iterating on the website package by building and uploading revisions to Builder.
+ * [Running the web-server package](/docs/share-packages-overview/#running-packages-from-the-depot) from the Depot, and
+ * Iterating on the website package by building and uploading revisions to the Depot.
 
-In doing so, you may find that the pattern we've outlined here &mdash; using `hab config apply` to prompt the web server to pick up changes to the website package &mdash; works nicely, but does require the somewhat manual step of running that command (and remembering to increment the version number). It'd be better if the Habitat supervisor could detect a new version of that package on Builder, install it for you, and have the web server pick up the change automatically.
+In doing so, you may find that the pattern we've outlined here &mdash; using `hab config apply` to prompt the web server to pick up changes to the website package &mdash; works nicely, but does require the somewhat manual step of running that command (and remembering to increment the version number). It'd be better if the Habitat supervisor could detect a new version of that package on the Depot, install it for you, and have the web server pick up the change automatically.
 
 One way to do that would be with [scaffolding](/docs/concepts-scaffolding/) to make it easier to package static websites or single-page JavaScript web applications. We've just started talking about this one, so expect to hear more about that here as it develops.
 
