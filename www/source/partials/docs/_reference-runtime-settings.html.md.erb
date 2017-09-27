@@ -1,17 +1,19 @@
----
-title: Runtime settings
----
-
-# Runtime settings
-The following settings can be used during a Habitat service's lifecycle. This means that you can use these settings in any of the plan hooks, such as init, or run, and also in any templatized configuration file for your application or service.
+# <a name="runtime-settings">Runtime settings</a>
+The following settings can be interrogated from the supervisor during a Habitat service's lifecycle. This means that you can use these settings in any of the plan hooks, such as init, or run, and also in any templatized configuration file for your application or service.
 
 These configuration settings are referenced using the [Handlebars.js](https://github.com/wycats/handlebars.js/) version of [mustache-style](https://mustache.github.io/mustache.5.html) tags. For an example on how these settings are used in plan hooks, see [Add Health Monitoring to a Plan](/tutorials/sample-app/mac/add-health-check-hook/) in the getting started tutorial.
 
 ## sys
-These are service settings specified by Habitat and correspond to the network information of the running Habitat service. You can also query these values on a running Supervisor via the [Supervisor HTTP API](docs/run-packages-monitoring). 
+These are service settings specified by Habitat and correspond to the network information of the running Habitat service. You can also query these values on a running Supervisor via the [Supervisor HTTP API](docs/run-packages-monitoring). Referencing this grouping of options in your hooks will follow standard mustache syntax like the following examples:
+
+```
+{{sys.version}}
+{{sys.member_id}}
+...
+```
 
 **version**
-: Version of the Habitat supervisor. 
+: Version of the Habitat supervisor.
 
 **member_id** 
 : Supervisor's member id. 
@@ -38,7 +40,13 @@ These are service settings specified by Habitat and correspond to the network in
 : This is set to `true` if a Supervisor is being used as a permanent peer, to increase Ring network traffic stability. 
 
 ## pkg
-These are package settings specified by Habitat and correspond to the the settings of the package when it was built and installed.
+These are package settings specified by Habitat and correspond to the the settings of the package when it was built and installed. Referencing this grouping of options in your hooks will follow standard mustache syntax like the following examples:
+
+```
+{{pkg.ident}}
+{{pkg.origin}}
+...
+```
 
 **ident**
 : The fully-qualified identifier of a package that consists of origin/name/version/release.
@@ -115,4 +123,8 @@ These are package settings specified by Habitat and correspond to the the settin
 - the effective group id
 
 ## cfg
-These are settings defined in your templatized configuration file. The values for those settings are pulled from the `default.toml` file included in your package.
+These are settings defined in your templatized configuration file. The values for those settings are pulled from the `default.toml` file included in your package. Referencing this grouping of options in your hooks will follow standard mustache syntax like the following example:
+
+```
+{{cfg.my_toml_option}}
+```

@@ -107,9 +107,11 @@ sidebar_links:
         link: "#hab-sup"
       - title: hab user key generate
         link: "hab-user-key-generate"
-  - title: Best Practices <span>&plus;</span>
+  - title: Best Practice Guides <span>&plus;</span>
     link: "/docs/best-practices"
     sub_links:
+    - title: Quickstart Guide
+      link: "#quickstart-guide"
     - title: Container Orchestration
       link: "#container-orchestration"
     - title: Kubernetes
@@ -117,13 +119,42 @@ sidebar_links:
     - title: "ECS and Habitat"
       link: "#ecs-and-habitat"   
     - title: "DCOS and Apache Mesos"
-      link: "#mesos-dcos"   
+      link: "#mesos-dcos"
+    - title: Core Contribution
+      link: "#core-development"
+    - title: Advanced Plan.sh Writing
+      link: "#planwriting-guide"
+    - title: Iterative Development
+      link: "#iterative-development"
     - title: Continuous Deployment
       link: "#continuous-deployment"
     - title: "Binary Wrapper Packages"  
       link: "#binary-wrapper"
   - title: Reference <span>&plus;</span>
-    link: "/docs"
+    link: "/docs/reference"
+    sub_links:
+    - title: Environment Variables
+      link: "#environment-variables"
+    - title: Plan Settings
+      link: "#plan-settings"
+    - title: Plan Variables
+      link: "#plan-variables"
+    - title: Plan Helper Functions
+      link: "#utility-functions"
+    - title: Callbacks
+      link: "#reference-callbacks"
+    - title: Hooks
+      link: "#reference-hooks"
+    - title: Mustache Helpers
+      link: "#mustache-helpers"
+    - title: Runtime Settings
+      link: "#runtime-settings"
+    - title: Package Contents
+      link: "#package-contents"
+    - title: Supervisor Log Keys
+      link: "#sup-log-keys"
+    - title: Infographics
+      link: "#infographics"
   - title: Glossary <span>&plus;</span>
     link: "/docs/glossary"
     sub_links:
