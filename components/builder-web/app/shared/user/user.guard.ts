@@ -9,12 +9,11 @@ export class UserLoggedInGuard implements CanActivate {
   constructor(private store: AppStore, private router: Router) { }
 
   canActivate() {
+    const qs = window.location.search;
+    const hasCode = !!qs.match(/[\?&]code=[\w-]+/);
     const hasToken = !!this.store.getState().gitHub.authToken;
-    const isCodeInQueryString = new URLSearchParams(
-      window.location.search.slice(1)
-    ).has("code");
 
-    if (isCodeInQueryString || hasToken) {
+    if (hasCode || hasToken) {
       return true;
     }
 
@@ -29,12 +28,11 @@ export class UserLoggedOutGuard implements CanActivate {
   constructor(private store: AppStore, private router: Router) { }
 
   canActivate() {
+    const qs = window.location.search;
+    const hasCode = !!qs.match(/[\?&]code=[\w-]+/);
     const hasToken = !!this.store.getState().gitHub.authToken;
-    const isCodeInQueryString = new URLSearchParams(
-      window.location.search.slice(1)
-    ).has("code");
 
-    if (!isCodeInQueryString || !hasToken) {
+    if (!hasCode || !hasToken) {
       return true;
     }
 
