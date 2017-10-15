@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Chef Software Inc. and/or applicable contributors
+// Copyright (c) 2016 Chef Software Inc. and/or applicable contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,9 +46,12 @@ lazy_static! {
         map.register(JobGroupSpec::descriptor_static(None), handlers::job_group_create);
         map.register(JobGroupAbort::descriptor_static(None), handlers::job_group_abort);
         map.register(JobGroupGet::descriptor_static(None), handlers::job_group_get);
-        map.register(JobGraphPackageCreate::descriptor_static(None), handlers::job_graph_package_create);
-        map.register(JobGraphPackagePreCreate::descriptor_static(None), handlers::job_graph_package_precreate);
-        map.register(JobGraphPackageStatsGet::descriptor_static(None), handlers::job_graph_package_stats_get);
+        map.register(JobGraphPackageCreate::descriptor_static(None),
+            handlers::job_graph_package_create);
+        map.register(JobGraphPackagePreCreate::descriptor_static(None),
+            handlers::job_graph_package_precreate);
+        map.register(JobGraphPackageStatsGet::descriptor_static(None),
+            handlers::job_graph_package_stats_get);
         map.register(JobGraphPackageReverseDependenciesGet::descriptor_static(None),
             handlers::job_graph_package_reverse_dependencies_get);
         map
@@ -118,7 +121,6 @@ impl Dispatcher for JobSrv {
     ) -> Result<<Self::State as AppState>::InitState> {
         let datastore = DataStore::new(&config.datastore)?;
         datastore.setup()?;
-
         let mut graph = TargetGraph::new();
         let packages = datastore.get_job_graph_packages()?;
         let start_time = PreciseTime::now();
@@ -133,9 +135,7 @@ impl Dispatcher for JobSrv {
                 stat.edge_count,
             );
         }
-
         let state = InitServerState::new(config.clone(), datastore, graph)?;
-
         LogIngester::start(&config, state.log_dir.clone(), state.datastore.clone())?;
         let conn = RouteClient::new()?;
         conn.connect(&*router_pipe)?;
