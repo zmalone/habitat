@@ -38,3 +38,24 @@ instances:
          COUNT(job_state): [postgresql.job_state.working, GAUGE]
       query: SELECT job_state, %s from shard_0.jobs WHERE job_state = 'Dispatched' GROUP BY job_state;
       relation: false
+  - host: localhost
+    port: 5432
+    username: hab
+    password: REPLACETHIS
+    dbname: builder_scheduler
+    ssl: False
+    tags:
+      - scheduler
+    custom_metrics:
+    - # Stale not-started jobs
+      query: select (extract(epoch from now()) - extract(epoch from max(created_at)))/60 from shard_0.projects where project_state='%s'
+      metrics:
+          NotStarted: [postgresql.not_started_jobs.wait_minutes, GAUGE]
+      relation: false
+      descriptors: []
+    - # Stale dispatched jobs
+      query: select (extract(epoch from now()) - extract(epoch from max(created_at)))/60 from shard_0.projects where project_state='%s'
+      metrics:
+          Dispatched: [postgresql.dispatched_jobs.wait_minutes, GAUGE]
+      relation: false
+      descriptors: []
