@@ -1,0 +1,107 @@
+<!doctype html>
+<html prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Habitat - Automation that travels with the app.</title>
+    <meta name="description" content="Habitat allows automation to travel with your app, so you can be confident that what you build, deploy and manage will behave consistently in any runtime.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Habitat - Automation that travels with the app.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://www.habitat.sh/assets/images/habitat-social.jpg">
+    <meta property="og:url" content="https://www.habitat.sh/">
+    <meta property="og:description" content="Habitat allows automation to travel with your app, so you can be confident that what you build, deploy and manage will behave consistently in any runtime.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@chef">
+    <meta name="twitter:creator" content="@chef">
+    <meta name="twitter:image" content="/assets/images/habitat-social.jpg">
+
+    <!-- <link id="hab-css" rel="stylesheet" href="/assets/app.css"> -->
+    <base href="/">
+    <!-- Heap Analytics -->
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+      heap.load("460996886");
+    </script>
+    <!-- End Heap Analytics -->
+  </head>
+  <body>
+    <!-- Google Tag Manager -->
+    <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5VR24H"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5VR24H');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Segment -->
+    <script type="text/javascript">!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="4.0.0";analytics.load("NAwVPW04CeESMW3vtyqjJZmVMNBSQ1K1");analytics.page();}}();</script>
+    <!-- End Segment -->
+    <hab-app>
+    <script>
+        window.Habitat = { config: {} };
+        function habitatConfig(options) {
+            window.Habitat.config = options || {};
+        };
+        habitatConfig({
+  // The URL for the Habitat API service (including the API version.) If
+  // running the API services locally with `make bldr-run` or `make bldr-run-shell` from the root
+  // of the habitat repo, this will be localhost (if running Docker for Mac or
+  // Linux) or the result of `$(docker-machine ip default)` if using Docker
+  // in a virtual Machine.
+  "habitat_api_url": "http://localhost:9636",
+  // The URL for community information
+  "community_url": "https://www.habitat.sh/community",
+  // The URL for documentation
+  "docs_url": "https://www.habitat.sh/docs",
+  // The environment in which we're running. If "production", enable
+  // production mode
+  "environment": "production",
+  // GitHub Client ID for GitHubApp
+  "github_client_id": "Iv1.732260b62f84db15",
+  // The API URL for GitHub
+  "github_api_url": "https://api.github.com",
+  // The Web URL for GitHub
+  "github_web_url": "https://github.com",
+  // The Habitat Builder GitHub app
+  "github_app_url": "https://github.com/apps/habitat-builder-dev",
+  // The Habitat Builder GitHub app ID
+  "github_app_id": "5629",
+  // The URL for the Habitat source code
+  "source_code_url": "https://github.com/habitat-sh/habitat",
+  // The URL for tutorials
+  "tutorials_url": "https://www.habitat.sh/tutorials",
+  // The URL for Slack
+  "slack_url": "http://slack.habitat.sh/",
+  // The URL for YouTube
+  "youtube_url": "https://www.youtube.com/playlist?list=PL11cZfNdwNyOxlvI1Kq6ae8eVBl5S3IKk",
+  // The URL for events
+  "events_url": "https://events.chef.io/events/categories/habitat/",
+  // The URL for roadmap
+  "roadmap_url": "https://ext.prodpad.com/ext/roadmap/d2938aed0d0ad1dd62669583e108357efd53b3a6",
+  // The URL for feature requests
+  "feature_requests_url": "https://portal.prodpad.com/24539",
+  // The URL for forums
+  "forums_url": "https://forums.habitat.sh/",
+  // The URL for status
+  "status_url": "https://status.habitat.sh/",
+  // The URL for the demo app
+  "demo_app_url": "https://www.habitat.sh/demo",
+  // The version of the software we're running. In production, this should
+  // be automatically populated by Habitat
+  "version": "",
+  // The main website URL
+  "www_url": "http://localhost:3000/#/",
+  // Feature flags
+  "feature_flags": {
+      "project": false
+  }
+})
+    </script>
+    <!-- <script src="/assets/habitat.conf.js"></script> -->
+    <!-- <script id="hab-js" src="/assets/app.js"></script> -->
+  </body>
+</html>
