@@ -13,106 +13,27 @@
 // limitations under the License.
 
 use std::collections::HashSet;
-use std::fmt;
 use std::fs::{self, File};
 use std::io::{BufReader, Read, Write};
 use std::iter::FromIterator;
-use std::path::{Path, PathBuf};
+use std::ops::{Deref, DerefMut};
+use std::path::Path;
 use std::result;
 use std::str::FromStr;
 
-use hcore::channel::STABLE_CHANNEL;
 use hcore::package::{PackageIdent, PackageInstall};
-use hcore::service::{ApplicationEnvironment, ServiceGroup};
-use hcore::url::DEFAULT_BLDR_URL;
-use hcore::util::{deserialize_using_from_str, serialize_using_to_string};
+use hcore::service::ServiceGroup;
+use protocol;
 use rand::{Rng, thread_rng};
-use serde::{self, Deserialize};
 use toml;
 
-use super::{Topology, UpdateStrategy};
 use error::{Error, Result, SupError};
 
 static LOGKEY: &'static str = "SS";
-static DEFAULT_GROUP: &'static str = "default";
 const SPEC_FILE_EXT: &'static str = "spec";
 
-#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-pub enum DesiredState {
-    Down,
-    Up,
-}
-
-impl Default for DesiredState {
-    fn default() -> DesiredState {
-        DesiredState::Up
-    }
-}
-
-impl fmt::Display for DesiredState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let value = match *self {
-            DesiredState::Down => "down",
-            DesiredState::Up => "up",
-        };
-        write!(f, "{}", value)
-    }
-}
-
-impl FromStr for DesiredState {
-    type Err = SupError;
-
-    fn from_str(value: &str) -> result::Result<Self, Self::Err> {
-        match value.to_lowercase().as_ref() {
-            "down" => Ok(DesiredState::Down),
-            "up" => Ok(DesiredState::Up),
-            _ => Err(sup_error!(Error::BadDesiredState(value.to_string()))),
-        }
-    }
-}
-
-pub fn deserialize_application_environment<'de, D>(
-    d: D,
-) -> result::Result<Option<ApplicationEnvironment>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let s: Option<String> = Option::deserialize(d)?;
-    if let Some(s) = s {
-        Ok(Some(
-            FromStr::from_str(&s).map_err(serde::de::Error::custom)?,
-        ))
-    } else {
-        Ok(None)
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-#[serde(default)]
-pub struct ServiceSpec {
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub ident: PackageIdent,
-    pub group: String,
-    #[serde(deserialize_with = "deserialize_application_environment",
-            skip_serializing_if = "Option::is_none")]
-    pub application_environment: Option<ApplicationEnvironment>,
-    pub bldr_url: String,
-    pub channel: String,
-    pub topology: Topology,
-    pub update_strategy: UpdateStrategy,
-    pub binds: Vec<ServiceBind>,
-    pub config_from: Option<PathBuf>,
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub desired_state: DesiredState,
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub start_style: StartStyle,
-    pub svc_encrypted_password: Option<String>,
-    // The name of the composite this service is a part of
-    pub composite: Option<String>,
-}
+#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+pub struct ServiceSpec(protocol::ServiceSpec);
 
 impl ServiceSpec {
     pub fn default_for(ident: PackageIdent) -> Self {
@@ -121,14 +42,10 @@ impl ServiceSpec {
         spec
     }
 
-    fn to_toml_string(&self) -> Result<String> {
-        if self.ident == PackageIdent::default() {
-            return Err(sup_error!(Error::MissingRequiredIdent));
-        }
-        toml::to_string(self).map_err(|err| sup_error!(Error::ServiceSpecRender(err)))
-    }
-
-    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+    pub fn from_file<P>(path: P) -> Result<Self>
+    where
+        P: AsRef<Path>,
+    {
         let file = File::open(&path).map_err(|err| {
             sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err))
         })?;
@@ -140,7 +57,10 @@ impl ServiceSpec {
         Self::from_str(&buf)
     }
 
-    pub fn to_file<P: AsRef<Path>>(&self, path: P) -> Result<()> {
+    pub fn to_file<P>(&self, path: P) -> Result<()>
+    where
+        P: AsRef<Path>,
+    {
         debug!(
             "Writing service spec to '{}': {:?}",
             path.as_ref().display(),
@@ -182,6 +102,13 @@ impl ServiceSpec {
     pub fn validate(&self, package: &PackageInstall) -> Result<()> {
         self.validate_binds(package)?;
         Ok(())
+    }
+
+    fn to_toml_string(&self) -> Result<String> {
+        if self.ident == PackageIdent::default() {
+            return Err(sup_error!(Error::MissingRequiredIdent));
+        }
+        toml::to_string(self).map_err(|err| sup_error!(Error::ServiceSpecRender(err)))
     }
 
     /// Validates that all required package binds are present in service binds and all remaining
@@ -228,23 +155,17 @@ impl ServiceSpec {
     }
 }
 
-impl Default for ServiceSpec {
-    fn default() -> Self {
-        ServiceSpec {
-            ident: PackageIdent::default(),
-            group: DEFAULT_GROUP.to_string(),
-            application_environment: None,
-            bldr_url: DEFAULT_BLDR_URL.to_string(),
-            channel: STABLE_CHANNEL.to_string(),
-            topology: Topology::default(),
-            update_strategy: UpdateStrategy::default(),
-            binds: Vec::default(),
-            config_from: None,
-            desired_state: DesiredState::default(),
-            start_style: StartStyle::default(),
-            svc_encrypted_password: None,
-            composite: None,
-        }
+impl Deref for ServiceSpec {
+    type Target = protocol::ServiceSpec;
+
+    fn deref(&self) -> &protocol::ServiceSpec {
+        &self.0
+    }
+}
+
+impl DerefMut for ServiceSpec {
+    fn deref_mut(&mut self) -> &mut protocol::ServiceSpec {
+        &mut self.0
     }
 }
 
@@ -262,10 +183,20 @@ impl FromStr for ServiceSpec {
     }
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct ServiceBind {
-    pub name: String,
-    pub service_group: ServiceGroup,
+pub struct ServiceBind(protocol::ServiceBind);
+
+impl Deref for ServiceBind {
+    type Target = protocol::ServiceBind;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for ServiceBind {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 impl FromStr for ServiceBind {
@@ -276,69 +207,10 @@ impl FromStr for ServiceBind {
         if values.len() != 2 {
             return Err(sup_error!(Error::InvalidBinding(bind_str.to_string())));
         }
-
-        Ok(ServiceBind {
+        Ok(ServiceBind(protocol::ServiceBind {
             name: values[0].to_string(),
             service_group: ServiceGroup::from_str(values[1])?,
-        })
-    }
-}
-
-impl fmt::Display for ServiceBind {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}:{}", self.name, self.service_group)
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for ServiceBind {
-    fn deserialize<D>(deserializer: D) -> result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserialize_using_from_str(deserializer)
-    }
-}
-
-impl serde::Serialize for ServiceBind {
-    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str(&self.to_string())
-    }
-}
-
-#[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-pub enum StartStyle {
-    Persistent,
-    Transient,
-}
-
-impl Default for StartStyle {
-    fn default() -> StartStyle {
-        StartStyle::Transient
-    }
-}
-
-impl fmt::Display for StartStyle {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let value = match *self {
-            StartStyle::Persistent => "persistent",
-            StartStyle::Transient => "transient",
-        };
-        write!(f, "{}", value)
-    }
-}
-
-impl FromStr for StartStyle {
-    type Err = SupError;
-
-    fn from_str(value: &str) -> result::Result<Self, Self::Err> {
-        match value.to_lowercase().as_ref() {
-            "persistent" => Ok(StartStyle::Persistent),
-            "transient" => Ok(StartStyle::Transient),
-            _ => Err(sup_error!(Error::BadStartStyle(value.to_string()))),
-        }
+        }))
     }
 }
 
@@ -358,7 +230,10 @@ mod test {
     use super::*;
     use error::Error::*;
 
-    fn file_from_str<P: AsRef<Path>>(path: P, content: &str) {
+    fn file_from_str<P>(path: P, content: &str)
+    where
+        P: AsRef<Path>,
+    {
         fs::create_dir_all(path.as_ref().parent().expect(
             "failed to determine file's parent directory",
         )).expect("failed to create parent directory recursively");
@@ -368,7 +243,10 @@ mod test {
         );
     }
 
-    fn string_from_file<P: AsRef<Path>>(path: P) -> String {
+    fn string_from_file<P>(path: P) -> String
+    where
+        P: AsRef<Path>,
+    {
         let file = File::open(path).expect("failed to open file");
         let mut file = BufReader::new(file);
         let mut buf = String::new();

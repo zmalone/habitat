@@ -17,9 +17,9 @@ use std::os::unix::process::CommandExt;
 use std::process::{Child, Command, Stdio};
 
 use hcore::os;
+use protocol::Pkg;
 
 use error::{Error, Result};
-use manager::service::Pkg;
 
 static LOGKEY: &'static str = "EX";
 

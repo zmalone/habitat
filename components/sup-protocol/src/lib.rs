@@ -12,25 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::ffi::OsStr;
+extern crate habitat_core as core;
+#[macro_use]
+extern crate serde_derive;
+extern crate time;
+extern crate toml;
 
-use hcore::os::process::windows_child::Child;
-use protocol::Pkg;
+mod config;
+mod package;
+mod service;
 
-use error::Result;
-
-pub fn run<T, S>(path: S, pkg: &Pkg, svc_encrypted_password: Option<T>) -> Result<Child>
-where
-    T: ToString,
-    S: AsRef<OsStr>,
-{
-    let ps_cmd = format!("iex $(gc {} | out-string)", path.as_ref().to_string_lossy());
-    let args = vec!["-NonInteractive", "-command", ps_cmd.as_str()];
-    Ok(Child::spawn(
-        "powershell.exe",
-        args,
-        &pkg.env,
-        &pkg.svc_user,
-        svc_encrypted_password,
-    )?)
-}
+pub use config::*;
+pub use package::*;
+pub use service::*;

@@ -13,10 +13,12 @@
 // limitations under the License.
 
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::ops::{Deref, DerefMut};
 use std::str;
 
 use butterfly::rumor::service::SysInfo;
 use hcore;
+use protocol;
 
 use VERSION;
 use config::GossipListenAddr;
@@ -26,17 +28,7 @@ use http_gateway;
 static LOGKEY: &'static str = "SY";
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct Sys {
-    pub version: String,
-    pub member_id: String,
-    pub ip: IpAddr,
-    pub hostname: String,
-    pub gossip_ip: IpAddr,
-    pub gossip_port: u16,
-    pub http_gateway_ip: IpAddr,
-    pub http_gateway_port: u16,
-    pub permanent: bool,
-}
+pub struct Sys(protocol::Sys);
 
 impl Sys {
     pub fn new(permanent: bool, gossip: GossipListenAddr, http: http_gateway::ListenAddr) -> Sys {
@@ -56,7 +48,7 @@ impl Sys {
                 host
             }
         };
-        Sys {
+        Sys(protocol::Sys {
             version: VERSION.to_string(),
             member_id: "unloaded".to_string(),
             ip: ip,
@@ -66,37 +58,51 @@ impl Sys {
             http_gateway_ip: http.ip(),
             http_gateway_port: http.port(),
             permanent: permanent,
-        }
+        })
     }
 
     pub fn as_sys_info(&self) -> SysInfo {
         let mut sys_info = SysInfo::new();
-        sys_info.set_ip(self.ip.to_string());
-        sys_info.set_hostname(self.hostname.clone());
-        sys_info.set_gossip_ip(self.gossip_ip.to_string());
-        sys_info.set_gossip_port(self.gossip_port as u32);
-        sys_info.set_http_gateway_ip(self.http_gateway_ip.to_string());
-        sys_info.set_http_gateway_port(self.http_gateway_port as u32);
+        sys_info.set_ip(self.0.ip.to_string());
+        sys_info.set_hostname(self.0.hostname.clone());
+        sys_info.set_gossip_ip(self.0.gossip_ip.to_string());
+        sys_info.set_gossip_port(self.0.gossip_port as u32);
+        sys_info.set_http_gateway_ip(self.0.http_gateway_ip.to_string());
+        sys_info.set_http_gateway_port(self.0.http_gateway_port as u32);
         sys_info
     }
 
     pub fn gossip_listen(&self) -> SocketAddr {
-        SocketAddr::new(self.gossip_ip, self.gossip_port)
+        SocketAddr::new(self.0.gossip_ip, self.0.gossip_port)
     }
 
     pub fn http_listen(&self) -> http_gateway::ListenAddr {
-        http_gateway::ListenAddr::new(self.http_gateway_ip, self.http_gateway_port)
+        http_gateway::ListenAddr::new(self.0.http_gateway_ip, self.0.http_gateway_port)
     }
 }
 
-pub fn lookup_ip() -> Result<IpAddr> {
+impl Deref for Sys {
+    type Target = protocol::Sys;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Sys {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+fn lookup_ip() -> Result<IpAddr> {
     match hcore::util::sys::ip() {
         Ok(s) => Ok(s),
         Err(e) => Err(sup_error!(Error::HabitatCore(e))),
     }
 }
 
-pub fn lookup_hostname() -> Result<String> {
+fn lookup_hostname() -> Result<String> {
     match hcore::os::net::hostname() {
         Ok(hostname) => Ok(hostname),
         Err(_) => Err(sup_error!(Error::IPFailed)),

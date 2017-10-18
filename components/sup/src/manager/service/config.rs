@@ -19,17 +19,18 @@ use std::ascii::AsciiExt;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
+use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::result;
 
 use ansi_term::Colour::Purple;
 use hcore::crypto;
+use protocol::{Cfg, Pkg};
 use serde::{Serialize, Serializer};
 use serde::ser::SerializeMap;
 use serde_json;
 use toml;
 
-use super::Pkg;
 use census::CensusGroup;
 use error::{Error, Result};
 use templating::{TemplateRenderer, RenderContext};
@@ -43,33 +44,7 @@ static ENV_VAR_PREFIX: &'static str = "HAB";
 /// for a single service.
 static TOML_MAX_MERGE_DEPTH: u16 = 30;
 
-#[derive(Clone, Debug, Default)]
-pub struct Cfg {
-    /// Default level configuration loaded by a Package's `default.toml`
-    pub default: Option<toml::Value>,
-    /// User level configuration loaded by a Service's `user.toml`
-    pub user: Option<toml::Value>,
-    /// Gossip level configuration loaded by a census group
-    pub gossip: Option<toml::Value>,
-    /// Environment level configuration loaded by the Supervisor's process environment
-    pub environment: Option<toml::Value>,
-
-    /// Last known incarnation number of the census group's service config
-    gossip_incarnation: u64,
-}
-
 impl Cfg {
-    pub fn new(package: &Pkg, config_from: Option<&PathBuf>) -> Result<Cfg> {
-        let pkg_root = config_from.and_then(|p| Some(p.as_path())).unwrap_or(
-            &package.path,
-        );
-        let mut cfg = Cfg::default();
-        cfg.load_default(&pkg_root)?;
-        cfg.load_user(&package)?;
-        cfg.load_environment(&package)?;
-        Ok(cfg)
-    }
-
     /// Updates the service configuration with data from a census group if the census group has
     /// newer data than the current configuration.
     ///
@@ -87,122 +62,19 @@ impl Cfg {
             None => false,
         }
     }
+}
 
-    /// Returns a subset of the overall configuration whitelisted by the given package's exports.
-    pub fn to_exported(&self, pkg: &Pkg) -> Result<toml::value::Table> {
-        let mut map = toml::value::Table::default();
-        let cfg = toml::Value::try_from(&self).unwrap();
-        for (key, path) in pkg.exports.iter() {
-            let fields: Vec<&str> = path.split('.').collect();
-            let mut curr = &cfg;
-            let mut found = false;
+impl Deref for Cfg {
+    type Target = protocol::Cfg;
 
-            // JW TODO: the TOML library only provides us with a
-            // function to retrieve a value with a path which returns a
-            // reference. We actually want the value for ourselves.
-            // Let's improve this later to avoid allocating twice.
-            for field in fields {
-                match curr.get(field) {
-                    Some(val) => {
-                        curr = val;
-                        found = true;
-                    }
-                    None => found = false,
-                }
-            }
-
-            if found {
-                map.insert(key.clone(), curr.clone());
-            }
-        }
-        Ok(map)
+    fn deref(&self) -> &protocol::Cfg {
+        &self.0
     }
+}
 
-    fn load_default<T: AsRef<Path>>(&mut self, config_from: T) -> Result<()> {
-        let path = config_from.as_ref().join("default.toml");
-        let mut file = match File::open(&path) {
-            Ok(file) => file,
-            Err(e) => {
-                debug!("Failed to open 'default.toml', {}, {}", path.display(), e);
-                self.default = None;
-                return Ok(());
-            }
-        };
-        let mut config = String::new();
-        match file.read_to_string(&mut config) {
-            Ok(_) => {
-                let toml = toml::de::from_str(&config).map_err(|e| {
-                    sup_error!(Error::TomlParser(e))
-                })?;
-                self.default = Some(toml::Value::Table(toml));
-            }
-            Err(e) => {
-                outputln!("Failed to read 'default.toml', {}, {}", path.display(), e);
-                self.default = None;
-            }
-        }
-        Ok(())
-    }
-
-    fn load_user(&mut self, package: &Pkg) -> Result<()> {
-        let path = package.svc_path.join("user.toml");
-        let mut file = match File::open(&path) {
-            Ok(file) => file,
-            Err(e) => {
-                debug!("Failed to open 'user.toml', {}, {}", path.display(), e);
-                self.user = None;
-                return Ok(());
-            }
-        };
-        let mut config = String::new();
-        match file.read_to_string(&mut config) {
-            Ok(_) => {
-                let toml = toml::de::from_str(&config).map_err(|e| {
-                    sup_error!(Error::TomlParser(e))
-                })?;
-                self.user = Some(toml::Value::Table(toml));
-            }
-            Err(e) => {
-                outputln!("Failed to load 'user.toml', {}, {}", path.display(), e);
-                self.user = None;
-            }
-        }
-        Ok(())
-    }
-
-    fn load_environment(&mut self, package: &Pkg) -> Result<()> {
-        let var_name = format!("{}_{}", ENV_VAR_PREFIX, package.name)
-            .to_ascii_uppercase()
-            .replace("-", "_");
-        match env::var(&var_name) {
-            Ok(config) => {
-                match toml::de::from_str(&config) {
-                    Ok(toml) => {
-                        self.environment = Some(toml::Value::Table(toml));
-                        return Ok(());
-                    }
-                    Err(err) => debug!("Attempted to parse env config as toml and failed {}", err),
-                }
-                match serde_json::from_str(&config) {
-                    Ok(json) => {
-                        self.environment = Some(toml::Value::Table(json));
-                        return Ok(());
-                    }
-                    Err(err) => debug!("Attempted to parse env config as json and failed {}", err),
-                }
-                self.environment = None;
-                Err(sup_error!(Error::BadEnvConfig(var_name)))
-            }
-            Err(e) => {
-                debug!(
-                    "Looking up environment variable {} failed: {:?}",
-                    var_name,
-                    e
-                );
-                self.environment = None;
-                Ok(())
-            }
-        }
+impl DerefMut for Cfg {
+    fn deref_mut(&mut self) -> &mut protocol::Cfg {
+        &mut self.0
     }
 }
 
@@ -613,7 +485,8 @@ mod test {
         let mut cfg = Cfg::new(&pkg, Some(&concrete_path.as_ref().to_path_buf()))
             .expect("Could not create config");
 
-        let default_toml = "shards = []\n\n[datastore]\ndatabase = \"builder_originsrv\"\npassword = \"\"\nuser = \"hab\"\n";
+        let default_toml = "shards = []\n\n[datastore]\ndatabase = \"builder_originsrv\"\n
+            password = \"\"\nuser = \"hab\"\n";
 
         cfg.default = Some(toml::Value::Table(
             toml::de::from_str(default_toml).unwrap(),

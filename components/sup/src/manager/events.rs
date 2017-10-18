@@ -35,6 +35,7 @@ enum Command {
     TryConnect(Vec<EventSrvAddr>),
 }
 
+#[derive(Clone)]
 pub struct EventsCli {
     group: ServiceGroup,
     tx: Sender<Command>,
@@ -163,11 +164,11 @@ fn build_service_update(member: &CensusMember, service: &Service) -> ServiceUpda
             .unwrap_or(&"".to_string())
             .to_string(),
     );
-    sep.set_bldr_url(service.bldr_url.clone());
-    sep.set_channel(service.channel.clone());
-    sep.set_start_style(service.start_style.to_string());
-    sep.set_topology(service.topology.to_string());
-    sep.set_update_strategy(service.update_strategy.to_string());
+    sep.set_bldr_url(service.bldr_url().to_string());
+    sep.set_channel(service.channel().to_string());
+    sep.set_start_style(service.start_style().to_string());
+    sep.set_topology(service.topology().to_string());
+    sep.set_update_strategy(service.update_strategy().to_string());
 
     // JW TODO: We need to leverage `swim.SysInfo` inside of the EventSrv protobufs. That
     // will alleviate this translation and make things more re-usable.

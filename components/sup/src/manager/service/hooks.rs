@@ -28,9 +28,10 @@ use ansi_term::Colour;
 use hcore;
 use hcore::crypto;
 use hcore::service::ServiceGroup;
+use protocol::Pkg;
 use serde::{Serialize, Serializer};
 
-use super::{health, Pkg};
+use super::health;
 use error::{Result, SupError};
 use fs;
 use templating::{RenderContext, TemplateRenderer};

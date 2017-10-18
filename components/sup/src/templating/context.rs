@@ -15,10 +15,9 @@
 use std::collections::HashMap;
 
 use hcore::service::ServiceGroup;
+use protocol::{Cfg, Pkg, ServiceBind, Sys};
 
 use census::{CensusGroup, CensusMember, CensusRing, ElectionStatus};
-use manager::Sys;
-use manager::service::{Cfg, Pkg, ServiceBind};
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Binds<'a>(HashMap<String, BindGroup<'a>>);

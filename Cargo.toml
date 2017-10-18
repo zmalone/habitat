@@ -36,5 +36,6 @@ members = [
   "components/op",
   "components/pkg-export-docker",
   "components/segment-api-client",
-  "components/sup"
+  "components/sup",
+  "components/sup-protocol"
 ]

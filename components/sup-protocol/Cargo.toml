@@ -1,0 +1,12 @@
+[package]
+name = "habitat-sup-protocol"
+version = "0.0.0"
+authors = ["Jamie Winsor <reset@habitat.sh>"]
+workspace = "../../"
+
+[dependencies]
+habitat_core = { path = "../core" }
+serde = "*"
+serde_derive = "*"
+time = "*"
+toml = { version = "*", default-features = false }
