@@ -1,0 +1,79 @@
+# <a name="composite-pkgs" id="composite-pkgs" data-magellan-target="composite-pkgs">Creating Composite Packages</a>
+
+Composites are another type of Habitat package, but one that is all metadata.  They allow you to group together services that should be run together on the same Supervisor, enabling you to take better advantage of modern deployment patterns with your Habitat services. 
+
+Because these services use the same Supervisor, this also means they are running on the same machine. They are related services, but they are distinct enough to remain separate; they run separate processes, have separate development lifecycles, and so on. Examples of this pattern include: database and archiver (such as [WAL-E](https://github.com/wal-e/wal-e) for Postgres), service and a service mesh proxy (such as [Envoy](https://github.com/envoyproxy/envoy)), and service and log aggregation agent.
+
+Like other packages, composite packages are built from a plan.sh file. 
+
+~~~
+pkg_origin="yourorigin"
+pkg_name="composite-example"
+pkg_type="composite"
+pkg_version="0.1.0"
+
+pkg_services=(
+    origin/package1
+    origin/package2
+)
+
+pkg_bind_map=(
+    [origin/package2]="http:origin/package1"
+)
+~~~
+
+The `pkg_origin`, `pkg_name`, and `pkg_version` settings serve the same role they do in other Habitat packages, but `pkg_type`, `pkg_services`, and `pkg_bind_map` are only specific to composite packages. 
+
+Plans for composite packages must have the `pkg_type` setting set to the string `"composite"`. Without `pkg_type` defined, the package is assumed to be a "standalone" package type, which is the default type for non-composite packages. 
+
+The `pkg_services` array is where you enumerate all the services that are in your composite package. Services are defined as having a binary that gets executed via a `run` hook. By default, these should be either packages you have built and/or installed on your local workstation, or packages that are in the `stable` channel in Builder. If you wish to use packages that are in the `unstable` channel, specify `HAB_BLDR_CHANNEL=unstable` in your environment when you build your composite package.
+
+> **Note** You must specify at least two services in the `pkg_services` array. 
+
+The last composite-specific setting, `pkg_bind_map`, lets you declare all the binding relationships between all the services in your composite package. In the example above, `origin/package2` has a bind named `http` that is satisfied by the `origin/package1` service. Additional binds can be added by separating them with spaces, for example `"http:origin/package1 otherbind:origin/package3"`.
+
+## Using the Composite Packages
+To use a composite package, simply build it in the Studio as you would any other package, and then load it with the `hab svc load` subcommand. It then loads each individual service from the composite package.
+
+~~~
+$ hab svc load cm/composite-example --channel unstable
+» Installing cm/composite-example from channel 'unstable'
+→ Using cm/composite-example/0.1.0/20171005220452
+★ Install of cm/composite-example/0.1.0/20171005220452 complete with 0 new packages installed.
+hab-sup(MN): The cm/composite-example-api-proxy service was successfully loaded
+hab-sup(MN): The cm/sample-node-app service was successfully loaded
+hab-sup(MN): The cm/composite-example composite was successfully loaded
+~~~
+
+You can then start up your composite package with `hab svc run`. If you look at the Supervisor's output, you will see the services in your composite package start up. 
+
+~~~
+hab-sup(MR): Supervisor Member-ID d6df5da3056146c281d5ccfa27c47efa
+hab-sup(MR): Starting gossip-listener on 0.0.0.0:9638
+hab-sup(MR): Starting http-gateway on 0.0.0.0:9631
+hab-sup(MR): Starting cm/sample-node-app
+hab-sup(MR): Starting cm/composite-example-api-proxy
+sample-node-app.default(HK): init, compiled to /hab/svc/sample-node-app/hooks/init
+sample-node-app.default(HK): Hooks compiled
+sample-node-app.default(SR): Hooks recompiled
+default(CF): Updated app_env.sh ba78899e39891feeadd2ce7bb1ec6a990f58b8dc22433f1b705ce8a610eaa97f
+default(CF): Updated config.json 3f22842e8d737bbb107d9ac19afba42642eccf68a06ddfbdba70507b23b8498a
+sample-node-app.default(SR): Configuration recompiled
+sample-node-app.default(SR): Initializing
+sample-node-app.default(SV): Starting service as user=hab, group=hab
+composite-example-api-proxy.default(HK): run, compiled to /hab/svc/composite-example-api-proxy/hooks/run
+composite-example-api-proxy.default(HK): Hooks compiled
+composite-example-api-proxy.default(SR): Hooks recompiled
+default(CF): Updated nginx.conf f4c9490bac250b99083f3c34c3863c2fb63368aa9d1ff0d67120857e3674a89a
+composite-example-api-proxy.default(SR): Configuration recompiled
+composite-example-api-proxy.default(SR): Initializing
+composite-example-api-proxy.default(SV): Starting service as user=root, group=hab
+~~~
+
+While you can install, start, stop, load, and unload composite packages, they have the following limitations:
+
+* The individual services are still available and addressable just as though you'd started them manually. 
+* Composite packages are not directly addressable as though they were services themselves. 
+* They cannot do anything like export selected values from their constituent services as "composite-level exports", or map "composite-level binds" onto constituent service binds. 
+* A composite package as a whole does not update itself like an individual service can; however, the constituent services of a composite can continue to update independently of each other.
+* At this time, composite package support is only available for Linux services.
