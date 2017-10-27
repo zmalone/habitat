@@ -114,27 +114,25 @@ impl Server {
                 runner_msg = false;
             }
             if fe_msg {
-                self.fe_sock.recv(&mut self.msg, 0)?;
-                self.fe_sock.recv(&mut self.msg, 0)?;
+                self.fe_sock.recv(&mut self.msg, 0)?; // Receive empty msg
+                self.fe_sock.recv(&mut self.msg, 0)?; // Receive Command msg
 
                 let wc = message::decode::<jobsrv::WorkerCommand>(&self.msg)?;
-                if wc.get_op() == jobsrv::WorkerOperation::StartJob {
-                    self.fe_sock.recv(&mut self.msg, 0)?;
-                }
+                self.fe_sock.recv(&mut self.msg, 0)?; // Receive Job msg
 
                 match self.state {
                     State::Ready => {
                         match wc.get_op() {
                             jobsrv::WorkerOperation::StartJob => self.start_job()?,
                             jobsrv::WorkerOperation::CancelJob => {
-                                debug!("Received unexpected Cancel for Ready worker")
+                                warn!("Received unexpected Cancel for Ready worker")
                             }
                         }
                     }
                     State::Busy => {
                         match wc.get_op() {
                             jobsrv::WorkerOperation::StartJob => self.reject_job()?,
-                            jobsrv::WorkerOperation::CancelJob => println!("TBD"),
+                            jobsrv::WorkerOperation::CancelJob => self.cancel_job()?,
                         }
                     }
                 }
@@ -144,12 +142,21 @@ impl Server {
     }
 
     fn start_job(&mut self) -> Result<()> {
-        self.runner_cli.send(&self.msg)?;
+        self.runner_cli.start_job(&self.msg)?;
         {
             let reply = self.runner_cli.recv_ack()?;
             self.fe_sock.send(reply, 0)?;
         }
         self.set_busy()?;
+        Ok(())
+    }
+
+    fn cancel_job(&mut self) -> Result<()> {
+        self.runner_cli.cancel_job(&self.msg)?;
+        {
+            let reply = self.runner_cli.recv_ack()?;
+            self.fe_sock.send(reply, 0)?;
+        }
         Ok(())
     }
 

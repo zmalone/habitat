@@ -359,7 +359,7 @@ pub fn migrate(migrator: &mut Migrator) -> Result<()> {
         "jobsrv",
         r#"CREATE OR REPLACE FUNCTION get_cancel_pending_jobs_v1()
                      RETURNS SETOF jobs
-                     LANGUAGE SQL STABLE AS $$
+                     LANGUAGE SQL VOLATILE AS $$
                        SELECT *
                        FROM jobs
                        WHERE job_state = 'CancelPending'

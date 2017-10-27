@@ -336,6 +336,7 @@ impl WorkerMgr {
                 Ok(()) => {
                     job.set_state(jobsrv::JobState::CancelProcessing);
                     self.datastore.update_job(&job)?;
+                    println!("DONE setting job state to CancelProcessing");
                 }
                 Err(err) => {
                     warn!(
@@ -515,9 +516,11 @@ impl WorkerMgr {
 
         match self.datastore.get_job(&req)? {
             Some(mut job) => {
-                debug!("Requeing job {:?}", job_id);
-                job.set_state(jobsrv::JobState::Pending);
-                self.datastore.update_job(&job)?;
+                if job.get_state() == jobsrv::JobState::Dispatched {
+                    debug!("Requeing job {:?}", job_id);
+                    job.set_state(jobsrv::JobState::Pending);
+                    self.datastore.update_job(&job)?;
+                }
             }
             None => {
                 warn!(
