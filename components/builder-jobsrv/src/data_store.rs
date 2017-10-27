@@ -237,8 +237,6 @@ impl DataStore {
         let job_id = job.get_id() as i64;
         let job_state = job.get_state().to_string();
 
-        println!("update_job, job state: {:?}", job_state);
-
         // Note: the following fields may all be NULL. As currently
         // coded, if they are NULL, then the corresponding fields in
         // the database will also be updated to be NULL. This should

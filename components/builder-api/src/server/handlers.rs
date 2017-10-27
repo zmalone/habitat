@@ -30,7 +30,7 @@ use iron::status;
 use params::{Params, FromValue};
 use persistent;
 use protocol::jobsrv::{Job, JobGet, JobLogGet, JobLog, JobState, ProjectJobsGet,
-                       ProjectJobsGetResponse, JobGroupCancel};
+                       ProjectJobsGetResponse, JobGroupCancel, JobGroupGet, JobGroup};
 use protocol::jobsrv::{JobGraphPackageReverseDependenciesGet, JobGraphPackageReverseDependencies};
 use protocol::originsrv::*;
 use protocol::sessionsrv::{Account, AccountGetId, AccountInvitationListRequest,
@@ -191,6 +191,21 @@ pub fn job_group_cancel(req: &mut Request) -> IronResult<Response> {
         }
         None => return Ok(Response::with(status::BadRequest)),
     };
+
+    let mut jgg = JobGroupGet::new();
+    jgg.set_group_id(group_id);
+
+    let group = match route_message::<JobGroupGet, JobGroup>(req, &jgg) {
+        Ok(group) => group,
+        Err(err) => return Ok(render_net_error(&err)),
+    };
+
+    let name_split: Vec<&str> = group.get_project_name().split("/").collect();
+    assert!(name_split.len() == 2);
+
+    if !check_origin_access(req, &name_split[0]).unwrap_or(false) {
+        return Ok(Response::with(status::Forbidden));
+    }
 
     let mut jgc = JobGroupCancel::new();
     jgc.set_group_id(group_id);

@@ -313,7 +313,7 @@ impl WorkerMgr {
         let jobs = self.datastore.get_cancel_pending_jobs()?;
 
         if jobs.len() > 0 {
-            println!("process_cancels: Found {} cancels", jobs.len());
+            debug!("process_cancels: Found {} cancels", jobs.len());
         }
 
         for job in jobs {
@@ -336,7 +336,6 @@ impl WorkerMgr {
                 Ok(()) => {
                     job.set_state(jobsrv::JobState::CancelProcessing);
                     self.datastore.update_job(&job)?;
-                    println!("DONE setting job state to CancelProcessing");
                 }
                 Err(err) => {
                     warn!(
