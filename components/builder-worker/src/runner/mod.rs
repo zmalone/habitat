@@ -582,7 +582,6 @@ impl RunnerMgr {
                         self.spawn_job(job, tx.clone())?;
                     }
                     WORK_CANCEL => {
-                        println!("Setting cancel = true");
                         self.cancel.store(true, Ordering::SeqCst);
                         job.set_state(jobsrv::JobState::CancelProcessing);
                         self.send_ack(&job)?;
