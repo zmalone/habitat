@@ -40,3 +40,6 @@ members = [
   "components/segment-api-client",
   "components/sup"
 ]
+exclude = [
+  "components/builder-api-v2"
+]
