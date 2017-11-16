@@ -16,6 +16,7 @@ use rocket::request::{self, Request, FromRequest};
 use std::collections::HashMap;
 use std::sync::Mutex;
 
+// Authentication
 struct ApiKey(String);
 
 fn is_valid(key: &str) -> bool {
@@ -30,13 +31,13 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
         let keys: Vec<_> = request.headers().get("Authorization").collect();
 
         if keys.len() != 1 {
-            return Outcome::Failure((Status::BadRequest, ()));
+            return Outcome::Failure((Status::Forbidden, ()));
         }
 
         let key = keys[0];
 
         if !is_valid(key) {
-            return Outcome::Forward(());
+            return Outcome::Failure((Status::Forbidden, ()));
         }
 
         return Outcome::Success(ApiKey(key.to_string()));
@@ -71,7 +72,7 @@ fn show(name: String, map: State<Db>) -> Option<Json<Origin>> {
 
 // these 2 require auth, probably implemented as request guards
 #[post("/origins", format = "application/json", data = "<origin>")]
-fn create(origin: Json<OriginCreate>, map: State<Db>, key: ApiKey) -> Json<Value> {
+fn create(origin: Json<OriginCreate>, map: State<Db>, _key: ApiKey) -> Json<Value> {
     let mut rng = rand::thread_rng();
     let id = rng.gen::<u64>();
     let name = origin.0.name;
@@ -98,7 +99,7 @@ fn update(
     name: String,
     origin: Json<OriginUpdate>,
     map: State<Db>,
-    key: ApiKey,
+    _key: ApiKey,
 ) -> Option<Json<Origin>> {
     let mut db = map.lock().expect("map lock is poisoned");
 
@@ -118,10 +119,44 @@ fn not_found() -> Json<Value> {
     )
 }
 
-fn main() {
+fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .mount("/v2", routes![show, create, update])
         .catch(errors![not_found])
         .manage(Mutex::new(HashMap::<String, Origin>::new()))
-        .launch();
+}
+
+fn main() {
+    rocket().launch();
+}
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use rocket::local::Client;
+    use rocket::http::{Accept, ContentType, Status};
+
+    #[test]
+    fn test_origin_create_requires_auth() {
+        let client = Client::new(rocket()).unwrap();
+        let response = client
+            .post("/v2/origins")
+            .header(ContentType::JSON)
+            .header(Accept::JSON)
+            .body(r#"{"name":"haha"}"#)
+            .dispatch();
+        assert_eq!(response.status(), Status::Forbidden);
+    }
+
+    fn test_origin_create_requires_auth_from_bobo() {
+        let client = Client::new(rocket()).unwrap();
+        let response = client
+            .post("/v2/origins")
+            .header(ContentType::JSON)
+            .header(Accept::JSON)
+            .header()
+            .body(r#"{"name":"haha"}"#)
+            .dispatch();
+        assert_eq!(response.status(), Status::Forbidden);
+    }
 }
