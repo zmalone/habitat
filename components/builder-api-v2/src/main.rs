@@ -7,14 +7,16 @@ extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
+
+use std::collections::HashMap;
+use std::sync::Mutex;
 
 use rand::Rng;
 use rocket_contrib::{Json, Value};
 use rocket::{Outcome, State};
 use rocket::http::Status;
 use rocket::request::{self, Request, FromRequest};
-use std::collections::HashMap;
-use std::sync::Mutex;
 
 // Authentication
 struct ApiKey(String);
@@ -134,29 +136,41 @@ fn main() {
 mod test {
     use super::rocket;
     use rocket::local::Client;
-    use rocket::http::{Accept, ContentType, Status};
+    use rocket::http::{Accept, ContentType, Header, Status};
+    use serde_json;
 
     #[test]
-    fn test_origin_create_requires_auth() {
+    fn test_the_entire_api() {
+        // First let's create an origin
         let client = Client::new(rocket()).unwrap();
-        let response = client
+        let bobo = Header::new("Authorization", "Bearer bobo");
+        let creation_response = client
             .post("/v2/origins")
             .header(ContentType::JSON)
             .header(Accept::JSON)
+            .header(bobo.clone())
             .body(r#"{"name":"haha"}"#)
             .dispatch();
-        assert_eq!(response.status(), Status::Forbidden);
-    }
+        assert_eq!(creation_response.status(), Status::Ok);
 
-    fn test_origin_create_requires_auth_from_bobo() {
-        let client = Client::new(rocket()).unwrap();
-        let response = client
-            .post("/v2/origins")
+        // Now let's update it
+        let update_response = client
+            .put("/v2/origins/haha")
             .header(ContentType::JSON)
             .header(Accept::JSON)
-            .header()
-            .body(r#"{"name":"haha"}"#)
+            .header(bobo)
+            .body(r#"{"visibility":"private"}"#)
             .dispatch();
-        assert_eq!(response.status(), Status::Forbidden);
+        assert_eq!(update_response.status(), Status::Ok);
+
+        // Finally let's fetch it and make sure it matches
+        let mut get_response = client.get("/v2/origins/haha").dispatch();
+        assert_eq!(get_response.status(), Status::Ok);
+        assert_eq!(get_response.content_type(), Some(ContentType::JSON));
+
+        let body_string = get_response.body_string().unwrap();
+        let v: serde_json::Value = serde_json::from_str(&body_string).unwrap();
+        assert_eq!(v["name"], "haha");
+        assert_eq!(v["visibility"], "private");
     }
 }
