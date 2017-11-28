@@ -26,6 +26,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BreadcrumbsComponent } from './breadcrumbs/breadcrumbs.component';
 import { ChannelsComponent } from './channels/channels.component';
 import { CheckingInputComponent } from './checking-input/checking-input.component';
+import { ConfigureIntegrationDialog } from './docker-export-settings/configure-integration/configure-integration.dialog';
 import { CopyableComponent } from './copyable/copyable.component';
 import { DockerExportSettingsComponent } from './docker-export-settings/docker-export-settings.component';
 import { DisconnectConfirmDialog } from './project-settings/dialog/disconnect-confirm/disconnect-confirm.dialog';
@@ -57,6 +58,7 @@ import { SignedInGuard } from './guards/signed-in.guard';
     BreadcrumbsComponent,
     ChannelsComponent,
     CheckingInputComponent,
+    ConfigureIntegrationDialog,
     CopyableComponent,
     DisconnectConfirmDialog,
     DockerExportSettingsComponent,
@@ -69,6 +71,7 @@ import { SignedInGuard } from './guards/signed-in.guard';
     KeysPipe
   ],
   entryComponents: [
+    ConfigureIntegrationDialog,
     DisconnectConfirmDialog,
     SimpleConfirmDialog
   ],

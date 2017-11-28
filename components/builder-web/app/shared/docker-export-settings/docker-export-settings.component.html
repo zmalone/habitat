@@ -1,11 +1,11 @@
 <div class="docker-export-settings-component">
   <h3>
     <hab-icon symbol="docker"></hab-icon>
-    Publish to Docker Hub
+    Publish to Container Registries
   </h3>
   <p>
-    Export the resulting .hart file as a Docker container and publish it to your Docker Hub account. Integration settings are
-    managed under the origin Settings tab.
+    Export the resulting .hart file as a Docker container and publish it to your registry account(s). Registry account settings
+    are managed under the Integrations tab for this origin.
   </p>
   <section class="toggle">
     <mat-slide-toggle [(ngModel)]="enabled" [disabled]="!configured">
@@ -15,7 +15,29 @@
       You can configure this integration in the origin Integrations tab.
     </span>
   </section>
-  <ng-container *ngIf="enabled && configured">
+  <mat-radio-group [(ngModel)]="name">
+    <ul class="action-list" *ngIf="enabled && configured">
+      <ng-container *ngFor="let type of integrations | habKeysPipe">
+        <li class="item" mat-radio-button *ngFor="let integration of integrations[type]">
+          <span class="column name">
+            <mat-radio-button [value]="integration"></mat-radio-button>
+            <hab-icon [symbol]="type"></hab-icon>
+            <span>{{ integration }}</span>
+          </span>
+          <span class="column configure">
+            <hab-icon symbol="add-circle"></hab-icon>
+            <span> Configure this account</span>
+          </span>
+          <span class="column actions">
+            <hab-icon symbol="sync-disabled" title="Sync Disabled"></hab-icon>
+            <hab-icon *ngIf="false" symbol="sync" title="Sync Enabled"></hab-icon>
+            <hab-icon symbol="settings" title="Configure this integration"></hab-icon>
+          </span>
+        </li>
+      </ng-container>
+    </ul>
+  </mat-radio-group>
+  <!-- <ng-container>
     <section class="integrations">
       <mat-radio-group [(ngModel)]="name">
         <ng-container *ngFor="let type of integrations | habKeysPipe">
@@ -27,7 +49,7 @@
       </mat-radio-group>
     </section>
     <section class="fields">
-      <label for="repo_name" >Docker Organization and Repository</label>
+      <label for="repo_name">Docker Organization and Repository</label>
       <input type="text" name="repo_name" [(ngModel)]="repoName" placeholder="{{ repoPlaceholder }}">
       <label for="custom_tag">Custom Tag (Optional)</label>
       <input type="text" name="custom_tag" [(ngModel)]="customTag" [placeholder]="'yourtag or \{\{ channel \}\}'">
@@ -36,5 +58,5 @@
       <mat-checkbox [(ngModel)]="versionTag">:pkg_version</mat-checkbox>
       <mat-checkbox [(ngModel)]="releaseTag">:pkg_version-pkg_release</mat-checkbox>
     </section>
-  </ng-container>
+  </ng-container> -->
 </div>

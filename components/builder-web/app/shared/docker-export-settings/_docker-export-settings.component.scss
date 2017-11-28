@@ -1,5 +1,22 @@
 .docker-export-settings-component {
 
+  .action-list {
+    &:first-child {
+      border-bottom: $default-border;
+    }
+    .item {
+      .column {
+        &.configure {
+          color: $hab-blue;
+          cursor: pointer;
+        }
+        &.actions {
+          color: $medium-gray;
+        }
+      }
+    }
+  }
+
   .toggle {
     display: flex;
 
