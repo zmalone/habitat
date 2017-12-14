@@ -1,6 +1,13 @@
 [package]
-name = "pkg-export-tar"
-version = "0.1.0"
+name = "habitat_pkg_export_tar"
+version = "0.0.0"
 authors = ["Nell Shamrell <nellshamrell@gmail.com>"]
+workspace = "../../"
 
-[dependencies]
+[lib]
+name = "habitat_pkg_export_tar"
+
+[[bin]]                                                                
+name = "hab-pkg-export-tar"                                        
+path = "src/main.rs"                                  
+doc = false  

@@ -1441,6 +1441,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "habitat_pkg_export_tar"
+version = "0.0.0"
+
+[[package]]
 name = "habitat_sup"
 version = "0.0.0"
 dependencies = [
