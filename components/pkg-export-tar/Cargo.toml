@@ -1,0 +1,6 @@
+[package]
+name = "pkg-export-tar"
+version = "0.1.0"
+authors = ["Nell Shamrell <nellshamrell@gmail.com>"]
+
+[dependencies]
