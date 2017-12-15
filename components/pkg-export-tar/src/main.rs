@@ -3,6 +3,8 @@ extern crate env_logger;
 extern crate habitat_core as hcore;
 extern crate habitat_common as common;
 extern crate habitat_pkg_export_tar as export_tar;
+#[macro_use]
+extern crate log;
 
 use common::ui::UI;
 use hcore::PROGRAM_NAME;
@@ -17,6 +19,8 @@ fn main() {
 
 fn start(ui: &mut UI) {
     let cli = cli();
+    let m = cli.get_matches();
+    debug!("clap cli args: {:?}", m);
 }
 
 fn cli() {

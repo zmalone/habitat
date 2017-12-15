@@ -17,3 +17,4 @@ clap = { version = "*", features = ["suggestions", "color", "unstable"] }
 env_logger = "*"
 habitat_common = { path = "../common" }
 habitat_core = { path = "../core" }
+log = "*"
