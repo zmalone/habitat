@@ -11,3 +11,9 @@ name = "habitat_pkg_export_tar"
 name = "hab-pkg-export-tar"                                        
 path = "src/main.rs"                                  
 doc = false  
+
+[dependencies]
+clap = { version = "*", features = ["suggestions", "color", "unstable"] }
+env_logger = "*"
+habitat_common = { path = "../common" }
+habitat_core = { path = "../core" }

@@ -1,3 +1,11 @@
+#[macro_use]
+extern crate clap;
+
+
+pub mod cli;
+
+pub use cli::{Cli};
+
 #[cfg(test)]
 mod tests {
     #[test]
