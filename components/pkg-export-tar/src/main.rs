@@ -6,9 +6,10 @@ extern crate habitat_pkg_export_tar as export_tar;
 #[macro_use]
 extern crate log;
 
+use clap::App;
 use common::ui::UI;
 use hcore::PROGRAM_NAME;
-use export_tar::{Cli};
+use export_tar::{Cli, PkgIdentArgOptions, Result};
 
 fn main() {
     env_logger::init().unwrap();
