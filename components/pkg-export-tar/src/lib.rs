@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate clap;
-
+extern crate habitat_core as hcore;
+extern crate url;
 
 pub mod cli;
 

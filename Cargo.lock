@@ -1449,6 +1449,7 @@ dependencies = [
  "habitat_common 0.0.0",
  "habitat_core 0.0.0",
  "log 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "url 1.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

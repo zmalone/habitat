@@ -1,4 +1,13 @@
-use clap::{App};
+use clap::{App, Arg};
+use std::path::Path;
+use std::result;
+use std::str::FromStr;
+
+use hcore::package::PackageIdent;
+use url::Url;
+
+/// The version of this library and program when built.
+pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
 #[derive(Clone)]
 pub struct Cli<'a, 'b>
@@ -145,3 +154,11 @@ fn valid_ident_or_hart(val: String) -> result::Result<(), String> {
         }
     }
 }
+
+fn valid_url(val: String) -> result::Result<(), String> {
+    match Url::parse(&val) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(format!("URL: '{}' is not valid", &val)),
+    }
+}
+
