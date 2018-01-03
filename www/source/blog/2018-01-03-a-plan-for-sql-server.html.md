@@ -160,18 +160,18 @@ That may seem like a round about way of applying a DSC configuration but given t
 Our `run` hook is going to start the `MSSQL` service installed for our SQL named instance and then spin until the service is stopped:
 
 ```
-Start-Service "MSSQL`${{pkg.name}}"
+Start-Service 'MSSQL${{pkg.name}}'
 Write-Host "{{pkg.name}} is running"
 
 try {
-    while($(Get-Service "MSSQL`${{pkg.name}}").Status -eq "Running") {
+    while($(Get-Service 'MSSQL${{pkg.name}}').Status -eq "Running") {
         Start-Sleep -Seconds 1
     }
 }
 finally {
-    if($(Get-Service "MSSQL`${{pkg.name}}").Status -ne "Stopped") {
+    if($(Get-Service 'MSSQL${{pkg.name}}').Status -ne "Stopped") {
         Write-Host "{{pkg.name}} stopping..."
-        Stop-Service "MSSQL`${{pkg.name}}"
+        Stop-Service 'MSSQL${{pkg.name}}'
         Write-Host "{{pkg.name}} has stopped"
     }
 }
@@ -204,9 +204,9 @@ Now that might seem like an overly powerful privilege for an application user an
 In most cases, the `finally` block of our `run` hook will stop our SQL Server instance service when we ask the Supervisor to stop the `sqlserver` service. The Supervisor issues a `ctrl+debug` signal to our service process and Powershell will ensure that the `finally` block is called on the running pipeline. However there are somne isolated scenarios, like running in a Windows container, where `ctrl+debug` signals are not propperly generated and the `finally` block will not be called. We can fortify ourselves against this with a `post-stop` hook. This is called when we stop a service to perform any necessary cleanup. So we will just check to see if the service is still running and stop it if it is:
 
 ```
-if($(Get-Service "MSSQL`${{pkg.name}}").Status -ne "Stopped") {
+if($(Get-Service 'MSSQL${{pkg.name}}').Status -ne "Stopped") {
     Write-Host "{{pkg.name}} stopping..."
-    Stop-Service "MSSQL`${{pkg.name}}"
+    Stop-Service 'MSSQL${{pkg.name}}'
     Write-Host "{{pkg.name}} has stopped"
 }
 ```
