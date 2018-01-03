@@ -16,9 +16,12 @@ doc = false
 base64 = "*"
 clap = { version = "*", features = ["suggestions", "color", "unstable"] }
 env_logger = "*"
+hab = { path = "../hab" }
 habitat_common = { path = "../common" }
 habitat_core = { path = "../core" }
+lazy_static = "*"
 log = "*"
 url = "*"
 failure = "0.1"
 failure_derive = "0.1"
+tempdir = "*"
