@@ -9,14 +9,6 @@ use url::Url;
 /// The version of this library and program when built.
 pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
-arg_enum!{
-    #[derive(Debug)]
-    pub enum RegistryType {
-        Amazon,
-        Docker
-    }
-}
-
 #[derive(Clone)]
 pub struct Cli<'a, 'b>
 where

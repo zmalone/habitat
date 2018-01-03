@@ -11,7 +11,7 @@ extern crate failure_derive;
 pub mod cli;
 mod error;
 
-pub use cli::{Cli, PkgIdentArgOptions, RegistryType};
+pub use cli::{Cli, PkgIdentArgOptions};
 pub use error::{Error, Result};
 
 #[cfg(test)]
