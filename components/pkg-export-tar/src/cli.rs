@@ -9,6 +9,14 @@ use url::Url;
 /// The version of this library and program when built.
 pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
+arg_enum!{
+    #[derive(Debug)]
+    pub enum RegistryType {
+        Amazon,
+        Docker
+    }
+}
+
 #[derive(Clone)]
 pub struct Cli<'a, 'b>
 where
@@ -159,41 +167,5 @@ fn valid_url(val: String) -> result::Result<(), String> {
     match Url::parse(&val) {
         Ok(_) => Ok(()),
         Err(_) => Err(format!("URL: '{}' is not valid", &val)),
-    }
-}
-
-        Cli { app: app }
-    }
-    pub fn add_pkg_ident_arg(self, options: PkgIdentArgOptions) -> Self {
-        let help = if options.multiple {
-            "One or more Habitat package identifiers (ex: acme/redis) and/or filepaths to a \
-            Habitat Artifact (ex: /home/acme-redis-3.0.7-21120102031201-x86_64-linux.hart)"
-        } else {
-            "A Habitat package identifier (ex: acme/redis) and/or filepath to a Habitat Artifact \
-            (ex: /home/acme-redis-3.0.7-21120102031201-x86_64-linux.hart)"
-        };
-
-        let app = self.app.arg(
-            Arg::with_name("PKG_IDENT_OR_ARTIFACT")
-                .value_name("PKG_IDENT_OR_ARTIFACT")
-                .required(true)
-                .multiple(options.multiple)
-                .help(help),
-        );
-
-        Cli { app: app }
-    }
-}
-
-fn valid_ident_or_hart(val: String) -> result::Result<(), String> {
-    if Path::new(&val).is_file() {
-        Ok(())
-    } else if val.ends_with(".hart") {
-        Err(format!("Habitat artifact file: '{}' not found", &val))
-    } else {
-        match PackageIdent::from_str(&val) {
-            Ok(_) => Ok(()),
-            Err(e) => Err(format!("{}", e)),
-        }
     }
 }

@@ -13,8 +13,12 @@ path = "src/main.rs"
 doc = false  
 
 [dependencies]
+base64 = "*"
 clap = { version = "*", features = ["suggestions", "color", "unstable"] }
 env_logger = "*"
 habitat_common = { path = "../common" }
 habitat_core = { path = "../core" }
 log = "*"
+url = "*"
+failure = "0.1"
+failure_derive = "0.1"
