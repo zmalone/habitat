@@ -24,9 +24,10 @@ fn start(ui: &mut UI) {
     debug!("clap cli args: {:?}", m);
 }
 
-fn cli() {
+fn cli<'a, 'b>() -> App<'a, 'b> {
     let name: &str = &*PROGRAM_NAME;
     let about = "Creates a tar package from a Habitat package";
-
+    Cli::new(name, about)
+        .app
 
 }
