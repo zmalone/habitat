@@ -33,10 +33,7 @@ pub struct TarBallBuilder {
 }
 
 impl TarBallBuilder {
-    fn new<S>(workdir: PathBuf) -> Self
-    where
-        S: Into<String>,
-    {
+    fn new(workdir: PathBuf) -> Self {
         TarBallBuilder {
             workdir: workdir,
         }
@@ -143,7 +140,7 @@ impl TarBuildRoot {
             "channel": self.0.ctx().channel(),
         });
 
-        let tarball_path = PathBuf::new();
+        let mut tarball_path = PathBuf::new();
         tarball_path.push(self.0.workdir());
         let mut tarball = TarBall::new(tarball_path);
 
