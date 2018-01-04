@@ -3,6 +3,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use common::ui::{UI, Status};
+use hcore::fs as hfs;
 use hcore::os::filesystem;
 use handlebars::Handlebars;
 use build::BuildRoot;
@@ -14,6 +15,14 @@ use super::{Naming};
 use util;
 
 const INIT_SH: &'static str = include_str!("../defaults/init.sh.hbs");
+lazy_static! {
+    /// Absolute path to the tar program
+    static ref TAR_PROGRAM: PathBuf = hfs::resolve_cmd_in_pkg(
+        "tar",
+        env!("OUT_DIR"),
+    );
+}
+
 
 /// A builder used to create a Tarball
 pub struct TarBallBuilder<'a> {
