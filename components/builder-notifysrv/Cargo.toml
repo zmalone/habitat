@@ -1,0 +1,38 @@
+[package]
+name = "habitat_builder_notifysrv"
+version = "0.0.0"
+authors = ["Josh Black <raskchanky@gmail.com>"]
+description = "Habitat Builder Notifications Service"
+workspace = "../../"
+
+[[bin]]
+name = "bldr-notifysrv"
+path = "src/main.rs"
+doc = false
+
+[dependencies]
+habitat-builder-protocol = { path = "../builder-protocol" }
+log = "*"
+protobuf = "*"
+serde = "*"
+serde_derive = "*"
+toml = { version = "*", default-features = false }
+postgres = "*"
+r2d2 = "*"
+
+[dependencies.clap]
+version = "*"
+features = [ "suggestions", "color", "unstable" ]
+
+[dependencies.habitat_builder_db]
+path = "../builder-db"
+
+[dependencies.habitat_core]
+path = "../core"
+
+[dependencies.habitat_net]
+path = "../net"
+
+[dependencies.zmq]
+git = "https://github.com/erickt/rust-zmq"
+branch = "release/v0.8"

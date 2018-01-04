@@ -14,6 +14,7 @@ members = [
   "components/builder-graph",
   "components/builder-http-gateway",
   "components/builder-jobsrv",
+  "components/builder-notifysrv",
   "components/builder-originsrv",
   "components/builder-protocol",
   "components/builder-router",
