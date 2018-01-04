@@ -1,6 +1,7 @@
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use common::ui::{UI, Status};
 use hcore::fs as hfs;
@@ -41,7 +42,15 @@ impl<'a> TarBallBuilder<'a> {
     }
 
     pub fn build(self) -> Result<TarBall> {
+        let mut cmd = tar_cmd();
+        cmd.arg("-cpzf").arg("xyz.tar.gz").arg("-C").arg(self.workdir);
 
+        debug!("Running: {:?}", &cmd);
+        let exit_status = cmd.spawn()?.wait()?;
+
+        Ok(TarBall{
+            id: String::from("BiteMe")
+        })
     }
 }
 
@@ -152,4 +161,9 @@ impl<'a> TarBall {
     {
         TarBallBuilder::new(workdir)
     }
+}
+
+/// Returns a `Command` for the Tar program.
+fn tar_cmd() -> Command {
+    Command::new(&*TAR_PROGRAM)
 }
