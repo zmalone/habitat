@@ -33,12 +33,14 @@ use common::ui::UI;
 use hcore::channel;
 use hcore::url as hurl;
 
+use tar::{TarBuildRoot};
+
 pub use build::BuildSpec;
 
 /// The version of this library and program when built.
 pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
-/// The Habitat Package Identifier string for a Busybox package.
+/// The Habitat Package Identifier string for a Busybox paCkage.
 const BUSYBOX_IDENT: &'static str = "core/busybox-static";
 /// The Habitat Package Identifier string for SSL certificate authorities (CA) certificates package.
 const CACERTS_IDENT: &'static str = "core/cacerts";
@@ -91,6 +93,8 @@ pub fn export(ui: &mut UI, build_spec: BuildSpec, naming: &Naming) -> Result<()>
         "Building a runnable Docker image with: {}",
         build_spec.idents_or_archives.join(", ")
     ))?;
+
+    let build_root = TarBuildRoot::from_build_root(build_spec.create(ui)?, ui)?;
   
     Ok(())
 }

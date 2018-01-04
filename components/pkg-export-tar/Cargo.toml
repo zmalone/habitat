@@ -23,7 +23,7 @@ handlebars = { version = "*", features = ["partial4"], default-features = false 
 lazy_static = "*"
 log = "*"
 serde = { version = "*", features = ["rc"] }
-serde_json = "*"
+serde_json = "1.0.4"
 url = "*"
 failure = "0.1"
 failure_derive = "0.1"

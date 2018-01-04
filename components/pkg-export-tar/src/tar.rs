@@ -1,5 +1,6 @@
 use std::fs::{self, OpenOptions};
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 use common::ui::{UI, Status};
 use hcore::os::filesystem;
@@ -9,9 +10,30 @@ use build::BuildRoot;
 use error::{Error, Result};
 use serde_json;
 
+use super::{Naming};
 use util;
 
 const INIT_SH: &'static str = include_str!("../defaults/init.sh.hbs");
+
+/// A builder used to create a Tarball
+pub struct TarBallBuilder<'a> {
+    /// The base workdir which hosts the root file system.
+    workdir: &'a Path,
+    /// A list of tags for the image.
+    tags: Vec<String>,
+}
+
+impl<'a> TarBallBuilder<'a> {
+    fn new<S>(workdir: &'a Path) -> Self
+    where
+        S: Into<String>,
+    {
+        TarBallBuilder {
+            workdir: workdir,
+            tags: Vec::new(),
+        }
+    }
+}
 
 /// A temporary file system build root for building a tarball, based on Habitat packages.
 pub struct TarBuildRoot(BuildRoot);
@@ -84,6 +106,42 @@ impl TarBuildRoot {
         Ok(())
     }
 
+    pub fn export(&self, ui: &mut UI, naming: &Naming) -> Result<TarBall> { 
+        self.build_tarball(ui, naming)
+    }
 
+    fn build_tarball(&self, ui: &mut UI, naming: &Naming) -> Result<TarBall> {
+        ui.status(Status::Creating, "Docker image")?;
+        let ident = self.0.ctx().installed_primary_svc_ident()?;
+        let version = &ident.version.expect("version exists");
+        let release = &ident.release.expect("release exists");
+        let json = json!({
+            "pkg_origin": ident.origin,
+            "pkg_name": ident.name,
+            "pkg_version": &version,
+            "pkg_release": &release,
+            "channel": self.0.ctx().channel(),
+        });
 
+        let mut tarball = TarBall::new(self.0.workdir());
+
+        tarball.build()
+    } 
+}
+
+pub struct TarBall {
+    /// The ID for this tarball.
+    id: String,
+    /// The list of tags for this tarball.
+    tags: Vec<String>,
+}
+
+impl<'a> TarBall {
+    /// Returns a new `TarBallBuilder` which is used to build the image.
+    pub fn new<S>(workdir: &'a Path) -> TarBallBuilder<'a>
+    where
+        S: Into<String>,
+    {
+        TarBallBuilder::new(workdir)
+    }
 }
