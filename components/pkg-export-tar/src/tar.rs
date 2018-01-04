@@ -2,6 +2,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::str::FromStr;
 
 use common::ui::{UI, Status};
 use hcore::fs as hfs;
@@ -26,13 +27,13 @@ lazy_static! {
 
 
 /// A builder used to create a Tarball
-pub struct TarBallBuilder<'a> {
+pub struct TarBallBuilder {
     /// The base workdir which hosts the root file system.
-    workdir: &'a Path,
+    workdir: PathBuf,
 }
 
-impl<'a> TarBallBuilder<'a> {
-    fn new<S>(workdir: &'a Path) -> Self
+impl TarBallBuilder {
+    fn new<S>(workdir: PathBuf) -> Self
     where
         S: Into<String>,
     {
@@ -142,7 +143,9 @@ impl TarBuildRoot {
             "channel": self.0.ctx().channel(),
         });
 
-        let mut tarball = TarBall::new(self.0.workdir());
+        let tarball_path = PathBuf::new();
+        tarball_path.push(self.0.workdir());
+        let mut tarball = TarBall::new(tarball_path);
 
         tarball.build()
     } 
@@ -153,12 +156,9 @@ pub struct TarBall {
     id: String,
 }
 
-impl<'a> TarBall {
+impl TarBall {
     /// Returns a new `TarBallBuilder` which is used to build the image.
-    pub fn new<S>(workdir: &'a Path) -> TarBallBuilder<'a>
-    where
-        S: Into<String>,
-    {
+    pub fn new(workdir: PathBuf) -> TarBallBuilder {
         TarBallBuilder::new(workdir)
     }
 }
