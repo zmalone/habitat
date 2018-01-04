@@ -19,8 +19,6 @@ const INIT_SH: &'static str = include_str!("../defaults/init.sh.hbs");
 pub struct TarBallBuilder<'a> {
     /// The base workdir which hosts the root file system.
     workdir: &'a Path,
-    /// A list of tags for the image.
-    tags: Vec<String>,
 }
 
 impl<'a> TarBallBuilder<'a> {
@@ -30,8 +28,11 @@ impl<'a> TarBallBuilder<'a> {
     {
         TarBallBuilder {
             workdir: workdir,
-            tags: Vec::new(),
         }
+    }
+
+    pub fn build(self) -> Result<TarBall> {
+
     }
 }
 
@@ -132,8 +133,6 @@ impl TarBuildRoot {
 pub struct TarBall {
     /// The ID for this tarball.
     id: String,
-    /// The list of tags for this tarball.
-    tags: Vec<String>,
 }
 
 impl<'a> TarBall {
