@@ -77,7 +77,17 @@ pub fn export_for_cli_matches(ui: &mut UI, matches: &clap::ArgMatches) -> Result
     let spec = BuildSpec::new_from_cli_matches(&matches, &default_channel, &default_url);
     let naming = Naming::new_from_cli_matches(&matches);
 
+    let tarball = export(ui, spec, &naming)?;
 
+    Ok(())
+}
+
+pub fn export(ui: &mut UI, build_spec: BuildSpec, naming: &Naming) -> Result<()> {
+   ui.begin(format!(
+        "Building a runnable Docker image with: {}",
+        build_spec.idents_or_archives.join(", ")
+    ))?;
+  
     Ok(())
 }
 
