@@ -46,6 +46,7 @@ impl TarBallBuilder {
         debug!("Running: {:?}", &cmd);
         let exit_status = cmd.spawn()?.wait()?;
 
+        // TEMPORARY
         Ok(TarBall{
             id: String::from("BiteMe")
         })
@@ -62,8 +63,6 @@ impl TarBuildRoot {
             root.add_users_and_groups(ui)?;
             root.create_entrypoint(ui)?;
         }
-
-        //root.create_dockerfile(ui)?;
 
         Ok(root)
     }
