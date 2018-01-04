@@ -19,8 +19,11 @@ env_logger = "*"
 hab = { path = "../hab" }
 habitat_common = { path = "../common" }
 habitat_core = { path = "../core" }
+handlebars = { version = "*", features = ["partial4"], default-features = false }
 lazy_static = "*"
 log = "*"
+serde = { version = "*", features = ["rc"] }
+serde_json = "*"
 url = "*"
 failure = "0.1"
 failure_derive = "0.1"

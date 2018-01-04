@@ -6,6 +6,7 @@ extern crate habitat_common as common;
 extern crate base64;
 
 extern crate hab;
+extern crate handlebars;
 
 extern crate tempdir;
 extern crate failure;
@@ -15,12 +16,15 @@ extern crate failure_derive;
 extern crate lazy_static;
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate serde_json;
 
 mod build;
 pub mod cli;
 mod error;
 mod fs;
 pub mod rootfs;
+mod tar;
 mod util;
 
 pub use cli::{Cli, PkgIdentArgOptions};
