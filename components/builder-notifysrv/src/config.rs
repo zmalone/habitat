@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Configuration for a Habitat OriginSrv service
+//! Configuration for a Habitat NotifySrv service
 
 use hab_net::app::config::*;
 use db::config::DataStoreCfg;
@@ -29,7 +29,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         let mut datastore = DataStoreCfg::default();
-        datastore.database = String::from("builder_originsrv");
+        datastore.database = String::from("builder_notifysrv");
         Config {
             app: AppCfg::default(),
             datastore: datastore,
@@ -58,7 +58,7 @@ mod tests {
         host = "1.1.1.1"
         port = 9000
         user = "test"
-        database = "test_originsrv"
+        database = "test_notifysrv"
         connection_retry_ms = 500
         connection_timeout_sec = 4800
         connection_test = true
@@ -68,7 +68,7 @@ mod tests {
         let config = Config::from_raw(&content).unwrap();
         assert_eq!(config.datastore.port, 9000);
         assert_eq!(config.datastore.user, "test");
-        assert_eq!(config.datastore.database, "test_originsrv");
+        assert_eq!(config.datastore.database, "test_notifysrv");
         assert_eq!(config.datastore.connection_retry_ms, 500);
         assert_eq!(config.datastore.connection_timeout_sec, 4800);
         assert_eq!(config.datastore.connection_test, true);

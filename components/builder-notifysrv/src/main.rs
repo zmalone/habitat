@@ -14,6 +14,7 @@
 
 #[macro_use]
 extern crate clap;
+extern crate env_logger;
 extern crate habitat_core as hab_core;
 extern crate habitat_builder_protocol as protocol;
 extern crate habitat_builder_notifysrv as notifysrv;
@@ -40,13 +41,13 @@ fn main() {
 
     match subcmd {
         "migrate" => {
-            match originsrv::server::migrate(config) {
+            match notifysrv::server::migrate(config) {
                 Ok(_) => process::exit(0),
                 Err(e) => exit_with(e, 1),
             }
         }
         "start" => {
-            match originsrv::server::run(config) {
+            match notifysrv::server::run(config) {
                 Ok(_) => process::exit(0),
                 Err(e) => exit_with(e, 1),
             }
@@ -56,20 +57,20 @@ fn main() {
 }
 
 fn app<'a, 'b>() -> clap::App<'a, 'b> {
-    clap_app!(BuilderOriginsrv =>
+    clap_app!(BuilderNotifysrv =>
         (version: VERSION)
-        (about: "Habitat builder-originsrv")
+        (about: "Habitat builder-notifysrv")
         (@setting VersionlessSubcommands)
         (@setting SubcommandRequiredElseHelp)
         (@subcommand migrate =>
             (about: "Run database migrations")
             (@arg config: -c --config +takes_value +global
-                "Filepath to configuration file. [default: /hab/svc/builder-originsrv/config.toml]")
+                "Filepath to configuration file. [default: /hab/svc/builder-notifysrv/config.toml]")
         )
         (@subcommand start =>
-            (about: "Run a Habitat-Builder origin server")
+            (about: "Run a Habitat Builder notifications server")
             (@arg config: -c --config +takes_value +global
-                "Filepath to configuration file. [default: /hab/svc/builder-originsrv/config.toml]")
+                "Filepath to configuration file. [default: /hab/svc/builder-notifysrv/config.toml]")
         )
     )
 }
