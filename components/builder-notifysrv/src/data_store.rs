@@ -25,7 +25,7 @@ use hab_net::conn::{RouteClient, RouteConn};
 use hab_net::{ErrCode, NetError};
 use hab_core::package::PackageIdent;
 use postgres::rows::Rows;
-use protocol::{originsrv, sessionsrv, jobsrv};
+use protocol::{notifysrv, originsrv, sessionsrv, jobsrv};
 use protocol::net::NetOk;
 use protocol::originsrv::Pageable;
 use postgres;

@@ -1,0 +1,19 @@
+syntax = "proto2";
+package notifysrv;
+
+message CreateNotification {
+  optional Notification notification = 1;
+}
+
+message Notification {
+  optional uint64 id = 1;
+  optional uint64 origin_id = 2;
+  optional uint64 account_id = 3;
+  optional NotificationCategory category = 4;
+  optional string data = 5;
+}
+
+enum NotificationCategory {
+  Info = 1;
+  Error = 2;
+}
