@@ -31,7 +31,7 @@ pub enum SrvError {
     BadPort(String),
     ConnErr(hab_net::conn::ConnErr),
     Db(db::error::Error),
-    DbPoolTimeout(r2d2::GetTimeout),
+    DbPoolTimeout(r2d2::Error),
     DbTransactionStart(postgres::error::Error),
     DbTransactionCommit(postgres::error::Error),
     DbListen(postgres::error::Error),
@@ -93,11 +93,11 @@ impl error::Error for SrvError {
     }
 }
 
-impl From<r2d2::GetTimeout> for SrvError {
-    fn from(err: r2d2::GetTimeout) -> Self {
-        SrvError::DbPoolTimeout(err)
-    }
-}
+// impl From<r2d2::GetTimeout> for SrvError {
+//     fn from(err: r2d2::GetTimeout) -> Self {
+//         SrvError::DbPoolTimeout(err)
+//     }
+// }
 
 impl From<hab_core::Error> for SrvError {
     fn from(err: hab_core::Error) -> Self {
@@ -105,38 +105,38 @@ impl From<hab_core::Error> for SrvError {
     }
 }
 
-impl From<hab_net::NetError> for SrvError {
-    fn from(err: hab_net::NetError) -> Self {
-        SrvError::NetError(err)
-    }
-}
+// impl From<hab_net::NetError> for SrvError {
+//     fn from(err: hab_net::NetError) -> Self {
+//         SrvError::NetError(err)
+//     }
+// }
 
-impl From<hab_net::conn::ConnErr> for SrvError {
-    fn from(err: hab_net::conn::ConnErr) -> Self {
-        SrvError::ConnErr(err)
-    }
-}
+// impl From<hab_net::conn::ConnErr> for SrvError {
+//     fn from(err: hab_net::conn::ConnErr) -> Self {
+//         SrvError::ConnErr(err)
+//     }
+// }
 
-impl From<db::error::Error> for SrvError {
-    fn from(err: db::error::Error) -> Self {
-        SrvError::Db(err)
-    }
-}
+// impl From<db::error::Error> for SrvError {
+//     fn from(err: db::error::Error) -> Self {
+//         SrvError::Db(err)
+//     }
+// }
 
-impl From<protobuf::ProtobufError> for SrvError {
-    fn from(err: protobuf::ProtobufError) -> Self {
-        SrvError::Protobuf(err)
-    }
-}
+// impl From<protobuf::ProtobufError> for SrvError {
+//     fn from(err: protobuf::ProtobufError) -> Self {
+//         SrvError::Protobuf(err)
+//     }
+// }
 
-impl From<protocol::ProtocolError> for SrvError {
-    fn from(err: protocol::ProtocolError) -> Self {
-        SrvError::Protocol(err)
-    }
-}
+// impl From<protocol::ProtocolError> for SrvError {
+//     fn from(err: protocol::ProtocolError) -> Self {
+//         SrvError::Protocol(err)
+//     }
+// }
 
-impl From<zmq::Error> for SrvError {
-    fn from(err: zmq::Error) -> Self {
-        SrvError::from(hab_net::conn::ConnErr::from(err))
-    }
-}
+// impl From<zmq::Error> for SrvError {
+//     fn from(err: zmq::Error) -> Self {
+//         SrvError::from(hab_net::conn::ConnErr::from(err))
+//     }
+// }

@@ -41,7 +41,7 @@ pub struct DataStore {
 
 impl DataStore {
     pub fn new(cfg: &DataStoreCfg, shards: Vec<ShardId>) -> SrvResult<DataStore> {
-        let pool = Pool::new(&cfg, shards)?;
+        let pool = Pool::new(&cfg, shards).map_err(SrvError::Db)?;
         let ap = pool.clone();
         Ok(DataStore { pool: pool })
     }
@@ -51,16 +51,34 @@ impl DataStore {
     }
 
     pub fn setup(&self) -> SrvResult<()> {
-        let conn = self.pool.get_raw()?;
+        let conn = self.pool.get_raw().map_err(SrvError::Db)?;
         let xact = conn.transaction().map_err(SrvError::DbTransactionStart)?;
         let mut migrator = Migrator::new(xact, self.pool.shards.clone());
 
-        migrator.setup()?;
+        migrator.setup().map_err(SrvError::Db)?;
 
         migrations::notifications::migrate(&mut migrator)?;
 
-        migrator.finish()?;
+        migrator.finish().map_err(SrvError::Db)?;
 
         Ok(())
+    }
+
+    pub fn create_notification(
+        &self,
+        notification_create: &notifysrv::NotificationCreate,
+    ) -> SrvResult<notifysrv::Notification> {
+        // let conn = self.pool.get(notification_create)?;
+        // let rows = conn.query(
+        //     "SELECT * FROM select_or_insert_account_v1($1, $2)",
+        //     &[&account_create.get_name(), &account_create.get_email()],
+        // ).map_err(SrvError::AccountCreate)?;
+        // let row = rows.get(0);
+        // let account = self.row_to_account(row);
+        // Ok(account)
+
+        // JB TODO: this is wrong lol
+        let n = notifysrv::Notification::new();
+        Ok(n)
     }
 }

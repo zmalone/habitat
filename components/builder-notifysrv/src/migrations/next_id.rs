@@ -14,12 +14,13 @@
 
 use db::migration::Migrator;
 
-use error::SrvResult;
+use error::{SrvError, SrvResult};
 
 pub fn migrate(migrator: &mut Migrator) -> SrvResult<()> {
-    migrator.migrate(
-        "notifysrv",
-        r#"CREATE OR REPLACE FUNCTION next_id_v1(sequence_id regclass, OUT result bigint) AS $$
+    migrator
+        .migrate(
+            "notifysrv",
+            r#"CREATE OR REPLACE FUNCTION next_id_v1(sequence_id regclass, OUT result bigint) AS $$
                 DECLARE
                     our_epoch bigint := 1409266191000;
                     seq_id bigint;
@@ -33,6 +34,7 @@ pub fn migrate(migrator: &mut Migrator) -> SrvResult<()> {
                     result := result | (shard_id);
                 END;
                 $$ LANGUAGE PLPGSQL;"#,
-    )?;
+        )
+        .map_err(SrvError::Db)?;
     Ok(())
 }

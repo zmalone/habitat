@@ -3,6 +3,7 @@ name = "habitat_builder_notifysrv"
 version = "0.0.0"
 authors = ["Josh Black <raskchanky@gmail.com>"]
 description = "Habitat Builder Notifications Service"
+build = "../build-builder.rs"
 workspace = "../../"
 
 [[bin]]

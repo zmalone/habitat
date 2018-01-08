@@ -15,7 +15,7 @@
 use hab_net::app::prelude::*;
 use postgres::error::Error as PostgresError;
 use protocol::net;
-use protocol::originsrv as proto;
+use protocol::notifysrv as proto;
 
 use super::ServerState;
 use error::{SrvError, SrvResult};
@@ -25,13 +25,19 @@ pub fn create_notification(
     conn: &mut RouteConn,
     state: &mut ServerState,
 ) -> SrvResult<()> {
-    let mut msg = req.parse::<proto::NotificationCreate>()?;
+    let mut msg = req.parse::<proto::NotificationCreate>().map_err(
+        SrvError::Protocol,
+    )?;
     match state.datastore.create_notification(&mut msg) {
-        Ok(Some(ref notification)) => conn.route_reply(req, notification)?,
+        Ok(ref notification) => {
+            conn.route_reply(req, notification).map_err(
+                SrvError::ConnErr,
+            )?
+        }
         Err(e) => {
             let err = NetError::new(ErrCode::DATA_STORE, "vt:notification-create:2");
             error!("{}, {}", err, e);
-            conn.route_reply(req, &*err)?;
+            conn.route_reply(req, &*err).map_err(SrvError::ConnErr)?;
         }
     }
     Ok(())

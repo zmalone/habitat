@@ -24,7 +24,7 @@ use error::{SrvError, SrvResult};
 lazy_static! {
     static ref DISPATCH_TABLE: DispatchTable<NotifySrv> = {
         let mut map = DispatchTable::new();
-        map.register(CreateNotification::descriptor_static(None),
+        map.register(NotificationCreate::descriptor_static(None),
             handlers::create_notification);
         map
     };
@@ -61,7 +61,10 @@ impl Dispatcher for NotifySrv {
     type Error = SrvError;
     type State = ServerState;
 
-    fn app_init(config: Self::Config) -> SrvResult<<Self::State as AppState>::InitState> {
+    fn app_init(
+        config: Self::Config,
+        _: Arc<String>,
+    ) -> SrvResult<<Self::State as AppState>::InitState> {
         let state = ServerState::new(config)?;
         Ok(state)
     }

@@ -14,16 +14,19 @@
 
 use db::migration::Migrator;
 
-use error::SrvResult;
+use error::{SrvError, SrvResult};
 
 pub fn migrate(migrator: &mut Migrator) -> SrvResult<()> {
-    migrator.migrate(
-        "notifysrv",
-        r#"CREATE SEQUENCE IF NOT EXISTS notification_id_seq;"#,
-    )?;
-    migrator.migrate(
-        "notifysrv",
-        r#"CREATE TABLE IF NOT EXISTS notifications (
+    migrator
+        .migrate(
+            "notifysrv",
+            r#"CREATE SEQUENCE IF NOT EXISTS notification_id_seq;"#,
+        )
+        .map_err(SrvError::Db)?;
+    migrator
+        .migrate(
+            "notifysrv",
+            r#"CREATE TABLE IF NOT EXISTS notifications (
                     id bigint PRIMARY KEY DEFAULT next_id_v1('notification_id_seq'),
                     origin_id bigint NOT NULL,
                     account_id bigint NOT NULL,
@@ -32,10 +35,12 @@ pub fn migrate(migrator: &mut Migrator) -> SrvResult<()> {
                     created_at timestamptz DEFAULT now(),
                     updated_at timestamptz
              )"#,
-    )?;
-    migrator.migrate(
-        "notifysrv",
-        r#"CREATE OR REPLACE FUNCTION insert_notification_v1 (
+        )
+        .map_err(SrvError::Db)?;
+    migrator
+        .migrate(
+            "notifysrv",
+            r#"CREATE OR REPLACE FUNCTION insert_notification_v1 (
                      n_origin_id bigint,
                      n_account_id bigint,
                      n_category text,
@@ -45,6 +50,7 @@ pub fn migrate(migrator: &mut Migrator) -> SrvResult<()> {
                         VALUES (n_origin_id, n_account_id, n_category, n_data)
                         RETURNING *
                  $$ LANGUAGE SQL VOLATILE"#,
-    )?;
+        )
+        .map_err(SrvError::Db)?;
     Ok(())
 }
