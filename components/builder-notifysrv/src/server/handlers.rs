@@ -13,8 +13,6 @@
 // limitations under the License.
 
 use hab_net::app::prelude::*;
-use postgres::error::Error as PostgresError;
-use protocol::net;
 use protocol::notifysrv as proto;
 
 use super::ServerState;

@@ -22,7 +22,6 @@ use protobuf;
 use protocol;
 use postgres;
 use r2d2;
-use zmq;
 
 pub type SrvResult<T> = Result<T, SrvError>;
 
@@ -40,6 +39,7 @@ pub enum SrvError {
     NotificationCreate(postgres::error::Error),
     Protocol(protocol::ProtocolError),
     Protobuf(protobuf::ProtobufError),
+    UnknownNotificationCategory(protocol::notifysrv::Error),
 }
 
 impl fmt::Display for SrvError {
@@ -67,6 +67,7 @@ impl fmt::Display for SrvError {
             }
             SrvError::Protocol(ref e) => format!("{}", e),
             SrvError::Protobuf(ref e) => format!("{}", e),
+            SrvError::UnknownNotificationCategory(ref e) => format!("{}", e),
         };
         write!(f, "{}", msg)
     }
@@ -89,54 +90,13 @@ impl error::Error for SrvError {
             SrvError::NotificationCreate(ref err) => err.description(),
             SrvError::Protocol(ref err) => err.description(),
             SrvError::Protobuf(ref err) => err.description(),
+            SrvError::UnknownNotificationCategory(ref err) => err.description(),
         }
     }
 }
-
-// impl From<r2d2::GetTimeout> for SrvError {
-//     fn from(err: r2d2::GetTimeout) -> Self {
-//         SrvError::DbPoolTimeout(err)
-//     }
-// }
 
 impl From<hab_core::Error> for SrvError {
     fn from(err: hab_core::Error) -> Self {
         SrvError::HabitatCore(err)
     }
 }
-
-// impl From<hab_net::NetError> for SrvError {
-//     fn from(err: hab_net::NetError) -> Self {
-//         SrvError::NetError(err)
-//     }
-// }
-
-// impl From<hab_net::conn::ConnErr> for SrvError {
-//     fn from(err: hab_net::conn::ConnErr) -> Self {
-//         SrvError::ConnErr(err)
-//     }
-// }
-
-// impl From<db::error::Error> for SrvError {
-//     fn from(err: db::error::Error) -> Self {
-//         SrvError::Db(err)
-//     }
-// }
-
-// impl From<protobuf::ProtobufError> for SrvError {
-//     fn from(err: protobuf::ProtobufError) -> Self {
-//         SrvError::Protobuf(err)
-//     }
-// }
-
-// impl From<protocol::ProtocolError> for SrvError {
-//     fn from(err: protocol::ProtocolError) -> Self {
-//         SrvError::Protocol(err)
-//     }
-// }
-
-// impl From<zmq::Error> for SrvError {
-//     fn from(err: zmq::Error) -> Self {
-//         SrvError::from(hab_net::conn::ConnErr::from(err))
-//     }
-// }

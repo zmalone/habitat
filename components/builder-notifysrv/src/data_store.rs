@@ -12,24 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::HashMap;
-use std::fmt::Display;
-use std::str::FromStr;
 use std::sync::Arc;
 
 use db::config::{DataStoreCfg, ShardId};
-use db::error::{Error as DbError, Result as DbResult};
 use db::migration::Migrator;
 use db::pool::Pool;
-use hab_net::conn::{RouteClient, RouteConn};
-use hab_net::{ErrCode, NetError};
-use hab_core::package::PackageIdent;
-use postgres::rows::Rows;
-use protocol::{notifysrv, originsrv, sessionsrv, jobsrv};
-use protocol::net::NetOk;
-use protocol::originsrv::Pageable;
+use protocol::notifysrv;
 use postgres;
-use protobuf;
 
 use error::{SrvError, SrvResult};
 use migrations;
@@ -42,7 +31,6 @@ pub struct DataStore {
 impl DataStore {
     pub fn new(cfg: &DataStoreCfg, shards: Vec<ShardId>) -> SrvResult<DataStore> {
         let pool = Pool::new(&cfg, shards).map_err(SrvError::Db)?;
-        let ap = pool.clone();
         Ok(DataStore { pool: pool })
     }
 
@@ -68,17 +56,43 @@ impl DataStore {
         &self,
         notification_create: &notifysrv::NotificationCreate,
     ) -> SrvResult<notifysrv::Notification> {
-        // let conn = self.pool.get(notification_create)?;
-        // let rows = conn.query(
-        //     "SELECT * FROM select_or_insert_account_v1($1, $2)",
-        //     &[&account_create.get_name(), &account_create.get_email()],
-        // ).map_err(SrvError::AccountCreate)?;
-        // let row = rows.get(0);
-        // let account = self.row_to_account(row);
-        // Ok(account)
+        let conn = self.pool.get(notification_create).map_err(SrvError::Db)?;
+        let notification = notification_create.get_notification();
+        let mut cat = notification.get_category().to_string();
 
-        // JB TODO: this is wrong lol
-        let n = notifysrv::Notification::new();
-        Ok(n)
+        if cat.is_empty() {
+            cat = notifysrv::NotificationCategory::default().to_string();
+        }
+
+        let rows = conn.query(
+            "SELECT * FROM insert_notification_v1($1, $2, $3, $4)",
+            &[
+                &(notification.get_origin_id() as i64),
+                &(notification.get_account_id() as i64),
+                &cat,
+                &notification.get_data(),
+            ],
+        ).map_err(SrvError::NotificationCreate)?;
+        let row = rows.get(0);
+        let notification = self.row_to_notification(row)?;
+        Ok(notification)
+    }
+
+    fn row_to_notification(&self, row: postgres::rows::Row) -> SrvResult<notifysrv::Notification> {
+        let mut notification = notifysrv::Notification::new();
+        let id: i64 = row.get("id");
+        let origin_id: i64 = row.get("origin_id");
+        let account_id: i64 = row.get("account_id");
+        notification.set_id(id as u64);
+        notification.set_origin_id(origin_id as u64);
+        notification.set_account_id(account_id as u64);
+
+        let cat: String = row.get("category");
+        let new_cat: notifysrv::NotificationCategory =
+            cat.parse().map_err(SrvError::UnknownNotificationCategory)?;
+        notification.set_category(new_cat);
+
+        notification.set_data(row.get("data"));
+        Ok(notification)
     }
 }
