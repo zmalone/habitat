@@ -6,6 +6,7 @@ members = [
   "components/airlock",
   "components/builder-admin",
   "components/builder-api",
+  "components/builder-api-v2",
   "components/builder-api-client",
   "components/builder-core",
   "components/builder-db",
