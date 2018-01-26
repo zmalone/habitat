@@ -33,8 +33,8 @@ If your host machine is running Linux, do the following to run your packages:
 You may use the same `hab start` command on Windows but omit the `sudo` command. However, you should be inside of an elevated shell. Also, note that the `hab` user is not necessary on Windows. If it is absent, services will run under the identity of the current user. If a `hab` user is present, you will need to provide its password via the`--password` argument:
 
 ```shell
-PS C:\&gt; $cred = Get-Credential hab
-PS C:\&gt; hab start yourorigin/yourname --password $cred.GetNetworkCredential().Password
+PS C:&bsol;> $cred = Get-Credential hab
+PS C:&bsol;> hab start yourorigin/yourname --password $cred.GetNetworkCredential().Password
 ```
 
 ## Running packages in any environment
@@ -97,11 +97,11 @@ After you have built the hart package, do the following:
 On Windows this looks very similar with the additional step of installing the Chocolatey package manager:
 
 ```shell
-PS C:\&gt; Set-ExecutionPolicy Bypass -Scope Process -Force
-PS C:\&gt; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-PS C:\&gt; choco install habitat
-PS C:\&gt; hab install your_package.hart
-PS C:\&gt; hab start your_origin/your_package
+PS C:&bsol;> Set-ExecutionPolicy Bypass -Scope Process -Force
+PS C:&bsol;> iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+PS C:&bsol;> choco install habitat
+PS C:&bsol;> hab install your_package.hart
+PS C:&bsol;> hab start your_origin/your_package
 ```
 
 ## Starting only the Supervisor
@@ -136,8 +136,8 @@ It is important to start the Supervisor via the `hab` program as upgrades to the
 On Windows, you can run the Supervisor as a Windows Service. You can use the `windows-service` Habitat package to host the Supervisor inside the Windows Service Control Manager:
 
 ```shell
-PS C:\&gt; hab pkg install core/windows-service
-PS C:\&gt; hab pkg exec core/windows-service install
+PS C:&bsol;> hab pkg install core/windows-service
+PS C:&bsol;> hab pkg exec core/windows-service install
 ```
 
 ## Loading a Service for Supervision
@@ -170,7 +170,7 @@ Sometimes you need to stop a running service for a period of time, for example d
 $ hab svc stop core/redis
 ```
 
-## Starting a Loaded Stopped Service
+## Starting a Loaded Stopped Servicestrat
 
 To resume running a service which has been loaded but stopped (via the `hab svc stop` subcommand explained above), you use the `hab svc start` subcommand. Let's resume our `core/redis` service with:
 
