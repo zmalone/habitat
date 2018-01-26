@@ -30,7 +30,7 @@ If your host machine is running Linux, do the following to run your packages:
     $ sudo hab start yourorigin/yourname
     ```
 
-You may use the same `hab start` command on Windows but omit the `sudo` command. However, you should be inside of an elevated shell. Also, not that the `hab` user is not necessary on Windows. If it is absent, services will run under the identity of the current user. If a `hab` user is present, you will need to provide its password via the`--password` argument:
+You may use the same `hab start` command on Windows but omit the `sudo` command. However, you should be inside of an elevated shell. Also, note that the `hab` user is not necessary on Windows. If it is absent, services will run under the identity of the current user. If a `hab` user is present, you will need to provide its password via the`--password` argument:
 
 ```shell
 PS C:\> $cred = Get-Credential hab
@@ -94,7 +94,7 @@ After you have built the hart package, do the following:
         $ sudo hab start your_origin/your_package
         ```
 
-On Windows this looks very similar with the the additional step of installing the Chocolatey package manager:
+On Windows this looks very similar with the additional step of installing the Chocolatey package manager:
 
 ```shell
 PS C:\> Set-ExecutionPolicy Bypass -Scope Process -Force
