@@ -34,7 +34,7 @@ sidebar_links:
   - title: Developing Packages
     link: "/docs/developing-packages"
     sub_links:
-    - title: Writing a Plan.sh
+    - title: Writing a Plan
       link: "/docs/developing-packages/#write-plans"
     - title: Config Templates
       link: "/docs/developing-packages/#add-configuration"
@@ -65,7 +65,7 @@ sidebar_links:
       link: "/docs/best-practices/#ecs-and-habitat"
     - title: "Apache Mesos and DC/OS"
       link: "/docs/best-practices/#mesos-dcos"
-    - title: "Advanced Plan.sh Writing"
+    - title: "Advanced Plan Writing"
       link: "/docs/best-practices/#planwriting-guide"
     - title: Iterative Development
       link: "/docs/best-practices/#iterative-development"
