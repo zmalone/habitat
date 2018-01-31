@@ -1,0 +1,14 @@
+[package]
+name = "hab-studio"
+version = "0.1.0"
+authors = ["Travis Elliott Davis <edavis@chef.io>"]
+
+[dependencies]
+clap = "*"
+env_logger = "*"
+errno = "*"
+libc = "*"
+log = "*"
+pnet_datalink = "*"
+rand = "*"
+users = "*"

@@ -13,6 +13,7 @@ members = [
   "components/github-api-client",
   "components/hab",
   "components/hab-butterfly",
+  "components/hab-studio",
   "components/http-client",
   "components/launcher",
   "components/launcher-client",
