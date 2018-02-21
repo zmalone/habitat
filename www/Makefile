@@ -1,6 +1,6 @@
 build: clean
 	bundle install
-	bundle exec middleman build --no-parallel
+	bundle exec middleman build --no-parallel --verbose
 .PHONY: build
 
 clean:
