@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Chef Software Inc. and/or applicable contributors
+// Copyright (c) 2018 Chef Software Inc. and/or applicable contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate base64;
-extern crate frank_jwt as jwt;
 extern crate habitat_http_client as hab_http;
-extern crate http_client_common;
 extern crate hyper;
-extern crate hyper_openssl;
-#[macro_use]
-extern crate log;
-extern crate regex;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 extern crate serde_json;
-extern crate time;
 
-pub mod client;
-pub mod config;
 pub mod error;
 pub mod types;
 
-pub use client::GitHubClient;
-pub use config::GitHubCfg;
-pub use error::{HubError, HubResult};
+pub use error::{OAuthError, OAuthResult};

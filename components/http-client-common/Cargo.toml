@@ -1,0 +1,9 @@
+[package]
+name = "http-client-common"
+version = "0.0.0"
+authors = ["Josh Black <raskchanky@gmail.com>"]
+
+[dependencies]
+habitat_http_client = { path = "../http-client" }
+hyper = "0.10"
+serde_json = ">= 1.0"

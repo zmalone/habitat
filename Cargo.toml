@@ -3,6 +3,7 @@ debug = true
 
 [workspace]
 members = [
+  "components/bitbucket-api-client",
   "components/builder-api-client",
   "components/builder-depot-client",
   "components/butterfly",
@@ -14,6 +15,7 @@ members = [
   "components/hab",
   "components/hab-butterfly",
   "components/http-client",
+  "components/http-client-common",
   "components/launcher",
   "components/launcher-client",
   "components/launcher-protocol",
