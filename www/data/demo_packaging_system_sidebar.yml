@@ -4,13 +4,10 @@ sidebar_links:
   links:
   - title: Clone the sample application
     link: /demo/packaging-system/steps/1
-  - title: Install the tools
-    link: /demo/packaging-system/steps/2
-  - title: Finish setting up Habitat
-    link: /demo/packaging-system/steps/3
   - title: Add Habitat to the application
-    link: /demo/packaging-system/steps/4
+    link: /demo/packaging-system/steps/2
   - title: Build the application
-    link: /demo/packaging-system/steps/5
+    link: /demo/packaging-system/steps/3
   - title: Run the application
-    link: /demo/packaging-system/steps/6
+    link: /demo/packaging-system/steps/4
+

@@ -21,9 +21,7 @@ classes: demo_step
         h4.h4="Build System Demo"
       .columns.large-6
         p
-          ' Connecting your Docker Hub account will allow Habitat Builder to publish the sample application package as a Docker container image
-          span.asterisk="*"
-          ' .
+          ' Connecting your Docker Hub account will allow Habitat Builder to publish the sample application package as a Docker container image.
         p
           ' Go to the
           strong Integrations
@@ -31,16 +29,10 @@ classes: demo_step
           a.link-external href="#{builder_web_url}/#/origins" target="_blank" new origin
           ' , then click on the
           strong Docker Hub*
-          '  button. Enter an integration name, your Docker Hub username and password, then click Save Account.
-        .footnote.habicat-with-linux
-          p
-            span.asterisk="*"
-            '  Habitat Builder currently publishes only Linux-based containers. You can still complete this demo even if your system cannot run a Linux container, but you will not be able to run the app locally.
-          p.mb-0
-            span.asterisk="*"
-            '  Don't have a Docker Hub account?
-            a.link-external href="https://hub.docker.com" target="blank" Create one
-            '  , it's free.
+          '  button. Enter an integration name, your Docker Hub username and password, then click
+          strong Save Account
+          ' .
+
       .columns.large-6
         p You should see your new account added, as in the image below:
         img src="/images/demo/screen-add-docker-hub-integration.png"

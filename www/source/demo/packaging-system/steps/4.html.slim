@@ -9,41 +9,50 @@ classes: demo_step
       a.demo-step--indicator.packaging.active href="/demo/packaging-system/steps/2"
       a.demo-step--indicator.packaging.active href="/demo/packaging-system/steps/3"
       a.demo-step--indicator.packaging.active href="/demo/packaging-system/steps/4"
-      a.demo-step--indicator.packaging href="/demo/packaging-system/steps/5"
-      a.demo-step--indicator.packaging href="/demo/packaging-system/steps/6"
     .row
       .columns.large-12
-        h3.h3="Step 4: Add Habitat to the application"
+        h3.h3="Step 6: Run the application"
         h4.h4="Packaging System Demo"
-      .columns.large-6
+      .columns.large-12
         p
-          ' Everything Habitat needs to build and run the application
-          ' is defined in a set of files known as the Habitat Plan, the most important of which is the <strong>plan.sh</strong> file.
+          ' Now that the build is complete, let's test it out by running the package. Two common ways of running a package include:
+        ul
+          li Start services directly from the Studio* using the Habitat Supervisor, or
+          li Export the <code>.hart</code> to a Docker image and use <code>docker run</code>.
         p
-          ' For the sake of this demo, the Habitat Plan files have been generated* for you
-          ' under the <strong>/habitat</strong> directory. Have a quick look around, then we'll
-          ' make one small change in order to build the application.
+          ' We've mentioned the benefits of Habitat's export capabilities, so let's see how
+          ' how that works now. With a single command, you will have exported the <code>.hart</code> file as a Docker image.
+        = code(:shell) do
+          | [1][default:/src:0]# hab pkg export docker ./results/<path to .hart>
         p
-          ' Open the <strong>plan.sh</strong> file in your favorite editor and change the value of <strong>pkg_origin</strong>
-          ' to the origin name you created earlier. Once you've saved that change, proceed to the next step.
+          ' After the export finishes, exit the studio (or open a new terminal window in the same location) and run the Docker container.
+        = code(:shell) do
+          | [1][default:/src:0]# exit
+
+        = code(:shell) do
+          | $ docker run -it -p 8000:8000 yourorigin/sample-node-app
 
         .footnote
-          p
-            span.asterisk *
-            ' You can either write plan files from scratch or generate a basic set using the
-            a.link-exteranl href="https://www.habitat.sh/docs/habitat-cli/#hab-plan-init" hab plan init
-            '  command.
           p.mb-0
-            ' For languages where
-            a.link-external href="https://www.habitat.sh/docs/glossary/#glossary-scaffolding" target="_bank" scaffolding
-            ' is available, such as node, <strong>hab plan init -s node</strong> will
-            ' introspect the application and generate configuration files during build time.
+            span.asterisk="*"
+            '  The Habitat Studio is built using Docker, so you would need to
+            a.link-external href="https://www.habitat.sh/tutorials/build-your-own/node/build-test/#test-locally" expose a port
+            '  (8000:8000, in this case) in order to preview the sample application locally.
 
-      .columns.large-6
-        img alt="CLI screenshot after running hab setup" src="/images/demo/pkg-step-4.png"
+        h3="Preview the application in your browser"
+        p
+          ' Finally, go to
+          a.link-external href="http://localhost:8000" target="_blank" http://localhost:8000
+          '  in your browser to see the sample application UI (screenshot below).
+        img.mb-2 alt="Screenshot of sample node app running in web browser" src="/images/demo/screen-sample-app-v1.png"
 
+        h3="That's a wrap!"
+        p
+        ' By building your application with Habitat, you are now able to take advantage of all
+        ' the capabilities baked into your build artifact. For example, in the Build System demo you'll learn how to automate the build process and (optionally)
+        ' publish your artifacts to various container registries, all using Habitat Builder.
     .row.mt-1.step-bottom-nav
       .columns.large-6
         a.previous-step-link href="/demo/packaging-system/steps/3" Previous Step
       .columns.large-6.text-align-right
-        a.button.cta.mb-0 href="/demo/packaging-system/steps/5" Next Step
+        a.button.cta.mb-0 href="/learn" Return to Learn Habitat

@@ -19,6 +19,37 @@ classes: demo_step
       .columns.large-12
         h3.h3="Step 1: Fork the sample application on GitHub"
         h4.h4="Build System Demo"
+      .columns.large-6
+        p 
+          ' Habitat Builder is a continuous build service that allows you to store, automatically build, and deploy your Habitat packages.
+          ' In this demo, you'll use builder to publish to
+          a.link-external href="https://hub.docker.com/" target="_bank" Docker Hub
+          ' , automate builds, and then auto-update your running application.
+        
+        .footnote
+          p.mb-0
+            span.asterisk=""
+            '  Habitat Builder currently publishes only Linux-based containers. You can still complete this demo even if your system cannot run a Linux container, but you will not be able to run the app locally.
+        p.mb-0
+        p
+          ' To complete this tutorial, you will need:
+        ul
+          li The Habitat CLI tool
+          li Docker
+          li A Github account
+          li A Docker Hub account
+        p
+          ' You can follow the Habitat documentation to
+          a.link-external href="https://www.habitat.sh/docs/install-habitat/#install-habitat" target="_bank" Install Habitat and Docker
+          and then 
+          a.link-external href="https://www.habitat.sh/docs/install-habitat/#configure-workstation" target="_bank" Configure your Workstation
+          ' . 
+        p 
+          ' If you don't have a Github account, you can sign up
+          a.link-external href="https://github.com/join" target="_bank" here
+          ' . If you don't have a Docker Hub account, you can
+          a.link-external href="https://www.habitat.sh/docs/install-habitat/#configure-workstation" target="_bank"  create one
+          ' for free.
       = partial '/partials/demo/fork_sample_app'
     .row.mt-2.step-bottom-nav
       .columns.large-6
