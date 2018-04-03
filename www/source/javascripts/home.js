@@ -14,8 +14,12 @@ var homepageScripts = function() {
     });
   };
 
-  var mainCarousel = new Carousel($('.home--hero-carousel-slide'), $('.home--hero-carousel-nav-item'), 'is-active');
-  var testimonialCarousel = new Carousel($('.home--testimonial-carousel-slide'), $('.home--testimonial-carousel-nav-item'), 'is-active');
+  window.infographicCarousel = new Carousel(
+    $('.home--infographic .carousel-slide'),
+    [$('.home--infographic .carousel-nav'), $('.home--infographic .carousel-infographic > li')],
+    {activeClass: 'is-active'}
+  );
+  // var testimonialCarousel = new Carousel($('.home--testimonial-carousel-slide'), $('.home--testimonial-carousel-nav-item'), 'is-active');
 
   // Sub-hero logo sliders
   var lastScrollPosition = 0;

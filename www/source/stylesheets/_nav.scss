@@ -13,9 +13,9 @@ $main-nav-breakpoint: 769px;
 }
 
 #main-nav {
-  position: relative;
+  position: fixed;
   z-index: 100;
-  background: transparent;
+  background: $hab-slate;
   min-height: $header-height-mobile;
   width: 100%;
   transition: top 0.4s ease;
@@ -56,9 +56,9 @@ $main-nav-breakpoint: 769px;
 
   // modifiers for nav on homepage on large screens
   .home &:not(.is-sticky) {
-    @include large-nav {
-        background: transparent;
-    }
+    // @include large-nav {
+    //     background: red;
+    // }
 
     .main-nav--logo {
       // @media (min-width: 1150px) {

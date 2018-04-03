@@ -421,6 +421,16 @@ a, a:hover {
   transition: all 200ms;
 }
 
+a {
+  &.with-arrow {
+    &:after {
+      content: '→';
+      margin-left: rem-calc(5);
+      display: inline-block;
+    }
+  }
+}
+
 .back-link {
   display: block;
   margin-top: rem-calc(10);

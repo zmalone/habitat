@@ -1,18 +1,24 @@
-function Carousel($slides, $nav, activeClass, intervalLength, smallBreakpoint) {
+function Carousel($slides, $nav, opts) {
+  $nav = [].concat($nav)
+
   this.dom = {
     slideParent: $slides.parent(),
     slides: $slides,
-    navParent: $nav.parent(),
+    navParent: $nav[0].parent(),
     nav: $nav,
     window: $(window)
   }
   this.current = 0;
   this.len = this.dom.slides.length;
 
-  this.smallBreakpoint = smallBreakpoint || 640;
-  this.activeClass = activeClass || 'is-active';
-  this.intervalLength = intervalLength || 10000;
+  this.opts = Object.assign({
+    smallBreakpoint: 640,
+    activeClass: 'is-active',
+    intervalLength: 10000,
+    onRotate: function() {},
+  }, opts);
 
+  this.rotators = this.dom.nav.concat(this.dom.slides);
   this.dom.window.resize(this.resizeParent.bind(this));
 
   this.timeout;
@@ -20,11 +26,13 @@ function Carousel($slides, $nav, activeClass, intervalLength, smallBreakpoint) {
 }
 
 Carousel.prototype.init = function() {
-  $(this.dom.nav).each(function(idx, el) {
-    $(el).attr('data-idx', idx).on('click', this.rotate.bind(this, idx));
+  $(this.dom.nav).each(function(_navIdx, navArray) {
+    navArray.each(function(idx, el) {
+      $(el).attr('data-idx', idx).on('click', this.rotate.bind(this, idx));
+    }.bind(this));
   }.bind(this));
 
-  $(this.dom.slides).mouseenter(this.stop.bind(this)).mouseleave(this.start.bind(this));
+  $(this.dom.slideParent).mouseenter(this.stop.bind(this)).mouseleave(this.start.bind(this, this.opts.intervalLength));
 
   this.resizeParent();
   this.rotate(0, true);
@@ -40,19 +48,21 @@ Carousel.prototype.stop = function() {
 }
 
 Carousel.prototype.rotate = function(target, initialRotate) {
-  $(this.dom.slides[this.current]).removeClass(this.activeClass);
-  $(this.dom.nav[this.current]).removeClass(this.activeClass);
+  var next = target !== undefined ? target :
+    this.current + 1 === this.len ? 0 : this.current + 1;
 
-  var next = target !== undefined ? target : this.current + 1 === this.len ? 0 : this.current + 1;
-
-  $(this.dom.slides[next]).addClass(this.activeClass);
-  $(this.dom.nav[next]).addClass(this.activeClass);
+  this.rotators.forEach(function(rotatorArray) {
+    $(rotatorArray[this.current]).removeClass(this.opts.activeClass);
+    $(rotatorArray[next]).addClass(this.opts.activeClass);
+  }.bind(this));
 
   this.dom.slideParent.attr('data-currentIdx', next);
   this.dom.navParent.attr('data-currentIdx', next);
   this.current = next;
 
-  this.start(target !== undefined && initialRotate !== true ? this.intervalLength * 6 : this.intervalLength);
+  this.opts.onRotate.call(this);
+
+  this.start(target !== undefined && initialRotate !== true ? this.opts.intervalLength * 6 : this.opts.intervalLength);
 }
 
 Carousel.prototype.resizeParent = function() {

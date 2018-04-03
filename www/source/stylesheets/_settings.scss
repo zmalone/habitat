@@ -73,7 +73,7 @@ $hab-blue-green: #6F8E92;
 $hab-blue-medium: #007FAB;
 $hab-gray-dark-15: rgba(125, 134, 140, 0.15);
 $hab-green-terminal: #82FF69;
-$hab-slate: #243442;
+$hab-slate: #243541;
 $hab-slate-light: #627b8f;
 $hab-cta: $hab-green;
 
@@ -113,13 +113,13 @@ $body-background: $hab-white;
 $body-font-color: $hab-blue-grey;
 $body-font-family: 'Titillium Web', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
 $body-antialiased: true;
-$header-height: 80px;
+$header-height: 100px;
 $header-height-mobile: 63px;
 $global-margin: 1rem;
 $global-padding: 1rem;
 $global-weight-normal: normal;
 $global-weight-bold: bold;
-$global-radius: 3px;
+$global-radius: 2px;
 $global-text-direction: ltr;
 $global-flexbox: false;
 $print-transparent-backgrounds: true;
@@ -145,7 +145,7 @@ $grid-row-width: $global-width;
 $grid-column-count: 12;
 $grid-column-gutter: (
   small: 20px,
-  medium: 30px,
+  medium: 24px,
 );
 $grid-column-align-edge: true;
 $block-grid-max: 8;
@@ -288,7 +288,7 @@ $breadcrumbs-item-slash: true;
 $button-padding: rem-calc(10) rem-calc(20);
 $button-margin: 0 0 $global-margin 0;
 $button-fill: solid;
-$button-background: $hab-cta;
+$button-background: rgba(255,255,255,0.1);
 $button-background-hover: scale-color($button-background, $lightness: -15%);
 $button-color: $white;
 $button-color-alt: $black;

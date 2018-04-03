@@ -16,7 +16,6 @@
 
 @mixin button {
   background: transparent;
-  border: 1px solid $hab-orange;
   border-radius: $global-radius;
   color: $hab-white;
   font-size: rem-calc(16);
@@ -32,8 +31,8 @@
 
 @mixin primary-button {
   @include button;
-  background-image: linear-gradient(to left, lighten($hab-orange, 13%), lighten($hab-orange-dark, 5%) 100%);
-  color: $hab-navy;
+  background-color: $hab-blue-medium;
+  color: $white;
   font-weight: normal;
 }
 

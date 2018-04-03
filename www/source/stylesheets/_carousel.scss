@@ -16,3 +16,84 @@ $slider-transition: 1s;
 .carousel-nav {
   cursor: pointer;
 }
+
+.carousel-infographic {
+  list-style-type: none;
+  // background: url('/images/carousel-arrows.svg') center center no-repeat;
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0px auto;
+  padding-left: 10px;
+  justify-content: center;
+
+  > li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 200px;
+    margin-left: -30px;
+    position: relative;
+
+    background: {
+      image: url('/images/carousel-arrows-vertical.svg');
+      repeat: no-repeat;
+      color: transparent;
+      size: cover;
+    }
+
+    .infographic-label {
+      position: absolute;
+      top: -10px;
+      width: 100%;
+      text-align: center;
+
+      > span {
+        height: 40px;
+        line-height: 40px;
+        padding: 0px 16px;
+        display: inline-block;
+        border-radius: 5px;
+        background-color: #28AFA4;
+      }
+    }
+
+    &.carousel-infographic-0 {
+      background-position: 0px 0px;
+      .infographic-label > span { background-color: #28AFA4; }
+    }
+    &.carousel-infographic-1 {
+      background-position: 0px -225px;
+      .infographic-label > span { background-color: #2AA5A2; }
+    }
+    &.carousel-infographic-2 {
+      background-position: 0px -455px;
+      .infographic-label > span { background-color: #2E99A0; }
+    }
+    &.carousel-infographic-3 {
+      background-position: 0px -676px;
+      .infographic-label > span { background-color: #318F9E; }
+    }
+    &.carousel-infographic-4 {
+      background-position: 0px -910px;
+      .infographic-label > span { background-color: #35839C; }
+    }
+
+
+    &.is-active > .infographic-cell {
+      background-color: #2E99A0;
+    }
+
+    > .infographic-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
+}
