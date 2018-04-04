@@ -1,159 +1,190 @@
-.pricing-row-wrapper {
-  position: relative;
-
-  @include breakpoint(medium) {
-    .background-waves-blue {
-      position: absolute;
-      background: url('/images/background-dark-blue.svg') center top repeat-x;
-      background-size: cover;
-      left: 0px;
-      top: 50%;
-      height: 85px;
-      width: 100%;
-
-      &:after {
-        content: '';
-        background-color: #253442;
-        width: 100%;
-        height: 600px;
-        position: absolute;
-        top: 85px;
-      }
-    }
-  }
-}
-
-.pricing-box {
-  position: relative;
-  background: $hab-white;
-  border-radius: $global-radius;
-  box-shadow: 0 -2px 20px 0 rgba(200,210,217,0.5);
-  padding: rem-calc(40) 0px 0px;
-
-  &:before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 10px;
-    width: 100%;
-    border-radius: $global-radius $global-radius 0px 0px;
-    background: linear-gradient(90deg, #62AAA7 0%, #BADB8D 100%);
-  }
-}
 
 .container_pricing {
-  .price-entry {
-    border-bottom: 1px solid $hab-gray;
-  }
+  padding-top: 170px;
+  color: $white;
 
-  .price {
-    color: $hab-green;
-    text-transform: uppercase;
-  }
+  .cta {
+    background-color: $hab-blue-medium;
 
-  .pricing-box-row {
-    padding: rem-calc(20);
-  }
-}
-
-.pricing--faq-section {
-  width: 100%;
-  position: relative;
-  background: linear-gradient($hab-green-light-2, $hab-blue-green);
-  box-shadow: 0 -2px 20px 0 rgba(200,210,217,0.5);
-  padding-bottom: rem-calc(200);
-
-  > .row { position: relative; }
-  @include breakpoint(large) {
-    .jumping-habicat {
-      position: absolute;
-      display: block;
-      height: 189px;
-      width: 233px;
-      background: url('/images/decor/jumping-habicat.svg') center center no-repeat;
-      background-size: contain;
-      top: -190px;
-      left: 20px;
+    &:hover {
+      background-color: darken($hab-blue-medium, 5%);
+      box-shadow: none;
     }
-    .standing-habicat {
-      position: absolute;
-      display: block;
-      height: 143px;
-      width: 355px;
-      background: url('/images/decor/standing-habicat.svg') center center no-repeat;
-      background-size: contain;
-      top: -150px;
-      right: 20px;
-    }
-  }
-}
-
-.faq-box {
-  .accordion-title {
-    font-size: 1rem;
-    color: $hab-gray-dark;
-    border-bottom: 0px;
-  }
-  .accordion-content {
-    border-bottom: 0px;
-  }
-  .accordion > .accordion-item:first-child {
-    border-radius: $global-radius $global-radius 0px 0px;
-  }
-  .accordion > .accordion-item:last-child {
-    border-radius: 0px 0px $global-radius $global-radius;
-  }
-}
-
-.pricing--contact-us {
-  min-height: 373px;
-  width: 100%;
-  margin-top: rem-calc(-150);
-  position: relative;
-  background: url('/images/graphics/polygon.svg') center 50px repeat-x transparent;
-
-  @include breakpoint(small only) {
-    background: transparent;
-  }
-
-  .contact-box {
-    padding: rem-calc(50) rem-calc(20px);
-    box-shadow: 0 -2px 20px 0 rgba(200,210,217,0.5);
-    border-radius: $global-radius;
   }
 
   .button {
-    @include breakpoint(small only) { width: 100%; }
-  }
-}
+    display: block;
+    margin-bottom: 8px;
+    margin-left: 0;
 
-.pricing {
-  .footer--decor { display: none; }
-}
-
-.pricing--open-source {
-  padding: rem-calc(100) 0px;
-
-  > .row {
-    position: relative;
-  }
-
-  @include breakpoint(large) {
-    .stars-left {
-      position: absolute;
-      height: 166px;
-      width: 248px;
-      background: url('/images/decor/star_bg.svg') center center no-repeat;
+    @include breakpoint(medium) {
+      display: inline-block;
+      margin-bottom: 0;
+      margin-left: 1rem;
     }
-    .stars-right {
-      position: absolute;
-      height: 143px;
-      width: 254px;
-      background: url('/images/decor/star_bg2.svg') center center no-repeat;
-      right: 0px;
-      bottom: -100px;
+
+    .chef {
+      margin-left: 8px;
+      height: 30px;
+    }
+
+    .github {
+      height: 28px;
+      width: 28px;
+      margin-bottom: 2px;
+    }
+  }
+
+  section.header {
+    text-align: center;
+    margin-bottom: 109px;
+
+    h1 {
+      font-size: 35px;
+      font-weight: 700;
+      line-height: 43px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 36px;
+      font-size: 18px;
+      color: $text-gray;
+    }
+  }
+
+  section.trio {
+    background: linear-gradient(90deg, rgba(63,83,100,0) 0%, rgba(40,60,76,0.6) 100%);
+    border-bottom: 1px solid rgba(40,60,76,0.6);
+    margin-bottom: 48px;
+
+    @include breakpoint(medium) {
+      margin-bottom: 128px;
+    }
+
+    > div {
+      padding: 42px;
+      text-align: center;
+
+      > img {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 24px;
+      }
+    }
+
+    h3 {
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 0;
+      color: $text-gray;
+    }
+  }
+
+  section.bullets {
+    margin-bottom: 32px;
+
+    @include breakpoint(medium) {
+      margin-bottom: 96px;
+    }
+
+    h2 {
+      font-size: 24px;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 48px;
+    }
+
+    ul {
+      margin: 0;
+      list-style-type: none;
+
+      li {
+        background: url(/images/icons/icon-bullet.svg) no-repeat;
+        background-size: 32px 32px;
+        background-position: 0 8px;
+        padding-left: 46px;
+        margin-bottom: 32px;
+        font-size: 18px;
+      }
+    }
+  }
+
+  section.callout-enterprise {
+    padding: 0;
+    color: $white;
+    margin-bottom: 104px;
+
+    .wrapper {
+      box-shadow: 0 2px 22px 0 #2F3F4C;
+    }
+
+    h2 {
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .header {
+      background-color: #3F5364;
+      padding: 56px 0;
+      border-top: 1px solid #4e6070;
+
+      > div {
+
+        @include breakpoint(medium) {
+          &:first-child {
+            padding-left: 54px;
+          }
+
+          &:last-child {
+            text-align: right;
+            padding-right: 52px;
+          }
+        }
+      }
+
+      p {
+        margin-bottom: 0;
+        background: url(/images/icons/icon-videoconference.svg) no-repeat;
+        background-size: 32px 32px;
+        background-position: 0 8px;
+        padding-left: 48px;
+        font-size: 18px;
+        margin-bottom: 24px;
+
+        @include breakpoint(medium) {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .body {
+      padding: 64px 0;
+      background-color: $white;
+      color: $hab-blue-grey;
+      text-align: center;
+
+      h1 {
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      p {
+        margin-bottom: 28px;
+        color: rgba(92,102,112,0.7);
+      }
+
+      .button.cta {
+        padding: 12px 32px;
+      }
+
+      .button.outline {
+        border: 1px solid $text-gray;
+        color: $hab-blue-grey;
+      }
     }
   }
 }
