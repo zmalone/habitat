@@ -24,10 +24,10 @@ body.home {
   .home--backdrop {
     background: url(/images/bg-circles-cropped.svg) bottom center no-repeat;
     background-size: cover;
+    padding: 50px 10px;
 
     @include breakpoint(large) {
-      padding-top: 170px;
-      padding-bottom: 50px;
+      padding: 170px 0px 50px;
       margin-bottom: 50px;
     }
   }
@@ -93,6 +93,10 @@ body.home {
   }
 
   .home--carousel-content {
+    position: relative;
+  }
+
+  .home--infographic {
     position: relative;
   }
 }

@@ -16,7 +16,7 @@ var homepageScripts = function() {
 
   window.infographicCarousel = new Carousel(
     '.home--infographic .carousel-slide',
-    ['.home--infographic .carousel-nav', '.home--infographic .carousel-infographic > li'],
+    ['.home--infographic .carousel-infographic > li', '.home--infographic .carousel-nav'],
     {activeClass: 'is-active', navArrows: '.carousel-nav-arrow'}
   );
   // var testimonialCarousel = new Carousel($('.home--testimonial-carousel-slide'), $('.home--testimonial-carousel-nav-item'), 'is-active');

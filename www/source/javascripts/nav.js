@@ -104,6 +104,7 @@ var toggleStickyNav = function() {
 toggleStickyNav();
 
 $navToggle.click(function() {
+  console.log('nav')
   $navLinks.slideToggle();
   $mainNav.toggleClass('is-open');
 });
