@@ -34,6 +34,7 @@ $slider-transition: 1s;
     width: 200px;
     margin-left: -30px;
     position: relative;
+    cursor: pointer;
 
     background: {
       image: url('/images/carousel-arrows-vertical.svg');
@@ -44,7 +45,7 @@ $slider-transition: 1s;
 
     .infographic-label {
       position: absolute;
-      top: -10px;
+      top: 0px;
       width: 100%;
       text-align: center;
 
@@ -63,22 +64,21 @@ $slider-transition: 1s;
       .infographic-label > span { background-color: #28AFA4; }
     }
     &.carousel-infographic-1 {
-      background-position: 0px -225px;
+      background-position: 1px -229px;
       .infographic-label > span { background-color: #2AA5A2; }
     }
     &.carousel-infographic-2 {
-      background-position: 0px -455px;
+      background-position: 3px -457px;
       .infographic-label > span { background-color: #2E99A0; }
     }
     &.carousel-infographic-3 {
-      background-position: 0px -676px;
+      background-position: 3px -682px;
       .infographic-label > span { background-color: #318F9E; }
     }
     &.carousel-infographic-4 {
-      background-position: 0px -910px;
+      background-position: 4px -912px;
       .infographic-label > span { background-color: #35839C; }
     }
-
 
     &.is-active > .infographic-cell {
       background-color: #2E99A0;
