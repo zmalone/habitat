@@ -97,3 +97,62 @@ $slider-transition: 1s;
     }
   }
 }
+
+.carousel-nav-arrow {
+  display: block;
+  height: 50px;
+  width: 50px;
+  position: absolute;
+  top: 60px;
+  cursor: pointer;
+  z-index: 5;
+
+  &.arrow-left {
+    left: 0px;
+    background: url('/images/icons/icon-chevron-left.svg') center center no-repeat transparent;
+  }
+  &.arrow-right {
+    right: 0px;
+    background: url('/images/icons/icon-chevron-right.svg') center center no-repeat transparent;
+  }
+}
+
+.carousel-nav-dots {
+  $carousel-nav-dot-color: #c3c6c8;
+  display: flex;
+  // align-content: center;
+  // align-items: center;
+  justify-content: center;
+
+
+  > li {
+    text-indent: -9999px;
+    border-radius: 50%;
+    border: solid 1px $carousel-nav-dot-color;
+    height: 17px;
+    width: 17px;
+    box-shadow: 1;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    padding: 0px;
+    margin: 0px 12px;
+
+    &.is-active {
+      background: $carousel-nav-dot-color;
+
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 25px;
+        width: 25px;
+        z-index: 1;
+        border: solid 1px $carousel-nav-dot-color;
+        border-radius: 50%;
+        top: -5px;
+        left: -5px;
+      }
+    }
+  }
+}

@@ -17,8 +17,10 @@ function Carousel(slides, nav, opts) {
     activeClass: 'is-active',
     intervalLength: 10000,
     onRotate: function() {},
-    navArrows: opts.navArrows ? [].concat(opts.navArrows).map(function(nav) { return $(nav); }) : undefined
+    navArrows: undefined
   }, opts);
+
+  if (this.opts.navArrows) this.opts.navArrows = $(this.opts.navArrows);
 
   this.rotators = this.dom.nav.concat(this.dom.slides);
   this.dom.window.resize(this.resizeParent.bind(this));
@@ -37,10 +39,9 @@ Carousel.prototype.init = function() {
   $(this.dom.slideParent).mouseenter(this.stop.bind(this)).mouseleave(this.start.bind(this, this.opts.intervalLength));
 
   if (this.opts.navArrows) {
-    console.log(this.opts.navArrows)
-    // this.opts.navArrows.forEach(function(el) {
-
-    // })
+    this.opts.navArrows.each(function(_idx, el) {
+      $(el).on('click', this.rotate.bind(this, el.getAttribute('data-type')));
+    }.bind(this))
   }
 
   this.resizeParent();
@@ -57,8 +58,25 @@ Carousel.prototype.stop = function() {
 }
 
 Carousel.prototype.rotate = function(target, initialRotate) {
-  var next = target !== undefined ? target :
-    this.current + 1 === this.len ? 0 : this.current + 1;
+  var next;
+
+  switch (target) {
+    case 'next': case undefined:
+      next = this.current + 1;
+      break;
+    case 'prev':
+      next = this.current - 1;
+      break;
+    default:
+      next = target;
+      break;
+  }
+
+  if (next >= this.len) {
+    next = 0;
+  } else if (next < 0) {
+    next = this.len - 1;
+  }
 
   this.rotators.forEach(function(rotatorArray) {
     $(rotatorArray[this.current]).removeClass(this.opts.activeClass);
