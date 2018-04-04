@@ -84,62 +84,64 @@ section.home--hero
             span.infographic-label: span Manage
             span.infographic-cell Habitat Supervisor
       .row.home--carousel-content
+        .carousel-nav-arrow.arrow-left[data-type='prev']
+        .carousel-nav-arrow.arrow-right[data-type='next']
         .columns.small-12.carousel-slide
           .row
-            .columns.small-12.h3 Write a Habitat Plan for your application
+            .columns.small-12.h2.text-align-center Write a Habitat Plan for your application
           .row
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.medium-offset-1
               p Create your application in your language and code editor of choice.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3
               p Define your application using a Habitat Plan to create an immutable artifact with tunable configuration values.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.end
               p Use Habitat Studio to test your plan and application, and build and iterate quickly.
           .row
-            .columns.small-12
+            .columns.small-12.text-align-center
               = link_to 'Get Started with Studio', '#TODO', class: 'button cta'
         .columns.small-12.carousel-slide
           .row
-            .columns.small-12.h3 Build your application
+            .columns.small-12.h2.text-align-center Build your application
           .row
-            .columns.small-12.medium-6
+            .columns.small-12.medium-5.medium-offset-1
               p Set up your application using public or on-prem Builder to begin rebuilding your application automatically as source code or underlying dependencies have updates from upstream.
-            .columns.small-12.medium-6
+            .columns.small-12.medium-5.end
               p Optionally, export your package into a variety of formats with Builder: Docker Image, ACI, Tarball, CloudFoundry, and more.
           .row
-            .columns.small-12
+            .columns.small-12.text-align-center
               = link_to 'Get Started with Builder', '#TODO', class: 'button cta'
         .columns.small-12.carousel-slide
           .row
-            .columns.small-12.h3 Deploy your application
+            .columns.small-12.h2.text-align-center Deploy your application
           .row
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.medium-offset-1
               p Deploy your application updates to your running services by defining your service groups' update strategies and subscribing to Builder channels.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3
               p Get automatic rebuilds when a new version of your application's underlying dependencies is available.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.end
               p Export your application to a variety of container formats and publish them automatically to Dockerhub, ECR, and Kubernetes.
         .columns.small-12.carousel-slide
           .row
-            .columns.small-12.h3 Run your application
+            .columns.small-12.h2.text-align-center Run your application
           .row
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.medium-offset-1
               p Habitat's runtime automation runs your application's lifecycle hooks so your services behave intelligently over the course of their lifetime.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3
               p Templatize your configuration settings and update them as needed during runtime.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.end
               p Your application will know how to behave as a member of a distributed system, wherever you choose to export and run it.
         .columns.small-12.carousel-slide
           .row
-            .columns.small-12.h3 Manage your application
+            .columns.small-12.h2.text-align-center Manage your application
           .row
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.medium-offset-1
               p Check the status of your services via a customizable health check API endpoint.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3
               p See exactly what software versions you are running in each environment. Have complete dependency and transitive dependency control and visibility.
-            .columns.small-12.medium-4
+            .columns.small-12.medium-3.end
               p Health and event data is gathered from your services and placed on a queue you can use to feed your monitoring systems.
           .row
-            .columns.small-12
+            .columns.small-12.text-align-center
               = link_to 'Get Started with Supervisor', '#TODO', class: 'button cta'
       ul.row.home--carousel-nav
         li.columns.carousel-nav.home--carousel-nav-item.write-plan

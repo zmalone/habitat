@@ -1,5 +1,6 @@
-function Carousel($slides, $nav, opts) {
-  $nav = [].concat($nav)
+function Carousel(slides, nav, opts) {
+  $slides = $(slides);
+  $nav = [].concat(nav).map(function(nav) { return $(nav); });
 
   this.dom = {
     slideParent: $slides.parent(),
@@ -16,6 +17,7 @@ function Carousel($slides, $nav, opts) {
     activeClass: 'is-active',
     intervalLength: 10000,
     onRotate: function() {},
+    navArrows: opts.navArrows ? [].concat(opts.navArrows).map(function(nav) { return $(nav); }) : undefined
   }, opts);
 
   this.rotators = this.dom.nav.concat(this.dom.slides);
@@ -33,6 +35,13 @@ Carousel.prototype.init = function() {
   }.bind(this));
 
   $(this.dom.slideParent).mouseenter(this.stop.bind(this)).mouseleave(this.start.bind(this, this.opts.intervalLength));
+
+  if (this.opts.navArrows) {
+    console.log(this.opts.navArrows)
+    // this.opts.navArrows.forEach(function(el) {
+
+    // })
+  }
 
   this.resizeParent();
   this.rotate(0, true);

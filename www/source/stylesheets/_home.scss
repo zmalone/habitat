@@ -91,6 +91,28 @@ body.home {
       }
     }
   }
+
+  .home--carousel-content {
+    position: relative;
+
+    .carousel-nav-arrow {
+      display: block;
+      height: 50px;
+      width: 50px;
+      position: absolute;
+      top: 60px;
+      cursor: pointer;
+
+      &.arrow-left {
+        left: 0px;
+        background: url('/images/icons/icon-chevron-left.svg') center center no-repeat transparent;
+      }
+      &.arrow-right {
+        right: 0px;
+        background: url('/images/icons/icon-chevron-right.svg') center center no-repeat transparent;
+      }
+    }
+  }
 }
 
 // // homepage
