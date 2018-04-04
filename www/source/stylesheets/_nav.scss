@@ -20,6 +20,7 @@ $main-nav-breakpoint: 769px;
   width: 100%;
   transition: top 0.4s ease;
   box-shadow: 0 0 50px 2px transparent;
+  z-index: 10;
 
   @include large-nav {
     min-height: $header-height;
@@ -221,7 +222,7 @@ $main-nav-breakpoint: 769px;
           position: absolute;
           right: 0;
           top: 52px;
-          z-index: 9999;
+          z-index: 10;
 
           ul {
             margin-left: 0;
@@ -274,7 +275,7 @@ $main-nav-breakpoint: 769px;
 }
 
 .main-nav--link {
-  a {
+  > a {
     position: relative;
     color: $white;
     transition: color 0.2s ease;
@@ -304,6 +305,18 @@ $main-nav-breakpoint: 769px;
         left: -10%;
       }
     }
+
+    &.with-icon {
+      padding-left: 25px;
+      background: {
+        position: left center;
+        repeat: no-repeat;
+        color: transparent;
+        size: 16px;
+      }
+    }
+    &.download { background-image: url('../images/icons/icon-cloud-download.svg'); }
+    &.github { background-image: url('../images/icons/icon-github.svg'); }
   }
 
   &.cta-link a {
