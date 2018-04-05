@@ -351,6 +351,10 @@ code {
   &.alt {
     @include alt-button;
   }
+
+  @include small-nav {
+    padding: $button-padding-small;
+  }
 }
 
 .button.cta{
@@ -458,6 +462,12 @@ a.button {
       position: 32px center;
       repeat: no-repeat;
       size: 16px;
+    }
+    @include small-nav {
+      padding-left: 40px;
+      background: {
+        position: 16px center;
+      }
     }
   }
 }
