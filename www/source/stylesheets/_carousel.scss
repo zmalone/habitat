@@ -24,7 +24,7 @@ $carousel-infographic-min-width: 860px;
     width: $carousel-infographic-min-width;
     position: relative;
     left: 50%;
-  
+
     &[data-currentidx='0'] { transform: translateX(-90px); }
     &[data-currentidx='1'] { transform: translateX(-250px); }
     &[data-currentidx='2'] { transform: translateX(-420px); }
@@ -37,12 +37,10 @@ $carousel-infographic-min-width: 860px;
   list-style-type: none;
   display: flex;
   flex-flow: row nowrap;
-  margin: 0px auto;
+  margin: 0px auto 24px;
   padding-left: 10px;
   justify-content: center;
   transition: all 300ms ease;
-
-
 
   > li {
     display: flex;
@@ -108,12 +106,28 @@ $carousel-infographic-min-width: 860px;
       justify-content: center;
       width: 100px;
       height: 100px;
+      padding: rem-calc(24);
       background-color: rgba(255,255,255,0.1);
       border-radius: 50%;
       vertical-align: middle;
       text-align: center;
+
+      &.logos-deploy {
+        background-image: url('/images/infographic-deploy-logos.svg');
+      }
+      &.logos-run {
+        background-image: url('/images/infographic-run-logos.svg');
+      }
     }
   }
+}
+
+.carousel-slide-title {
+  margin-bottom: rem-calc(24);
+}
+
+.carousel-bullets {
+  margin-bottom: rem-calc(32);
 }
 
 .carousel-nav-arrow {
@@ -147,7 +161,7 @@ $carousel-infographic-min-width: 860px;
   // align-content: center;
   // align-items: center;
   justify-content: center;
-
+  margin-top: rem-calc(24);
 
   > li {
     text-indent: -9999px;
