@@ -9,29 +9,32 @@ section.home--hero
     .home--hero--content.row
       .columns.small-12.medium-6
         h1.home--hero--heading
-          ' Build your application to run anywhere and manage it throughout its lifecycle.
+          ' Build your application to run anywhere, then manage it throughout its lifecycle.
         p
           | Habitat is open source software that creates platform-independent build artifacts and provides built-in deployment and management capabilities.
-        p
-          = link_to 'Get Started', '#TODO', class: 'button cta'
-          = link_to 'View on Github', 'http://github.com/habitat-sh-/habitat', class: 'button github'
+        div
+          = link_to 'Get Started', '/learn', class: 'button cta'
+          = link_to 'View on Github', 'http://github.com/habitat-sh-/habitat', class: 'button github with-icon'
       .columns.small-12.medium-6
         .video-with-cat
           <iframe width="560" height="315" src="https://www.youtube.com/embed/VW1DwDezlqM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
     .home--hero-cards.row.mt-4
       .columns.small-12.medium-4.get-started--boxes--item
-        .card
+        .card.no-hover
+          img src="/images/icons/icon-cloud-done.svg"
           h3 Move your existing applications to a cloud friendly architecture.
           p Get up and running with Docker containers, AWS ECR, Kubernetes, virtual machines, and more. All from a single build artifact.
           = link_to 'Learn more', '#TODO', class: 'with-arrow'
       .columns.small-12.medium-4.get-started--boxes--item
-        .card
+        .card.no-hover
+          img src="/images/icons/icon-touch-app.svg"
           h3 Build, deploy, and manage all your applications the same way.
           p Habitat packages include all the tooling you'll need to ship and run your applications. Adopt as much as you need, when you need it.
           = link_to 'Learn more', '#TODO', class: 'with-arrow'
       .columns.small-12.medium-4.get-started--boxes--item
-        .card
+        .card.no-hover
+          img src="/images/icons/icon-view.svg"
           h3 Know exactly what software you're running in production.
           p Complete dependency management at build time. Know exactly what version of every dependency you're running on each node via our API.
 

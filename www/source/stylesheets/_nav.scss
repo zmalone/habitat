@@ -305,18 +305,6 @@ $main-nav-breakpoint: 769px;
         left: -10%;
       }
     }
-
-    &.with-icon {
-      padding-left: 25px;
-      background: {
-        position: left center;
-        repeat: no-repeat;
-        color: transparent;
-        size: 16px;
-      }
-    }
-    &.download { background-image: url('../images/icons/icon-cloud-download.svg'); }
-    &.github { background-image: url('../images/icons/icon-github.svg'); }
   }
 
   &.cta-link a {

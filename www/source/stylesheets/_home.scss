@@ -32,6 +32,15 @@ body.home {
     }
   }
 
+  .home--hero--content {
+    p {
+      max-width: rem-calc(496);
+      font-size: rem-calc(18);
+      line-height: rem-calc(27);
+      color: $text-gray;
+    }
+  }
+
   .video-with-cat {
     position: relative;
     padding-bottom: 52%;
@@ -59,7 +68,7 @@ body.home {
   }
 
   .home--hero-cards {
-    margin-top: 100px;
+    margin-top: rem-calc(112);
   }
 
   .card {
@@ -97,6 +106,7 @@ body.home {
   }
 
   .home--infographic {
+    margin-bottom: rem-calc(96);
     position: relative;
   }
 }

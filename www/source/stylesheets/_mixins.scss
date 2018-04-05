@@ -19,12 +19,11 @@
   border-radius: $global-radius;
   color: $hab-white;
   font-size: rem-calc(16);
-  padding: rem-calc(10) rem-calc(20);
   transition: all .2s;
 
   &:hover {
-    background-color: transparent;
-    box-shadow: $input-shadow-focus;
+    background-color: darken($hab-blue-medium,4);
+    @include shadow-float-hover;
     transition: all .2s;
   }
 }
@@ -92,10 +91,16 @@
   transition: all 100ms ease-in;
   transform: scale(1);
 
-  &:hover {
+  &:not(.no-hover):hover {
     @include shadow-float-hover;
     transition: all 100ms ease-in;
     transform: scale(1.02);
     z-index: 2;
+  }
+
+  > img {
+    margin-bottom: rem-calc(16);
+    height: rem-calc(32);
+    width: rem-calc(32);
   }
 }
