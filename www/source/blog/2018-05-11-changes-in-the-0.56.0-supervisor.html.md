@@ -40,7 +40,7 @@ As a result, please review any scripts or automation you have that make use of t
 
 `hab svc stop` is how you stop a currently-running (and thus, loaded) service. A stopped service will not be restarted if you restart the Supervisor; you must run `hab svc start`.
 
-`hab sup run` is now the _only_ way to start a Supervisor. As a convenience, `hab sup run` can also accept arguments that load and start a single service. This means that you are still able to start a Supervisor and service in a single command.
+`hab sup run` is now the _only_ way to start a Supervisor. As a convenience, `hab sup run` can also accept the same arguments as `hab svc load` in order to start a supervisor, and load and start a single service (for example, `hab sup run core/redis --strategy=at-once --group=dev` --peer=192.168.1.1:9638`). This means that you are still able to start a Supervisor and service in a single command.
 
 `hab sup term` shuts down the Supervisor and all currently-running services.
 
