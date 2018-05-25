@@ -173,6 +173,11 @@ impl Service {
         )?;
         let config_root = Self::config_root(&pkg, spec.config_from.as_ref());
         let hooks_root = Self::hooks_root(&pkg, spec.config_from.as_ref());
+        let composite = if spec.has_composite() {
+            Some(spec.take_composite())
+        } else {
+            None
+        };
         Ok(Service {
             sys: sys,
             cfg: Cfg::new(&pkg, spec.config_from.as_ref())?,
@@ -206,7 +211,7 @@ impl Service {
             config_from: spec.config_from,
             last_health_check: None,
             svc_encrypted_password: spec.svc_encrypted_password,
-            composite: spec.composite,
+            composite: composite,
             defaults_updated: false,
         })
     }
@@ -235,7 +240,7 @@ impl Service {
     ) -> Result<Service> {
         // The package for a spec should already be installed.
         let fs_root_path = Path::new(&*FS_ROOT_PATH);
-        let package = PackageInstall::load(&spec.ident, Some(fs_root_path))?;
+        let package = PackageInstall::load(spec.get_ident(), Some(fs_root_path))?;
         Ok(Self::new(sys, package, spec, manager_fs_cfg, organization)?)
     }
 
@@ -382,21 +387,21 @@ impl Service {
 
     pub fn to_spec(&self) -> ServiceSpec {
         let mut spec = ServiceSpec::default_for(self.spec_ident.clone());
-        spec.group = self.service_group.group().to_string();
-        if let Some(appenv) = self.service_group.application_environment() {
-            spec.application_environment = Some(appenv)
+        spec.set_group(self.service_group.group().to_string());
+        if let Some(app_env) = self.service_group.application_environment() {
+            spec.set_application_environment(app_env.into());
         }
         if let Some(ref composite) = self.composite {
-            spec.composite = Some(composite.clone())
+            spec.set_composite(composite.clone());
         }
-        spec.bldr_url = self.bldr_url.clone();
-        spec.channel = self.channel.clone();
-        spec.topology = self.topology;
-        spec.update_strategy = self.update_strategy;
-        spec.binds = self.binds.clone();
-        spec.config_from = self.config_from.clone();
+        spec.set_bldr_url(self.bldr_url.clone());
+        spec.set_channel(self.channel.clone());
+        spec.set_topology(self.topology);
+        spec.set_update_strategy(self.update_strategy);
+        spec.set_binds(self.binds.clone());
+        spec.set_config_from(self.config_from.clone());
         if let Some(ref password) = self.svc_encrypted_password {
-            spec.svc_encrypted_password = Some(password.clone())
+            spec.set_svc_encrypted_password(password.clone())
         }
         spec
     }

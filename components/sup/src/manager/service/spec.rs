@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Chef Software Inc. and/or applicable contributors
+// Copyright (c) 2016 Chef Software Inc. and/or applicable contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,68 +14,32 @@
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::{BufReader, Read, Write};
 use std::iter::FromIterator;
+use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::result;
 use std::str::FromStr;
 
+use glob::glob;
 use hcore;
-use hcore::channel::STABLE_CHANNEL;
 use hcore::package::metadata::BindMapping;
 use hcore::package::{PackageIdent, PackageInstall};
-use hcore::service::{ApplicationEnvironment, BindingMode, ServiceGroup};
-use hcore::url::DEFAULT_BLDR_URL;
-use hcore::util::{deserialize_using_from_str, serialize_using_to_string};
+use hcore::service::{ApplicationEnvironment, ServiceGroup};
+use hcore::util::deserialize_using_from_str;
 use protocol;
-use rand::{thread_rng, Rng};
 use serde::{self, Deserialize};
 use toml;
 
 use super::composite_spec::CompositeSpec;
-use super::{Topology, UpdateStrategy};
 use error::{Error, Result, SupError};
 
 static LOGKEY: &'static str = "SS";
-static DEFAULT_GROUP: &'static str = "default";
 const SPEC_FILE_EXT: &'static str = "spec";
+const SPEC_FILE_GLOB: &'static str = "*.spec";
 
 pub type BindMap = HashMap<PackageIdent, Vec<BindMapping>>;
-
-#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-pub enum DesiredState {
-    Down,
-    Up,
-}
-
-impl Default for DesiredState {
-    fn default() -> DesiredState {
-        DesiredState::Up
-    }
-}
-
-impl fmt::Display for DesiredState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let value = match *self {
-            DesiredState::Down => "down",
-            DesiredState::Up => "up",
-        };
-        write!(f, "{}", value)
-    }
-}
-
-impl FromStr for DesiredState {
-    type Err = SupError;
-
-    fn from_str(value: &str) -> result::Result<Self, Self::Err> {
-        match value.to_lowercase().as_ref() {
-            "down" => Ok(DesiredState::Down),
-            "up" => Ok(DesiredState::Up),
-            _ => Err(sup_error!(Error::BadDesiredState(value.to_string()))),
-        }
-    }
-}
 
 pub enum Spec {
     Service(ServiceSpec),
@@ -86,7 +50,7 @@ impl Spec {
     pub fn ident(&self) -> &PackageIdent {
         match self {
             &Spec::Composite(ref s, _) => s.ident(),
-            &Spec::Service(ref s) => s.ident.as_ref(),
+            &Spec::Service(ref s) => s.get_ident(),
         }
     }
 }
@@ -123,49 +87,42 @@ pub trait IntoServiceSpec {
 
 impl IntoServiceSpec for protocol::ctl::SvcLoad {
     fn into_spec(&self, spec: &mut ServiceSpec) {
-        spec.ident = self.get_ident().clone().into();
+        spec.set_ident(self.get_ident().clone().into());
         if self.has_group() {
-            spec.group = self.get_group().to_string();
+            spec.set_group(self.get_group().to_string());
         }
         if self.has_application_environment() {
-            spec.application_environment = Some(
-                hcore::service::ApplicationEnvironment::new(
-                    self.get_application_environment().get_application(),
-                    self.get_application_environment().get_environment(),
-                ).unwrap(),
-            )
+            spec.set_application_environment(self.get_application_environment().clone());
         }
         if self.has_bldr_url() {
-            spec.bldr_url = self.get_bldr_url().to_string();
+            spec.set_bldr_url(self.get_bldr_url().to_string());
         }
         if self.has_bldr_channel() {
-            spec.channel = self.get_bldr_channel().to_string();
+            spec.set_channel(self.get_bldr_channel().to_string());
         }
         if self.has_topology() {
-            spec.topology = self.get_topology();
+            spec.set_topology(self.get_topology());
         }
         if self.has_update_strategy() {
-            spec.update_strategy = self.get_update_strategy();
+            spec.set_update_strategy(self.get_update_strategy());
         }
         if self.has_specified_binds() {
-            let binds: Vec<ServiceBind> = self.get_binds()
+            let (_, standard) = self.get_binds()
+                .clone()
                 .into_iter()
-                .map(Clone::clone)
-                .map(Into::into)
-                .collect();
-            let (_, standard) = binds.into_iter().partition(|ref bind| bind.is_composite());
-            spec.binds = standard;
+                .partition(|ref bind| bind.has_service_name());
+            spec.set_binds(standard);
         }
         if self.has_binding_mode() {
-            spec.binding_mode = self.get_binding_mode().into();
+            spec.set_binding_mode(self.get_binding_mode());
         }
         if self.has_config_from() {
-            spec.config_from = Some(PathBuf::from(self.get_config_from()));
+            spec.set_config_from(self.get_config_from().to_string());
         }
         if self.has_svc_encrypted_password() {
-            spec.svc_encrypted_password = Some(self.get_svc_encrypted_password().to_string());
+            spec.set_svc_encrypted_password(self.get_svc_encrypted_password().to_string());
         }
-        spec.composite = None;
+        spec.clear_composite();
     }
 
     /// All specs in a composite currently share a lot of the same
@@ -191,16 +148,16 @@ impl IntoServiceSpec for protocol::ctl::SvcLoad {
         // All the service specs will be customized copies of this.
         let mut base_spec = ServiceSpec::default();
         self.into_spec(&mut base_spec);
-        base_spec.composite = Some(composite_name);
+        base_spec.set_composite(composite_name);
         // TODO (CM): Not dealing with service passwords for now, since
         // that's a Windows-only feature, and we don't currently build
         // Windows composites yet. And we don't have a nice way target
         // them on a per-service basis.
-        base_spec.svc_encrypted_password = None;
+        base_spec.clear_svc_encrypted_password();
         // TODO (CM): Not setting the dev-mode service config_from value
         // because we don't currently have a nice way to target them on a
         // per-service basis.
-        base_spec.config_from = None;
+        base_spec.clear_config_from();
 
         let composite_binds = if self.has_specified_binds() {
             let binds: Vec<ServiceBind> = self.get_binds()
@@ -217,7 +174,7 @@ impl IntoServiceSpec for protocol::ctl::SvcLoad {
         for service in services {
             // Customize each service's spec as appropriate
             let mut spec = base_spec.clone();
-            spec.ident = service;
+            spec.set_ident(service);
             if let Some(ref binds) = composite_binds {
                 set_composite_binds(&mut spec, &mut bind_map, &binds);
             }
@@ -229,121 +186,42 @@ impl IntoServiceSpec for protocol::ctl::SvcLoad {
     fn update_composite(&self, bind_map: &mut BindMap, spec: &mut ServiceSpec) {
         // We only want to update fields that were set by SvcLoad
         if self.has_group() {
-            spec.group = self.get_group().to_string();
+            spec.set_group(self.get_group().to_string());
         }
         if self.has_application_environment() {
-            spec.application_environment = Some(
-                hcore::service::ApplicationEnvironment::new(
-                    self.get_application_environment().get_application(),
-                    self.get_application_environment().get_environment(),
-                ).unwrap(),
-            )
+            spec.set_application_environment(self.get_application_environment().clone());
         }
         if self.has_bldr_url() {
-            spec.bldr_url = self.get_bldr_url().to_string();
+            spec.set_bldr_url(self.get_bldr_url().to_string());
         }
         if self.has_bldr_channel() {
-            spec.channel = self.get_bldr_channel().to_string();
+            spec.set_channel(self.get_bldr_channel().to_string());
         }
         if self.has_topology() {
-            spec.topology = self.get_topology();
+            spec.set_topology(self.get_topology());
         }
         if self.has_update_strategy() {
-            spec.update_strategy = self.get_update_strategy();
+            spec.set_update_strategy(self.get_update_strategy());
         }
         if self.has_specified_binds() {
-            let binds: Vec<ServiceBind> = self.get_binds()
-                .iter()
-                .map(Clone::clone)
-                .map(Into::into)
-                .collect();
-            let (composite, standard) = binds.into_iter().partition(|ref bind| bind.is_composite());
-            spec.binds = standard;
+            let (composite, standard) = self.get_binds()
+                .clone()
+                .into_iter()
+                .partition(|bind| bind.has_service_name());
+            spec.set_binds(standard);
             set_composite_binds(spec, bind_map, &composite);
         }
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-#[serde(default)]
-pub struct ServiceSpec {
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub ident: PackageIdent,
-    pub group: String,
-    #[serde(deserialize_with = "deserialize_application_environment",
-            skip_serializing_if = "Option::is_none")]
-    pub application_environment: Option<ApplicationEnvironment>,
-    pub bldr_url: String,
-    pub channel: String,
-    pub topology: Topology,
-    pub update_strategy: UpdateStrategy,
-    pub binds: Vec<ServiceBind>,
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub binding_mode: BindingMode,
-    pub config_from: Option<PathBuf>,
-    #[serde(deserialize_with = "deserialize_using_from_str",
-            serialize_with = "serialize_using_to_string")]
-    pub desired_state: DesiredState,
-    pub svc_encrypted_password: Option<String>,
-    // The name of the composite this service is a part of
-    pub composite: Option<String>,
-}
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq)]
+pub struct ServiceSpec(protocol::types::ServiceSpec);
 
 impl ServiceSpec {
     pub fn default_for(ident: PackageIdent) -> Self {
         let mut spec = Self::default();
-        spec.ident = ident;
+        spec.set_ident(ident.into());
         spec
-    }
-
-    fn to_toml_string(&self) -> Result<String> {
-        if self.ident == PackageIdent::default() {
-            return Err(sup_error!(Error::MissingRequiredIdent));
-        }
-        toml::to_string(self).map_err(|err| sup_error!(Error::ServiceSpecRender(err)))
-    }
-
-    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let file = File::open(&path)
-            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
-        let mut file = BufReader::new(file);
-        let mut buf = String::new();
-        file.read_to_string(&mut buf)
-            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
-        Self::from_str(&buf)
-    }
-
-    pub fn to_file<P: AsRef<Path>>(&self, path: P) -> Result<()> {
-        debug!(
-            "Writing service spec to '{}': {:?}",
-            path.as_ref().display(),
-            &self
-        );
-        let dst_path = path.as_ref()
-            .parent()
-            .expect("Cannot determine parent directory for service spec");
-        let tmpfile = path.as_ref()
-            .with_extension(thread_rng().gen_ascii_chars().take(8).collect::<String>());
-        fs::create_dir_all(dst_path)
-            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
-        // Release the write file handle before the end of the function since we're done
-        {
-            let mut file = File::create(&tmpfile)
-                .map_err(|err| sup_error!(Error::ServiceSpecFileIO(tmpfile.to_path_buf(), err)))?;
-            let toml = self.to_toml_string()?;
-            file.write_all(toml.as_bytes())
-                .map_err(|err| sup_error!(Error::ServiceSpecFileIO(tmpfile.to_path_buf(), err)))?;
-        }
-        fs::rename(&tmpfile, path.as_ref())
-            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
-
-        Ok(())
-    }
-
-    pub fn file_name(&self) -> String {
-        format!("{}.{}", &self.ident.name, SPEC_FILE_EXT)
     }
 
     pub fn validate(&self, package: &PackageInstall) -> Result<()> {
@@ -360,7 +238,7 @@ impl ServiceSpec {
     /// * If any given service binds are in neither required nor optional package binds
     fn validate_binds(&self, package: &PackageInstall) -> Result<()> {
         let mut svc_binds: HashSet<String> =
-            HashSet::from_iter(self.binds.iter().cloned().map(|b| b.name));
+            HashSet::from_iter(self.get_binds().iter().cloned().map(|b| b.get_name()));
 
         let mut missing_req_binds = Vec::new();
         // Remove each service bind that matches a required package bind. If a required package
@@ -395,31 +273,91 @@ impl ServiceSpec {
     }
 }
 
-impl Default for ServiceSpec {
-    fn default() -> Self {
-        ServiceSpec {
-            ident: PackageIdent::default(),
-            group: DEFAULT_GROUP.to_string(),
-            application_environment: None,
-            bldr_url: DEFAULT_BLDR_URL.to_string(),
-            channel: STABLE_CHANNEL.to_string(),
-            topology: Topology::default(),
-            update_strategy: UpdateStrategy::default(),
-            binds: Vec::default(),
-            binding_mode: BindingMode::default(),
-            config_from: None,
-            desired_state: DesiredState::default(),
-            svc_encrypted_password: None,
-            composite: None,
-        }
+impl Deref for ServiceSpec {
+    type Target = protocol::types::ServiceSpec;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
-impl FromStr for ServiceSpec {
+impl DerefMut for ServiceSpec {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[serde(default)]
+pub struct ServiceSpecLegacy {
+    #[serde(deserialize_with = "deserialize_using_from_str",
+            serialize_with = "serialize_using_to_string")]
+    pub ident: PackageIdent,
+    pub group: String,
+    #[serde(deserialize_with = "deserialize_application_environment",
+            skip_serializing_if = "Option::is_none")]
+    pub application_environment: Option<ApplicationEnvironment>,
+    pub bldr_url: String,
+    pub channel: String,
+    pub topology: Topology,
+    pub update_strategy: UpdateStrategy,
+    pub binds: Vec<ServiceBind>,
+    #[serde(deserialize_with = "deserialize_using_from_str",
+            serialize_with = "serialize_using_to_string")]
+    pub binding_mode: BindingMode,
+    pub config_from: Option<PathBuf>,
+    #[serde(deserialize_with = "deserialize_using_from_str",
+            serialize_with = "serialize_using_to_string")]
+    pub desired_state: ProcessState,
+    pub svc_encrypted_password: Option<String>,
+    pub composite: Option<String>,
+}
+
+impl ServiceSpecLegacy {
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+        let file = File::open(&path)
+            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
+        let mut file = BufReader::new(file);
+        let mut buf = String::new();
+        file.read_to_string(&mut buf)
+            .map_err(|err| sup_error!(Error::ServiceSpecFileIO(path.as_ref().to_path_buf(), err)))?;
+        Self::from_str(&buf)
+    }
+
+    pub fn file_name(&self) -> String {
+        format!("{}.{}", &self.ident.name, SPEC_FILE_EXT)
+    }
+
+    pub fn to_latest(self) -> ServiceSpec {
+        let mut spec = ServiceSpec::default();
+        spec.set_ident(self.ident.into());
+        spec.set_group(self.group);
+        spec.set_application_environment(self.application_environment);
+        spec.set_bldr_url(self.bldr_url);
+        spec.set_channel(self.channel);
+        spec.set_topology(self.topology);
+        spec.set_update_strategy(self.update_strategy);
+        spec.set_binds(self.binds.into());
+        spec.set_binding_mode(self.binding_mode);
+        if let Some(config_from) = self.config_from {
+            spec.set_config_from(config_from);
+        }
+        spec.set_desired_state(self.desired_state);
+        if let Some(svc_encrypted_password) = self.svc_encrypted_password {
+            spec.set_svc_encrypted_password(svc_encrypted_password);
+        }
+        if let Some(composite) = self.composite {
+            spec.set_composite(composite);
+        }
+        spec
+    }
+}
+
+impl FromStr for ServiceSpecLegacy {
     type Err = SupError;
 
     fn from_str(toml: &str) -> result::Result<Self, Self::Err> {
-        let spec: ServiceSpec =
+        let spec: ServiceSpecLegacy =
             toml::from_str(toml).map_err(|e| sup_error!(Error::ServiceSpecParse(e)))?;
         if spec.ident == PackageIdent::default() {
             return Err(sup_error!(Error::MissingRequiredIdent));
@@ -494,6 +432,20 @@ impl serde::Serialize for ServiceBind {
     }
 }
 
+pub fn spec_files<T>(watch_path: T) -> Result<Vec<PathBuf>>
+where
+    T: AsRef<Path>,
+{
+    Ok(glob(&watch_path
+        .as_ref()
+        .join(SPEC_FILE_GLOB)
+        .display()
+        .to_string())?
+        .filter_map(|p| p.ok())
+        .filter(|p| p.is_file())
+        .collect())
+}
+
 /// Generate the binds for a composite's service, taking into account
 /// both the values laid out in composite definition and any CLI value
 /// the user may have specified. This allows the user to override a
@@ -516,7 +468,7 @@ fn set_composite_binds(spec: &mut ServiceSpec, bind_map: &mut BindMap, binds: &V
     let mut final_binds: HashMap<String, ServiceBind> = HashMap::new();
 
     // First, generate the binds from the composite
-    if let Some(bind_mappings) = bind_map.remove(&spec.ident) {
+    if let Some(bind_mappings) = bind_map.remove(spec.get_ident()) {
         // Turn each BindMapping into a ServiceBind
 
         // NOTE: We are explicitly NOT generating binds that include
@@ -530,9 +482,9 @@ fn set_composite_binds(spec: &mut ServiceSpec, bind_map: &mut BindMap, binds: &V
         // active supervisor, and so we can't generate binds that include organizations.
         for bind_mapping in bind_mappings.iter() {
             let group = ServiceGroup::new(
-                spec.application_environment.as_ref(),
+                spec.get_application_environment(),
                 &bind_mapping.satisfying_service.name,
-                &spec.group,
+                spec.get_group(),
                 None, // <-- organization
             ).expect(
                 "Failed to parse bind mapping into service group. Did you validate your input?",
@@ -553,13 +505,13 @@ fn set_composite_binds(spec: &mut ServiceSpec, bind_map: &mut BindMap, binds: &V
     // Note that it consumes the values from cli_binds
     for bind in binds
         .iter()
-        .filter(|bind| bind.service_name.as_ref().unwrap() == &spec.ident.name)
+        .filter(|bind| bind.service_name.as_ref().unwrap() == spec.get_ident().get_name())
     {
         final_binds.insert(bind.name.clone(), bind.clone());
     }
 
     // Now take all the ServiceBinds we've collected.
-    spec.binds = final_binds.drain().map(|(_, v)| v).collect();
+    spec.set_binds(final_binds.drain().map(|(_, v)| v).collect());
 }
 
 #[cfg(test)]
@@ -703,7 +655,7 @@ mod test {
             ],
             binding_mode: BindingMode::Relaxed,
             config_from: Some(PathBuf::from("/only/for/development")),
-            desired_state: DesiredState::Down,
+            desired_state: ProcessState::Down,
             svc_encrypted_password: None,
             composite: None,
         };
@@ -853,7 +805,7 @@ mod test {
             ],
             binding_mode: BindingMode::Relaxed,
             config_from: Some(PathBuf::from("/only/for/development")),
-            desired_state: DesiredState::Down,
+            desired_state: ProcessState::Down,
             svc_encrypted_password: None,
             composite: None,
         };

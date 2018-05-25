@@ -1866,6 +1866,854 @@ impl ::protobuf::reflect::ProtobufValue for ServiceGroup {
 }
 
 #[derive(PartialEq,Clone,Default)]
+pub struct ServiceSpec {
+    // message fields
+    ident: ::protobuf::SingularPtrField<PackageIdent>,
+    group: ::protobuf::SingularField<::std::string::String>,
+    application_environment: ::protobuf::SingularPtrField<ApplicationEnvironment>,
+    bldr_url: ::protobuf::SingularField<::std::string::String>,
+    channel: ::protobuf::SingularField<::std::string::String>,
+    topology: ::std::option::Option<Topology>,
+    update_strategy: ::std::option::Option<UpdateStrategy>,
+    binds: ::protobuf::RepeatedField<ServiceBind>,
+    binding_mode: ::std::option::Option<BindingMode>,
+    config_from: ::protobuf::SingularField<::std::string::String>,
+    desired_state: ::std::option::Option<ProcessState>,
+    svc_encrypted_password: ::protobuf::SingularField<::std::string::String>,
+    composite: ::protobuf::SingularField<::std::string::String>,
+    // special fields
+    unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::protobuf::CachedSize,
+}
+
+// see codegen.rs for the explanation why impl Sync explicitly
+unsafe impl ::std::marker::Sync for ServiceSpec {}
+
+impl ServiceSpec {
+    pub fn new() -> ServiceSpec {
+        ::std::default::Default::default()
+    }
+
+    pub fn default_instance() -> &'static ServiceSpec {
+        static mut instance: ::protobuf::lazy::Lazy<ServiceSpec> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ServiceSpec,
+        };
+        unsafe {
+            instance.get(ServiceSpec::new)
+        }
+    }
+
+    // required .PackageIdent ident = 1;
+
+    pub fn clear_ident(&mut self) {
+        self.ident.clear();
+    }
+
+    pub fn has_ident(&self) -> bool {
+        self.ident.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_ident(&mut self, v: PackageIdent) {
+        self.ident = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_ident(&mut self) -> &mut PackageIdent {
+        if self.ident.is_none() {
+            self.ident.set_default();
+        }
+        self.ident.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_ident(&mut self) -> PackageIdent {
+        self.ident.take().unwrap_or_else(|| PackageIdent::new())
+    }
+
+    pub fn get_ident(&self) -> &PackageIdent {
+        self.ident.as_ref().unwrap_or_else(|| PackageIdent::default_instance())
+    }
+
+    fn get_ident_for_reflect(&self) -> &::protobuf::SingularPtrField<PackageIdent> {
+        &self.ident
+    }
+
+    fn mut_ident_for_reflect(&mut self) -> &mut ::protobuf::SingularPtrField<PackageIdent> {
+        &mut self.ident
+    }
+
+    // optional string group = 2;
+
+    pub fn clear_group(&mut self) {
+        self.group.clear();
+    }
+
+    pub fn has_group(&self) -> bool {
+        self.group.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_group(&mut self, v: ::std::string::String) {
+        self.group = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_group(&mut self) -> &mut ::std::string::String {
+        if self.group.is_none() {
+            self.group.set_default();
+        }
+        self.group.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_group(&mut self) -> ::std::string::String {
+        self.group.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_group(&self) -> &str {
+        match self.group.as_ref() {
+            Some(v) => &v,
+            None => "default",
+        }
+    }
+
+    fn get_group_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.group
+    }
+
+    fn mut_group_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.group
+    }
+
+    // optional .ApplicationEnvironment application_environment = 3;
+
+    pub fn clear_application_environment(&mut self) {
+        self.application_environment.clear();
+    }
+
+    pub fn has_application_environment(&self) -> bool {
+        self.application_environment.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_application_environment(&mut self, v: ApplicationEnvironment) {
+        self.application_environment = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_application_environment(&mut self) -> &mut ApplicationEnvironment {
+        if self.application_environment.is_none() {
+            self.application_environment.set_default();
+        }
+        self.application_environment.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_application_environment(&mut self) -> ApplicationEnvironment {
+        self.application_environment.take().unwrap_or_else(|| ApplicationEnvironment::new())
+    }
+
+    pub fn get_application_environment(&self) -> &ApplicationEnvironment {
+        self.application_environment.as_ref().unwrap_or_else(|| ApplicationEnvironment::default_instance())
+    }
+
+    fn get_application_environment_for_reflect(&self) -> &::protobuf::SingularPtrField<ApplicationEnvironment> {
+        &self.application_environment
+    }
+
+    fn mut_application_environment_for_reflect(&mut self) -> &mut ::protobuf::SingularPtrField<ApplicationEnvironment> {
+        &mut self.application_environment
+    }
+
+    // optional string bldr_url = 4;
+
+    pub fn clear_bldr_url(&mut self) {
+        self.bldr_url.clear();
+    }
+
+    pub fn has_bldr_url(&self) -> bool {
+        self.bldr_url.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_bldr_url(&mut self, v: ::std::string::String) {
+        self.bldr_url = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_bldr_url(&mut self) -> &mut ::std::string::String {
+        if self.bldr_url.is_none() {
+            self.bldr_url.set_default();
+        }
+        self.bldr_url.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_bldr_url(&mut self) -> ::std::string::String {
+        self.bldr_url.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_bldr_url(&self) -> &str {
+        match self.bldr_url.as_ref() {
+            Some(v) => &v,
+            None => "https://bldr.habitat.sh",
+        }
+    }
+
+    fn get_bldr_url_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.bldr_url
+    }
+
+    fn mut_bldr_url_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.bldr_url
+    }
+
+    // optional string channel = 5;
+
+    pub fn clear_channel(&mut self) {
+        self.channel.clear();
+    }
+
+    pub fn has_channel(&self) -> bool {
+        self.channel.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_channel(&mut self, v: ::std::string::String) {
+        self.channel = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_channel(&mut self) -> &mut ::std::string::String {
+        if self.channel.is_none() {
+            self.channel.set_default();
+        }
+        self.channel.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_channel(&mut self) -> ::std::string::String {
+        self.channel.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_channel(&self) -> &str {
+        match self.channel.as_ref() {
+            Some(v) => &v,
+            None => "stable",
+        }
+    }
+
+    fn get_channel_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.channel
+    }
+
+    fn mut_channel_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.channel
+    }
+
+    // optional .Topology topology = 6;
+
+    pub fn clear_topology(&mut self) {
+        self.topology = ::std::option::Option::None;
+    }
+
+    pub fn has_topology(&self) -> bool {
+        self.topology.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_topology(&mut self, v: Topology) {
+        self.topology = ::std::option::Option::Some(v);
+    }
+
+    pub fn get_topology(&self) -> Topology {
+        self.topology.unwrap_or(Topology::Standalone)
+    }
+
+    fn get_topology_for_reflect(&self) -> &::std::option::Option<Topology> {
+        &self.topology
+    }
+
+    fn mut_topology_for_reflect(&mut self) -> &mut ::std::option::Option<Topology> {
+        &mut self.topology
+    }
+
+    // optional .UpdateStrategy update_strategy = 7;
+
+    pub fn clear_update_strategy(&mut self) {
+        self.update_strategy = ::std::option::Option::None;
+    }
+
+    pub fn has_update_strategy(&self) -> bool {
+        self.update_strategy.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_update_strategy(&mut self, v: UpdateStrategy) {
+        self.update_strategy = ::std::option::Option::Some(v);
+    }
+
+    pub fn get_update_strategy(&self) -> UpdateStrategy {
+        self.update_strategy.unwrap_or(UpdateStrategy::None)
+    }
+
+    fn get_update_strategy_for_reflect(&self) -> &::std::option::Option<UpdateStrategy> {
+        &self.update_strategy
+    }
+
+    fn mut_update_strategy_for_reflect(&mut self) -> &mut ::std::option::Option<UpdateStrategy> {
+        &mut self.update_strategy
+    }
+
+    // repeated .ServiceBind binds = 8;
+
+    pub fn clear_binds(&mut self) {
+        self.binds.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_binds(&mut self, v: ::protobuf::RepeatedField<ServiceBind>) {
+        self.binds = v;
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_binds(&mut self) -> &mut ::protobuf::RepeatedField<ServiceBind> {
+        &mut self.binds
+    }
+
+    // Take field
+    pub fn take_binds(&mut self) -> ::protobuf::RepeatedField<ServiceBind> {
+        ::std::mem::replace(&mut self.binds, ::protobuf::RepeatedField::new())
+    }
+
+    pub fn get_binds(&self) -> &[ServiceBind] {
+        &self.binds
+    }
+
+    fn get_binds_for_reflect(&self) -> &::protobuf::RepeatedField<ServiceBind> {
+        &self.binds
+    }
+
+    fn mut_binds_for_reflect(&mut self) -> &mut ::protobuf::RepeatedField<ServiceBind> {
+        &mut self.binds
+    }
+
+    // optional .BindingMode binding_mode = 9;
+
+    pub fn clear_binding_mode(&mut self) {
+        self.binding_mode = ::std::option::Option::None;
+    }
+
+    pub fn has_binding_mode(&self) -> bool {
+        self.binding_mode.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_binding_mode(&mut self, v: BindingMode) {
+        self.binding_mode = ::std::option::Option::Some(v);
+    }
+
+    pub fn get_binding_mode(&self) -> BindingMode {
+        self.binding_mode.unwrap_or(BindingMode::Relaxed)
+    }
+
+    fn get_binding_mode_for_reflect(&self) -> &::std::option::Option<BindingMode> {
+        &self.binding_mode
+    }
+
+    fn mut_binding_mode_for_reflect(&mut self) -> &mut ::std::option::Option<BindingMode> {
+        &mut self.binding_mode
+    }
+
+    // optional string config_from = 10;
+
+    pub fn clear_config_from(&mut self) {
+        self.config_from.clear();
+    }
+
+    pub fn has_config_from(&self) -> bool {
+        self.config_from.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_config_from(&mut self, v: ::std::string::String) {
+        self.config_from = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_config_from(&mut self) -> &mut ::std::string::String {
+        if self.config_from.is_none() {
+            self.config_from.set_default();
+        }
+        self.config_from.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_config_from(&mut self) -> ::std::string::String {
+        self.config_from.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_config_from(&self) -> &str {
+        match self.config_from.as_ref() {
+            Some(v) => &v,
+            None => "",
+        }
+    }
+
+    fn get_config_from_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.config_from
+    }
+
+    fn mut_config_from_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.config_from
+    }
+
+    // optional .ProcessState desired_state = 11;
+
+    pub fn clear_desired_state(&mut self) {
+        self.desired_state = ::std::option::Option::None;
+    }
+
+    pub fn has_desired_state(&self) -> bool {
+        self.desired_state.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_desired_state(&mut self, v: ProcessState) {
+        self.desired_state = ::std::option::Option::Some(v);
+    }
+
+    pub fn get_desired_state(&self) -> ProcessState {
+        self.desired_state.unwrap_or(ProcessState::Up)
+    }
+
+    fn get_desired_state_for_reflect(&self) -> &::std::option::Option<ProcessState> {
+        &self.desired_state
+    }
+
+    fn mut_desired_state_for_reflect(&mut self) -> &mut ::std::option::Option<ProcessState> {
+        &mut self.desired_state
+    }
+
+    // optional string svc_encrypted_password = 12;
+
+    pub fn clear_svc_encrypted_password(&mut self) {
+        self.svc_encrypted_password.clear();
+    }
+
+    pub fn has_svc_encrypted_password(&self) -> bool {
+        self.svc_encrypted_password.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_svc_encrypted_password(&mut self, v: ::std::string::String) {
+        self.svc_encrypted_password = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_svc_encrypted_password(&mut self) -> &mut ::std::string::String {
+        if self.svc_encrypted_password.is_none() {
+            self.svc_encrypted_password.set_default();
+        }
+        self.svc_encrypted_password.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_svc_encrypted_password(&mut self) -> ::std::string::String {
+        self.svc_encrypted_password.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_svc_encrypted_password(&self) -> &str {
+        match self.svc_encrypted_password.as_ref() {
+            Some(v) => &v,
+            None => "",
+        }
+    }
+
+    fn get_svc_encrypted_password_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.svc_encrypted_password
+    }
+
+    fn mut_svc_encrypted_password_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.svc_encrypted_password
+    }
+
+    // optional string composite = 13;
+
+    pub fn clear_composite(&mut self) {
+        self.composite.clear();
+    }
+
+    pub fn has_composite(&self) -> bool {
+        self.composite.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_composite(&mut self, v: ::std::string::String) {
+        self.composite = ::protobuf::SingularField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_composite(&mut self) -> &mut ::std::string::String {
+        if self.composite.is_none() {
+            self.composite.set_default();
+        }
+        self.composite.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_composite(&mut self) -> ::std::string::String {
+        self.composite.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
+    pub fn get_composite(&self) -> &str {
+        match self.composite.as_ref() {
+            Some(v) => &v,
+            None => "",
+        }
+    }
+
+    fn get_composite_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.composite
+    }
+
+    fn mut_composite_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.composite
+    }
+}
+
+impl ::protobuf::Message for ServiceSpec {
+    fn is_initialized(&self) -> bool {
+        if self.ident.is_none() {
+            return false;
+        }
+        for v in &self.ident {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.application_environment {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        for v in &self.binds {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.ident)?;
+                },
+                2 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.group)?;
+                },
+                3 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.application_environment)?;
+                },
+                4 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.bldr_url)?;
+                },
+                5 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.channel)?;
+                },
+                6 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.topology, 6, &mut self.unknown_fields)?
+                },
+                7 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.update_strategy, 7, &mut self.unknown_fields)?
+                },
+                8 => {
+                    ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.binds)?;
+                },
+                9 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.binding_mode, 9, &mut self.unknown_fields)?
+                },
+                10 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.config_from)?;
+                },
+                11 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.desired_state, 11, &mut self.unknown_fields)?
+                },
+                12 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.svc_encrypted_password)?;
+                },
+                13 => {
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.composite)?;
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(ref v) = self.ident.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.group.as_ref() {
+            my_size += ::protobuf::rt::string_size(2, &v);
+        }
+        if let Some(ref v) = self.application_environment.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
+        if let Some(ref v) = self.bldr_url.as_ref() {
+            my_size += ::protobuf::rt::string_size(4, &v);
+        }
+        if let Some(ref v) = self.channel.as_ref() {
+            my_size += ::protobuf::rt::string_size(5, &v);
+        }
+        if let Some(v) = self.topology {
+            my_size += ::protobuf::rt::enum_size(6, v);
+        }
+        if let Some(v) = self.update_strategy {
+            my_size += ::protobuf::rt::enum_size(7, v);
+        }
+        for value in &self.binds {
+            let len = value.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        };
+        if let Some(v) = self.binding_mode {
+            my_size += ::protobuf::rt::enum_size(9, v);
+        }
+        if let Some(ref v) = self.config_from.as_ref() {
+            my_size += ::protobuf::rt::string_size(10, &v);
+        }
+        if let Some(v) = self.desired_state {
+            my_size += ::protobuf::rt::enum_size(11, v);
+        }
+        if let Some(ref v) = self.svc_encrypted_password.as_ref() {
+            my_size += ::protobuf::rt::string_size(12, &v);
+        }
+        if let Some(ref v) = self.composite.as_ref() {
+            my_size += ::protobuf::rt::string_size(13, &v);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
+        if let Some(ref v) = self.ident.as_ref() {
+            os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.group.as_ref() {
+            os.write_string(2, &v)?;
+        }
+        if let Some(ref v) = self.application_environment.as_ref() {
+            os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.bldr_url.as_ref() {
+            os.write_string(4, &v)?;
+        }
+        if let Some(ref v) = self.channel.as_ref() {
+            os.write_string(5, &v)?;
+        }
+        if let Some(v) = self.topology {
+            os.write_enum(6, v.value())?;
+        }
+        if let Some(v) = self.update_strategy {
+            os.write_enum(7, v.value())?;
+        }
+        for v in &self.binds {
+            os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        };
+        if let Some(v) = self.binding_mode {
+            os.write_enum(9, v.value())?;
+        }
+        if let Some(ref v) = self.config_from.as_ref() {
+            os.write_string(10, &v)?;
+        }
+        if let Some(v) = self.desired_state {
+            os.write_enum(11, v.value())?;
+        }
+        if let Some(ref v) = self.svc_encrypted_password.as_ref() {
+            os.write_string(12, &v)?;
+        }
+        if let Some(ref v) = self.composite.as_ref() {
+            os.write_string(13, &v)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
+    }
+    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
+        self as &mut ::std::any::Any
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for ServiceSpec {
+    fn new() -> ServiceSpec {
+        ServiceSpec::new()
+    }
+
+    fn descriptor_static(_: ::std::option::Option<ServiceSpec>) -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
+        };
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<PackageIdent>>(
+                    "ident",
+                    ServiceSpec::get_ident_for_reflect,
+                    ServiceSpec::mut_ident_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "group",
+                    ServiceSpec::get_group_for_reflect,
+                    ServiceSpec::mut_group_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ApplicationEnvironment>>(
+                    "application_environment",
+                    ServiceSpec::get_application_environment_for_reflect,
+                    ServiceSpec::mut_application_environment_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "bldr_url",
+                    ServiceSpec::get_bldr_url_for_reflect,
+                    ServiceSpec::mut_bldr_url_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "channel",
+                    ServiceSpec::get_channel_for_reflect,
+                    ServiceSpec::mut_channel_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<Topology>>(
+                    "topology",
+                    ServiceSpec::get_topology_for_reflect,
+                    ServiceSpec::mut_topology_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<UpdateStrategy>>(
+                    "update_strategy",
+                    ServiceSpec::get_update_strategy_for_reflect,
+                    ServiceSpec::mut_update_strategy_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<ServiceBind>>(
+                    "binds",
+                    ServiceSpec::get_binds_for_reflect,
+                    ServiceSpec::mut_binds_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<BindingMode>>(
+                    "binding_mode",
+                    ServiceSpec::get_binding_mode_for_reflect,
+                    ServiceSpec::mut_binding_mode_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "config_from",
+                    ServiceSpec::get_config_from_for_reflect,
+                    ServiceSpec::mut_config_from_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<ProcessState>>(
+                    "desired_state",
+                    ServiceSpec::get_desired_state_for_reflect,
+                    ServiceSpec::mut_desired_state_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "svc_encrypted_password",
+                    ServiceSpec::get_svc_encrypted_password_for_reflect,
+                    ServiceSpec::mut_svc_encrypted_password_for_reflect,
+                ));
+                fields.push(::protobuf::reflect::accessor::make_singular_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "composite",
+                    ServiceSpec::get_composite_for_reflect,
+                    ServiceSpec::mut_composite_for_reflect,
+                ));
+                ::protobuf::reflect::MessageDescriptor::new::<ServiceSpec>(
+                    "ServiceSpec",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+}
+
+impl ::protobuf::Clear for ServiceSpec {
+    fn clear(&mut self) {
+        self.clear_ident();
+        self.clear_group();
+        self.clear_application_environment();
+        self.clear_bldr_url();
+        self.clear_channel();
+        self.clear_topology();
+        self.clear_update_strategy();
+        self.clear_binds();
+        self.clear_binding_mode();
+        self.clear_config_from();
+        self.clear_desired_state();
+        self.clear_svc_encrypted_password();
+        self.clear_composite();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for ServiceSpec {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for ServiceSpec {
+    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
+        ::protobuf::reflect::ProtobufValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq,Clone,Default)]
 pub struct ServiceStatus {
     // message fields
     ident: ::protobuf::SingularPtrField<PackageIdent>,
@@ -2513,16 +3361,30 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x18\x02\x20\x01(\t:\x07defaultR\x05group\x12P\n\x17application_environm\
     ent\x18\x03\x20\x01(\x0b2\x17.ApplicationEnvironmentR\x16applicationEnvi\
     ronment\x12\"\n\x0corganization\x18\x04\x20\x01(\tR\x0corganization\"\
-    \xb0\x01\n\rServiceStatus\x12#\n\x05ident\x18\x01\x20\x01(\x0b2\r.Packag\
-    eIdentR\x05ident\x12(\n\x07process\x18\x02\x20\x01(\x0b2\x0e.ProcessStat\
-    usR\x07process\x122\n\rservice_group\x18\x03\x20\x01(\x0b2\r.ServiceGrou\
-    pR\x0cserviceGroup\x12\x1c\n\tcomposite\x18\x04\x20\x01(\tR\tcomposite*'\
-    \n\rInstallSource\x12\t\n\x05Ident\x10\0\x12\x0b\n\x07Archive\x10\x01*\
-    \x20\n\x0cProcessState\x12\x08\n\x04Down\x10\0\x12\x06\n\x02Up\x10\x01*&\
-    \n\x08Topology\x12\x0e\n\nStandalone\x10\0\x12\n\n\x06Leader\x10\x01*3\n\
-    \x0eUpdateStrategy\x12\x08\n\x04None\x10\0\x12\n\n\x06AtOnce\x10\x01\x12\
-    \x0b\n\x07Rolling\x10\x02*&\n\x0bBindingMode\x12\x0b\n\x07Relaxed\x10\0\
-    \x12\n\n\x06Strict\x10\x01\
+    \xf7\x04\n\x0bServiceSpec\x12#\n\x05ident\x18\x01\x20\x02(\x0b2\r.Packag\
+    eIdentR\x05ident\x12\x1d\n\x05group\x18\x02\x20\x01(\t:\x07defaultR\x05g\
+    roup\x12P\n\x17application_environment\x18\x03\x20\x01(\x0b2\x17.Applica\
+    tionEnvironmentR\x16applicationEnvironment\x122\n\x08bldr_url\x18\x04\
+    \x20\x01(\t:\x17https://bldr.habitat.shR\x07bldrUrl\x12\x20\n\x07channel\
+    \x18\x05\x20\x01(\t:\x06stableR\x07channel\x121\n\x08topology\x18\x06\
+    \x20\x01(\x0e2\t.Topology:\nStandaloneR\x08topology\x12>\n\x0fupdate_str\
+    ategy\x18\x07\x20\x01(\x0e2\x0f.UpdateStrategy:\x04NoneR\x0eupdateStrate\
+    gy\x12\"\n\x05binds\x18\x08\x20\x03(\x0b2\x0c.ServiceBindR\x05binds\x128\
+    \n\x0cbinding_mode\x18\t\x20\x01(\x0e2\x0c.BindingMode:\x07RelaxedR\x0bb\
+    indingMode\x12\x1f\n\x0bconfig_from\x18\n\x20\x01(\tR\nconfigFrom\x126\n\
+    \rdesired_state\x18\x0b\x20\x01(\x0e2\r.ProcessState:\x02UpR\x0cdesiredS\
+    tate\x124\n\x16svc_encrypted_password\x18\x0c\x20\x01(\tR\x14svcEncrypte\
+    dPassword\x12\x1c\n\tcomposite\x18\r\x20\x01(\tR\tcomposite\"\xb0\x01\n\
+    \rServiceStatus\x12#\n\x05ident\x18\x01\x20\x01(\x0b2\r.PackageIdentR\
+    \x05ident\x12(\n\x07process\x18\x02\x20\x01(\x0b2\x0e.ProcessStatusR\x07\
+    process\x122\n\rservice_group\x18\x03\x20\x01(\x0b2\r.ServiceGroupR\x0cs\
+    erviceGroup\x12\x1c\n\tcomposite\x18\x04\x20\x01(\tR\tcomposite*'\n\rIns\
+    tallSource\x12\t\n\x05Ident\x10\0\x12\x0b\n\x07Archive\x10\x01*\x20\n\
+    \x0cProcessState\x12\x08\n\x04Down\x10\0\x12\x06\n\x02Up\x10\x01*&\n\x08\
+    Topology\x12\x0e\n\nStandalone\x10\0\x12\n\n\x06Leader\x10\x01*3\n\x0eUp\
+    dateStrategy\x12\x08\n\x04None\x10\0\x12\n\n\x06AtOnce\x10\x01\x12\x0b\n\
+    \x07Rolling\x10\x02*&\n\x0bBindingMode\x12\x0b\n\x07Relaxed\x10\0\x12\n\
+    \n\x06Strict\x10\x01\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {

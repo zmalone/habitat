@@ -74,6 +74,22 @@ message ServiceGroup {
   optional string organization = 4;
 }
 
+message ServiceSpec {
+  required PackageIdent ident = 1;
+  optional string group = 2 [default = "default"];
+  optional ApplicationEnvironment application_environment = 3;
+  optional string bldr_url = 4 [default = "https://bldr.habitat.sh"];
+  optional string channel = 5 [default = "stable"];
+  optional Topology topology = 6 [default = Standalone];
+  optional UpdateStrategy update_strategy = 7 [default = None];
+  repeated ServiceBind binds = 8;
+  optional BindingMode binding_mode = 9 [default = Relaxed];
+  optional string config_from = 10;
+  optional ProcessState desired_state = 11 [default = Up];
+  optional string svc_encrypted_password = 12;
+  optional string composite = 13;
+}
+
 message ServiceStatus {
   optional PackageIdent ident = 1;
   optional ProcessStatus process = 2;

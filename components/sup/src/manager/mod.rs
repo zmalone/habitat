@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Chef Software Inc. and/or applicable contributors
+// Copyright (c) 2016 Chef Software Inc. and/or applicable contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ mod peer_watcher;
 mod periodic;
 mod self_updater;
 mod service_updater;
-mod spec_watcher;
 mod sys;
 mod user_config_watcher;
 
@@ -57,8 +56,8 @@ use hcore::package::metadata::PackageType;
 use hcore::package::{Identifiable, PackageIdent, PackageInstall};
 use hcore::service::ServiceGroup;
 use launcher_client::{LauncherCli, LAUNCHER_LOCK_CLEAN_ENV, LAUNCHER_PID_ENV};
-use protocol;
 use protocol::net::{self, ErrCode, NetResult};
+use protocol::{self, types::ProcessState};
 use serde;
 use serde_json;
 use time::{self, Duration as TimeDuration, Timespec};
@@ -67,11 +66,11 @@ use toml;
 
 use self::peer_watcher::PeerWatcher;
 use self::self_updater::{SelfUpdater, SUP_PKG_IDENT};
+use self::service::spec::{self, ServiceSpecLegacy};
 pub use self::service::{CompositeSpec, Service, ServiceBind, ServiceSpec, Spec, Topology,
                         UpdateStrategy};
-use self::service::{DesiredState, IntoServiceSpec, Pkg, ProcessState};
+use self::service::{DesiredState, IntoServiceSpec, Pkg};
 use self::service_updater::ServiceUpdater;
-use self::spec_watcher::{SpecWatcher, SpecWatcherEvent};
 pub use self::sys::Sys;
 use self::user_config_watcher::UserConfigWatcher;
 use VERSION;
@@ -192,7 +191,6 @@ pub struct Manager {
     launcher: LauncherCli,
     updater: ServiceUpdater,
     peer_watcher: Option<PeerWatcher>,
-    spec_watcher: SpecWatcher,
     user_config_watcher: UserConfigWatcher,
     organization: Option<String>,
     self_updater: Option<SelfUpdater>,
@@ -326,11 +324,11 @@ impl Manager {
         // unload services, though. Right now we watch files on disk and communicate with the
         // Supervisor asynchronously. We need to move to communicating directly with the
         // Supervisor's main loop through IPC.
-        match SpecWatcher::spec_files(&fs_cfg.specs_path) {
+        match spec::spec_files(&fs_cfg.specs_path) {
             Ok(specs) => for spec_file in specs {
-                match ServiceSpec::from_file(&spec_file) {
+                match ServiceSpecLegacy::from_file(&spec_file) {
                     Ok(spec) => {
-                        if let Err(err) = spec.to_file(&spec_file) {
+                        if let Err(err) = spec.to_latest(&spec_file) {
                             outputln!(
                                 "Unable to migrate service spec, {}, {}",
                                 spec_file.display(),
@@ -412,7 +410,6 @@ impl Manager {
             events_group: cfg.eventsrv_group,
             launcher: launcher,
             peer_watcher: peer_watcher,
-            spec_watcher: SpecWatcher::run(&fs_cfg.specs_path)?,
             user_config_watcher: UserConfigWatcher::new(),
             fs_cfg: Arc::new(fs_cfg),
             organization: cfg.organization,
@@ -512,11 +509,13 @@ impl Manager {
     }
 
     pub fn save_spec_for(cfg: &ManagerConfig, spec: &ServiceSpec) -> Result<()> {
-        spec.to_file(Self::spec_path_for(cfg, spec))
+        // JW TODO: Save this into the dat file
+        Ok(())
     }
 
     pub fn save_composite_spec_for(cfg: &ManagerConfig, spec: &CompositeSpec) -> Result<()> {
-        spec.to_file(Self::composite_path_for(cfg, spec))
+        // JW TODO: Save this into the dat file
+        Ok(())
     }
 
     fn clean_dirty_state<T>(state_path: T) -> Result<()>
@@ -597,7 +596,7 @@ impl Manager {
     }
 
     fn add_service(&mut self, spec: ServiceSpec) {
-        outputln!("Starting {}", &spec.ident);
+        outputln!("Starting {}", spec.get_ident());
         // JW TODO: This clone sucks, but our data structures are a bit messy here. What we really
         // want is the service to hold the spec and, on failure, return an error with the spec
         // back to us. Since we consume and deconstruct the spec in `Service::new()` which
@@ -611,7 +610,7 @@ impl Manager {
         ) {
             Ok(service) => service,
             Err(err) => {
-                outputln!("Unable to start {}, {}", &spec.ident, err);
+                outputln!("Unable to start {}, {}", spec.get_ident(), err);
                 return;
             }
         };
@@ -627,7 +626,7 @@ impl Manager {
                  {} and give the current user write access to it",
                 service.pkg.svc_path.display()
             );
-            outputln!("{} failed to start", &spec.ident);
+            outputln!("{} failed to start", spec.get_ident());
             return;
         }
 
@@ -666,7 +665,8 @@ impl Manager {
         if let Some(svc_load) = svc {
             Self::service_load(&self.state, &mut CtlRequest::default(), svc_load)?;
         }
-        self.start_initial_services_from_spec_watcher()?;
+        // JW TODO: Start initial services from dat file
+        // self.start_initial_services_from_spec_watcher()?;
 
         outputln!(
             "Starting gossip-listener on {}",
@@ -706,7 +706,8 @@ impl Manager {
                 self.shutdown();
                 return Ok(());
             }
-            self.update_running_services_from_spec_watcher()?;
+            // JW TODO: We don't need to consider what's on disk here anymore
+            // self.update_running_services_from_spec_watcher()?;
             self.update_peers_from_watch_file()?;
             self.update_running_services_from_user_config_watcher();
             self.check_for_updated_packages();
@@ -962,7 +963,7 @@ impl Manager {
                     Self::save_spec_for(&mgr.cfg, spec)?;
                     req.info(format!(
                         "The {} service was successfully loaded",
-                        spec.ident
+                        spec.get_ident()
                     ))?;
                 }
 
@@ -1009,14 +1010,14 @@ impl Manager {
                         util::pkg::satisfy_or_install(
                             req,
                             &source,
-                            &service_spec.bldr_url,
-                            &service_spec.channel,
+                            service_spec.get_bldr_url(),
+                            service_spec.get_channel(),
                         )?;
 
                         Self::save_spec_for(&mgr.cfg, &service_spec)?;
                         req.info(format!(
                             "The {} service was successfully loaded",
-                            service_spec.ident
+                            service_spec.get_ident()
                         ))?;
                     }
                     Spec::Composite(composite_spec, mut existing_service_specs) => {
@@ -1033,7 +1034,7 @@ impl Manager {
                                 Self::save_spec_for(&mgr.cfg, service_spec)?;
                                 req.info(format!(
                                     "The {} service was successfully loaded",
-                                    service_spec.ident
+                                    service_spec.get_ident()
                                 ))?;
                             }
                             req.info(format!(
@@ -1073,17 +1074,17 @@ impl Manager {
                             // composite
                             let mut old_spec_names = HashSet::new();
                             for s in existing_service_specs.iter() {
-                                old_spec_names.insert(s.ident.name.clone());
+                                old_spec_names.insert(s.get_ident().get_name().clone());
                             }
                             let mut new_spec_names = HashSet::new();
                             for s in new_service_specs.iter() {
-                                new_spec_names.insert(s.ident.name.clone());
+                                new_spec_names.insert(s.get_ident().get_name().clone());
                             }
 
                             let specs_to_delete: HashSet<_> =
                                 old_spec_names.difference(&new_spec_names).collect();
                             for spec in existing_service_specs.iter() {
-                                if specs_to_delete.contains(&spec.ident.name) {
+                                if specs_to_delete.contains(spec.get_ident().get_name()) {
                                     let file = Manager::spec_path_for(&mgr.cfg, spec);
                                     req.info(format!("Unloading {:?}", file))?;
                                     std::fs::remove_file(&file).map_err(|err| {
@@ -1102,7 +1103,7 @@ impl Manager {
                                 Self::save_spec_for(&mgr.cfg, spec)?;
                                 req.info(format!(
                                     "The {} service was successfully loaded",
-                                    spec.ident
+                                    spec.get_ident()
                                 ))?;
                             }
 
@@ -1170,8 +1171,8 @@ impl Manager {
         let updated_specs = match Self::existing_specs_for_ident(&mgr.cfg, &ident)? {
             Some(Spec::Service(mut spec)) => {
                 let mut updated_specs = vec![];
-                if spec.desired_state == DesiredState::Down {
-                    spec.desired_state = DesiredState::Up;
+                if spec.get_desired_state() == ProcessState::Down {
+                    spec.set_desired_state(ProcessState::Up);
                     updated_specs.push(spec);
                 }
                 updated_specs
@@ -1179,8 +1180,8 @@ impl Manager {
             Some(Spec::Composite(_, service_specs)) => {
                 let mut updated_specs = vec![];
                 for mut spec in service_specs {
-                    if spec.desired_state == DesiredState::Down {
-                        spec.desired_state = DesiredState::Up;
+                    if spec.get_desired_state() == ProcessState::Down {
+                        spec.set_desired_state(ProcessState::Up);
                         updated_specs.push(spec);
                     }
                 }
@@ -1218,8 +1219,8 @@ impl Manager {
         let updated_specs = match Self::existing_specs_for_ident(&mgr.cfg, &ident)? {
             Some(Spec::Service(mut spec)) => {
                 let mut updated_specs = vec![];
-                if spec.desired_state == DesiredState::Up {
-                    spec.desired_state = DesiredState::Down;
+                if spec.get_desired_state() == ProcessState::Up {
+                    spec.set_desired_state(ProcessState::Down);
                     updated_specs.push(spec);
                 }
                 updated_specs
@@ -1227,8 +1228,8 @@ impl Manager {
             Some(Spec::Composite(_, service_specs)) => {
                 let mut updated_specs = vec![];
                 for mut spec in service_specs {
-                    if spec.desired_state == DesiredState::Up {
-                        spec.desired_state = DesiredState::Down;
+                    if spec.get_desired_state() == ProcessState::Up {
+                        spec.set_desired_state(ProcessState::Down);
                         updated_specs.push(spec);
                     }
                 }
@@ -1345,14 +1346,15 @@ impl Manager {
             active_services.push(service.spec_ident.clone());
         }
 
-        for loaded in self.spec_watcher
-            .specs_from_watch_path()
-            .unwrap()
-            .values()
-            .filter(|s| !active_services.contains(&s.ident))
-        {
-            service_states.insert(loaded.ident.clone(), Timespec::new(0, 0));
-        }
+        // JW TODO: What was this for
+        // for loaded in self.spec_watcher
+        //     .specs_from_watch_path()
+        //     .unwrap()
+        //     .values()
+        //     .filter(|s| !active_services.contains(&s.ident))
+        // {
+        //     service_states.insert(loaded.ident.clone(), Timespec::new(0, 0));
+        // }
 
         if service_states != self.service_states {
             self.service_states = service_states.clone();
@@ -1451,33 +1453,6 @@ impl Manager {
             is_first = false;
         }
 
-        // add services that are not active but are being watched for changes
-        // These would include stopped persistent services or other
-        // persistent services that failed to load
-        for down in self.spec_watcher
-            .specs_from_watch_path()
-            .unwrap()
-            .values()
-            .filter(|s| !persisted_idents.contains(&s.ident))
-        {
-            match Service::load(
-                self.sys.clone(),
-                down.clone(),
-                self.fs_cfg.clone(),
-                self.organization.as_ref().map(|org| &**org),
-            ) {
-                Ok(service) => {
-                    if let Some(err) = self.write_service(&service, is_first, writer.get_mut())
-                        .err()
-                    {
-                        warn!("Couldn't write to service state file, {}", err);
-                    }
-                    is_first = false;
-                }
-                Err(e) => debug!("Error loading inactive service struct: {}", e),
-            }
-        }
-
         if let Some(err) = writer.get_mut().write("]".as_bytes()).err() {
             warn!("Couldn't write to service state file, {}", err);
         }
@@ -1559,47 +1534,6 @@ impl Manager {
             self.remove_service(&mut service, false);
         }
         release_process_lock(&self.fs_cfg);
-    }
-
-    fn start_initial_services_from_spec_watcher(&mut self) -> Result<()> {
-        for service_event in self.spec_watcher.initial_events()? {
-            match service_event {
-                SpecWatcherEvent::AddService(spec) => {
-                    if spec.desired_state == DesiredState::Up {
-                        // JW TODO: Should we retry starting services which we failed to add?
-                        self.add_service(spec);
-                    }
-                }
-                _ => warn!("Skipping unexpected watcher event: {:?}", service_event),
-            }
-        }
-        Ok(())
-    }
-
-    fn update_running_services_from_spec_watcher(&mut self) -> Result<()> {
-        let mut active_specs = HashMap::new();
-        for service in self.state
-            .services
-            .read()
-            .expect("Services lock is poisoned!")
-            .iter()
-        {
-            let spec = service.to_spec();
-            active_specs.insert(spec.ident.name.clone(), spec);
-        }
-
-        for service_event in self.spec_watcher.new_events(active_specs)? {
-            match service_event {
-                SpecWatcherEvent::AddService(spec) => {
-                    if spec.desired_state == DesiredState::Up {
-                        self.add_service(spec);
-                    }
-                }
-                SpecWatcherEvent::RemoveService(spec) => self.remove_service_for_spec(&spec)?,
-            }
-        }
-
-        Ok(())
     }
 
     fn update_peers_from_watch_file(&mut self) -> Result<()> {
