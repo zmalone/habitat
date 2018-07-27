@@ -297,7 +297,7 @@ impl Supervisor {
 
     /// Remove a pidfile for this package if it exists.
     /// Do NOT fail if there is an error removing the PIDFILE
-    fn cleanup_pidfile(&mut self) {
+    fn cleanup_pidfile(&self) {
         debug!(
             "Attempting to clean up pid file {}",
             self.pid_file.display()
