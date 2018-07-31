@@ -119,6 +119,7 @@ pub enum Error {
     DepotClient(depot_client::Error),
     EnvJoinPathsError(env::JoinPathsError),
     ExecCommandNotFound(String),
+    // ExecWait(io::Error),
     FileNotFound(String),
     FileWatcherFileIsRoot,
     GroupNotFound(String),
@@ -162,6 +163,7 @@ pub enum Error {
     ServiceSpecParse(toml::de::Error),
     ServiceSpecRender(toml::ser::Error),
     SignalFailed,
+    // Spawn(io::Error),
     SpecWatcherDirNotFound(String),
     SpecWatcherGlob(glob::PatternError),
     StrFromUtf8Error(str::Utf8Error),
@@ -227,6 +229,7 @@ impl fmt::Display for SupError {
             Error::ExecCommandNotFound(ref c) => {
                 format!("`{}' was not found on the filesystem or in PATH", c)
             }
+            // Error::ExecWait(ref e) => format!("Error waiting on PID, {}", e),
             Error::Permissions(ref err) => format!("{}", err),
             Error::HabitatCommon(ref err) => format!("{}", err),
             Error::HabitatCore(ref err) => format!("{}", err),
@@ -319,6 +322,7 @@ impl fmt::Display for SupError {
                 format!("Service spec could not be rendered successfully: {}", err)
             }
             Error::SignalFailed => format!("Failed to send a signal to the child process"),
+            // Error::Spawn(ref e) => format!("Unable to spawn process, {}", e),
             Error::SpecWatcherDirNotFound(ref path) => format!(
                 "Spec directory '{}' not created or is not a directory",
                 path
@@ -363,6 +367,7 @@ impl error::Error for SupError {
             Error::ButterflyError(ref err) => err.description(),
             Error::CtlSecretIo(_, _) => "IoError while reading ctl secret",
             Error::ExecCommandNotFound(_) => "Exec command was not found on filesystem or in PATH",
+            // Error::ExecWait(_) => "OS Error while waiting on PID",
             Error::GroupNotFound(_) => "No matching GID for group found",
             Error::TemplateFileError(ref err) => err.description(),
             Error::TemplateRenderError(ref err) => err.description(),
@@ -418,6 +423,7 @@ impl error::Error for SupError {
             Error::ServiceSpecParse(_) => "Service spec could not be parsed successfully",
             Error::ServiceSpecRender(_) => "Service spec TOML could not be rendered successfully",
             Error::SignalFailed => "Failed to send a signal to the child process",
+            // Error::Spawn(_) => "Unable to spawn process",
             Error::SpecWatcherDirNotFound(_) => "Spec directory not created or is not a directory",
             Error::SpecWatcherGlob(_) => "Spec watcher file globbing error",
             Error::StrFromUtf8Error(_) => "Failed to convert a str from a &[u8] as UTF-8",

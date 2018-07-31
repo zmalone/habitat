@@ -911,6 +911,7 @@ name = "habitat_sup"
 version = "0.0.0"
 dependencies = [
  "ansi_term 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "backtrace 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "caps 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",

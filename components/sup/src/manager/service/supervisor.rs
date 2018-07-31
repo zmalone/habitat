@@ -71,6 +71,41 @@ pub struct Supervisor {
     pid_file: PathBuf,
 }
 
+// use backtrace;
+// use std::thread;
+// impl Drop for Supervisor {
+//     fn drop(&mut self) {
+//         let handle = thread::current();
+//         println!(
+//             ">>>>>> Dropping supervisor for {:?} from thread {:?}: {:p}!",
+//             self.preamble,
+//             handle.name(),
+//             self
+//         );
+//         backtrace::trace(|frame| {
+//             let ip = frame.ip();
+//             let symbol_address = frame.symbol_address();
+
+//             // Resolve this instruction pointer to a symbol name
+//             backtrace::resolve(ip, |symbol| {
+//                 println!(
+//                     "{:?}: {:?}:{:?}",
+//                     symbol
+//                         .name()
+//                         .map(|s| s.to_string())
+//                         .unwrap_or("UNKNOWN_SYMBOL".to_string()),
+//                     symbol
+//                         .filename()
+//                         .map(|f| f.to_string_lossy().to_string())
+//                         .unwrap_or("UNKNOWN_FILE".to_string()),
+//                     symbol.lineno().unwrap_or(0)
+//                 );
+//             });
+//             true // keep going to the next frame
+//         });
+//     }
+// }
+
 impl Supervisor {
     pub fn new(service_group: &ServiceGroup) -> Supervisor {
         Supervisor {
@@ -236,6 +271,7 @@ impl Supervisor {
         (healthy, status)
     }
 
+    // TODO (CM): Do we need to return a Result here???
     pub fn stop(&mut self, launcher: &LauncherCli, cause: ShutdownReason) -> Result<()> {
         if self.pid.is_none() {
             return Ok(());
@@ -301,8 +337,16 @@ impl Supervisor {
         }
     }
 
+    // TODO (CM): Create a PidFile Type
+    // On drop, remove itself
+    //
+    // Can't do that because a Supervisor is dropped when a Service is
+    // dropped, and that gets created when we serialize to disk
+
     /// Remove a pidfile for this package if it exists.
     /// Do NOT fail if there is an error removing the PIDFILE
+    //
+    // NB: currently duped in terminator.rs
     fn cleanup_pidfile(&self) {
         debug!(
             "Attempting to clean up pid file {}",

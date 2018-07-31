@@ -1415,6 +1415,42 @@ impl Manager {
         }
     }
 
+    // TODO (CM): It would be nice to overhaul this entire thing.
+    //
+    // First, it should just use Serde to serialize a list of services
+    // directly, instead of the manual array generation we do
+    // here. That's presumably due to the fact that we're iterating
+    // through not only the currently running services, but also
+    // "rehydrating" records for non-running services, which is a
+    // separate step. If we could somehow reconcile these, we could
+    // remove some code bloat.
+    //
+    // Secondly, we create new Service objects for the non-running
+    // services that we know about. This is the same object that
+    // governs the runtime behavior of running services. If we didn't
+    // use the same object, we would get more flexibility in how we
+    // clean up after services when they shut down by taking advantage
+    // of the Drop trait. As it is, we can't do that, because we would
+    // Drop after each persistence... (well, we probably *can*, since
+    // we only do this for services that aren't running... that's
+    // probably not a great precedent to set, and would tend to muddy
+    // the waters).
+    //
+    // Third, we probably serialize way more than we need to, and not
+    // the right way (similar to how we used to handle templating
+    // data). A Service currently has a lot of implementation-level
+    // detail that are irrelevant (`needs_reload`,
+    // needs_configuration`, etc), as well as access to higher-level
+    // information, like details of where the supervisor is running,
+    // as well as information about the Manager process itself; these
+    // latter two are of course duplicated for each Service.
+    //
+    // We should determine what the contract of our HTTP gateway
+    // actually is, and then codify that.
+    //
+    // Similar arguments likely apply to our census and butterfly
+    // serialization, as well.
+
     fn persist_services_state(&self) {
         let tmp_file = self.fs_cfg.services_data_path.with_extension("dat.tmp");
         let file = match File::create(&tmp_file) {
@@ -1456,6 +1492,9 @@ impl Manager {
             .values()
             .filter(|s| !persisted_idents.contains(&s.ident))
         {
+            // TODO (CM): NO, don't do this! Use a different type than
+            // Service if all you want to do is serialize stuff!
+
             match Service::load(
                 self.sys.clone(),
                 down.clone(),
@@ -1484,6 +1523,9 @@ impl Manager {
             warn!("Couldn't finalize services state on disk, {}", err);
         }
     }
+    // TODO (CM): fix the doc string
+    // TODO (CM): I think we can just pass the service in directly,
+    // instead of passing a reference. Yes we can
 
     /// Remove the given service from the manager.
     ///

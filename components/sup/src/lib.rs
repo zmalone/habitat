@@ -42,6 +42,9 @@
 extern crate ansi_term;
 #[macro_use]
 extern crate bitflags;
+
+extern crate backtrace;
+
 extern crate byteorder;
 #[cfg(target_os = "linux")]
 extern crate caps;
@@ -141,6 +144,7 @@ features! {
 pub const PRODUCT: &'static str = "hab-sup";
 pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
+// TODO (CM): document these
 #[derive(Copy, Clone, Debug)]
 pub enum ShutdownReason {
     Departed,

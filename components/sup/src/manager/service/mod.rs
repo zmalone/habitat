@@ -155,6 +155,41 @@ pub struct Service {
     defaults_updated: bool,
 }
 
+// use backtrace;
+// use std::thread;
+// impl Drop for Service {
+//     fn drop(&mut self) {
+//         let handle = thread::current();
+//         println!(
+//             ">>>>>> Dropping service for {:?} from thread {:?}: {:p}!",
+//             self.service_group,
+//             handle.name(),
+//             self
+//         );
+//         backtrace::trace(|frame| {
+//             let ip = frame.ip();
+//             let symbol_address = frame.symbol_address();
+
+//             // Resolve this instruction pointer to a symbol name
+//             backtrace::resolve(ip, |symbol| {
+//                 println!(
+//                     "{:?}: {:?}:{:?}",
+//                     symbol
+//                         .name()
+//                         .map(|s| s.to_string())
+//                         .unwrap_or("UNKNOWN_SYMBOL".to_string()),
+//                     symbol
+//                         .filename()
+//                         .map(|f| f.to_string_lossy().to_string())
+//                         .unwrap_or("UNKNOWN_FILE".to_string()),
+//                     symbol.lineno().unwrap_or(0)
+//                 );
+//             });
+//             true // keep going to the next frame
+//         });
+//     }
+// }
+
 impl Service {
     fn new(
         sys: Arc<Sys>,
