@@ -20,6 +20,7 @@ pub mod hooks;
 mod package;
 pub mod spec;
 mod supervisor;
+mod terminator;
 
 use std;
 use std::collections::HashSet;

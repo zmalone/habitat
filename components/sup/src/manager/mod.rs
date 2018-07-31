@@ -1493,13 +1493,13 @@ impl Manager {
     /// to all running processes.
     fn remove_service(&mut self, service: &mut Service, cause: ShutdownReason) {
         // JW TODO: Update service rumor to remove service from cluster
-        let term = match cause {
-            ShutdownReason::LauncherStopping | ShutdownReason::SvcStopCmd => true,
-            _ => false,
+
+        match cause {
+            ShutdownReason::LauncherStopping | ShutdownReason::SvcStopCmd => {
+                service.stop(&self.launcher, cause);
+            }
+            ShutdownReason::Departed | ShutdownReason::PkgUpdating => {}
         };
-        if term {
-            service.stop(&self.launcher, cause);
-        }
         if let Err(err) = fs::remove_file(self.fs_cfg.health_check_cache(&service.service_group)) {
             outputln!(
                 "Unable to cleanup service health cache, {}, {}",

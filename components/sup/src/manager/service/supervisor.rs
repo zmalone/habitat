@@ -41,6 +41,8 @@ use manager::service::Pkg;
 #[cfg(unix)]
 use sys::abilities;
 
+use super::terminator;
+
 static LOGKEY: &'static str = "SV";
 
 /// Bundles up information about the user and group that a supervised
@@ -243,10 +245,14 @@ impl Supervisor {
             // we'll avoid this knowing that launcher will gratuitously kill off
             // all services as part of its shutdown routine
         } else {
-            launcher.terminate(self.pid.unwrap())?;
+            // TODO (CM): this cast... ugh
+            terminator::terminate_service(
+                self.pid.unwrap() as u32,
+                self.preamble.clone(), // TODO (CM): we should really
+                // just keep the service group around AS a service group
+                self.pid_file.clone(),
+            );
         }
-        self.cleanup_pidfile();
-        self.change_state(ProcessState::Down);
         Ok(())
     }
 
