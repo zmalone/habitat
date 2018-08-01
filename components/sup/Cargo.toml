@@ -73,6 +73,7 @@ caps = "*"
 [target.'cfg(windows)'.dependencies]
 ctrlc = "*"
 crypt32-sys = "*"
+kernel32-sys = "*"
 winapi = "0.2"
 
 [dev-dependencies]

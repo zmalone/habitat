@@ -273,21 +273,21 @@ impl Supervisor {
 
     // TODO (CM): Do we need to return a Result here???
     pub fn stop(&mut self, launcher: &LauncherCli, cause: ShutdownReason) -> Result<()> {
-        if self.pid.is_none() {
-            return Ok(());
-        }
-        if let ShutdownReason::LauncherStopping = cause {
-            // sending any cmds to launcher will block while it is shutting down
-            // we'll avoid this knowing that launcher will gratuitously kill off
-            // all services as part of its shutdown routine
-        } else {
-            // TODO (CM): this cast... ugh
-            terminator::terminate_service(
-                self.pid.unwrap() as u32,
-                self.preamble.clone(), // TODO (CM): we should really
-                // just keep the service group around AS a service group
-                self.pid_file.clone(),
-            );
+        if let Some(pid) = self.pid {
+            if let ShutdownReason::LauncherStopping = cause {
+                // sending any cmds to launcher will block while it is shutting down
+                // we'll avoid this knowing that launcher will gratuitously kill off
+                // all services as part of its shutdown routine
+
+                // TODO (CM): We might want to go ahead and kill everything here, actually
+            } else {
+                terminator::terminate_service(
+                    pid,
+                    self.preamble.clone(), // TODO (CM): we should really
+                    // just keep the service group around AS a service group
+                    self.pid_file.clone(),
+                );
+            }
         }
         Ok(())
     }

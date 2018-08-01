@@ -12,35 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// NOTE: All this code is basically copied verbatim from its previous home in
+// the Launcher module. Once all the service-related functionality that we're
+// going to move over to the Supervisor has been moved, we can take a look at
+// perhaps refactoring some of this a bit.
+
 use libc::{self, pid_t};
 use std::ops::Neg;
 use time::{Duration, SteadyTime};
 
-use hcore::os::process::{is_alive, signal, Signal};
+use hcore::os::process::{is_alive, signal, Pid, Signal};
+use sys::ShutdownMethod;
 
-// TODO (CM): This must be higher up, so windows can use it, too
-#[derive(Debug)]
-pub enum ShutdownMethod {
-    AlreadyExited,
-    GracefulTermination,
-    Killed,
+/// Kill a service process.
+pub fn kill(pid: Pid) -> ShutdownMethod {
+    let process = Process::new(pid as u32);
+    process.kill()
 }
 
-// TODO (CM): Do we need this struct any longer? Is it doing anything?
+///////////////////////////////////////////////////////////////////////
+// Private Code
 
-pub struct Process {
+// TODO (CM): We may not want this struct in the end... keeping it for now to keep some
+// parity with the Windows implementation. Once we pull over all the "service" functionality
+// from the Launcher, we can re-evaluate.
+struct Process {
     pid: pid_t,
 }
 
 impl Process {
-    // TODO (CM): originally this wasn't public.
-    pub fn new(pid: u32) -> Self {
+    fn new(pid: u32) -> Self {
         Process { pid: pid as pid_t }
     }
 
     /// Attempt to gracefully terminate a proccess and then forcefully kill it after
     /// 8 seconds if it has not terminated.
-    pub fn kill(&self) -> ShutdownMethod {
+    fn kill(&self) -> ShutdownMethod {
         let mut pid_to_kill = self.pid;
         // check the group of the process being killed
         // if it is the root process of the process group
@@ -70,24 +77,22 @@ impl Process {
             if !is_alive(pid_to_kill) {
                 return ShutdownMethod::GracefulTermination;
             }
-            if SteadyTime::now() < stop_time {
-                continue;
+            if SteadyTime::now() >= stop_time {
+                break;
             }
-
-            match signal(pid_to_kill, Signal::KILL) {
-                Ok(_) => {
-                    return ShutdownMethod::Killed;
-                }
-                Err(_) => {
-                    // JW TODO: Determine if the error represents a case where the process was already
-                    // exited before we return out and assume so.
-
-                    return ShutdownMethod::GracefulTermination;
-                }
-            }
-
-            // TODO (CM): wait a little more to see if the process has
-            // been killed?
         }
+
+        match signal(pid_to_kill, Signal::KILL) {
+            Ok(_) => {
+                ShutdownMethod::Killed
+            }
+            Err(_) => {
+                // JW TODO: Determine if the error represents a case where the process was already
+                // exited before we return out and assume so.
+                ShutdownMethod::GracefulTermination
+            }
+        }
+        // TODO (CM): wait a little more to see if the process has
+        // been killed?
     }
 }

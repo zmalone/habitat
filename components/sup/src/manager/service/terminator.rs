@@ -2,11 +2,13 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::thread;
 
-use sys::service::{Process, ShutdownMethod};
+use hcore::os::process::Pid;
 
+use sys::service;
+use sys::ShutdownMethod;
 static LOGKEY: &'static str = "ST"; // "Service Terminator"
 
-pub fn terminate_service<P>(pid: u32, service_group: String, pidfile: P)
+pub fn terminate_service<P>(pid: Pid, service_group: String, pidfile: P)
 where
     P: Into<PathBuf>,
 {
@@ -14,7 +16,8 @@ where
     let _ = thread::Builder::new()
         .name(format!("terminate-{}", pid))
         .spawn(move || {
-            match shutdown(pid) {
+            debug!("Terminating: {}", pid);
+            match service::kill(pid) {
                 ShutdownMethod::AlreadyExited => {
                     outputln!(preamble service_group, "Already exited: {:?}", pid);
                 }
@@ -30,13 +33,6 @@ where
             // the service down gracefully, or it's been killed.
             cleanup_pidfile(pidfile);
         });
-}
-
-// TODO (CM) wanted to use Pid, but it could be negative... that was constrained
-// in the Launcher implementation, based on how it was instantiated
-fn shutdown(pid: u32) -> ShutdownMethod {
-    debug!("Terminating: {}", pid);
-    Process::new(pid).kill()
 }
 
 // This is a dupe of Supervisor::cleanup_pidfile. That is still used

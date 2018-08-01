@@ -12,24 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// NOTE: All this code is basically copied verbatim from its previous home in
+// the Launcher module. Once all the service-related functionality that we're
+// going to move over to the Supervisor has been moved, we can take a look at
+// perhaps refactoring some of this a bit.
+
+use kernel32;
 use std::collections::HashMap;
 use std::io;
 use std::mem;
-
-use core::os::process::handle_from_pid;
-use core::os::process::windows_child::{Child, ExitStatus, Handle};
-use kernel32;
-use protocol::{self, ShutdownMethod};
 use time::{Duration, SteadyTime};
 use winapi;
 
-use error::{Error, Result};
-use service::Service;
+use hcore::os::process::windows_child::{ExitStatus, Handle};
+use hcore::os::process::{handle_from_pid, Pid};
+use sys::ShutdownMethod;
 
 const PROCESS_ACTIVE: u32 = 259;
 type ProcessTable = HashMap<winapi::DWORD, Vec<winapi::DWORD>>;
 
-pub struct Process {
+/// Kill a service process
+pub fn kill(pid: Pid) -> ShutdownMethod {
+    match handle_from_pid(pid) {
+        None => {
+            // Assume it's already gone if we can't resolve a proper process handle
+            ShutdownMethod::AlreadyExited
+        }
+        Some(handle_ptr) => {
+            let mut process = Process::new(Handle::new(handle_ptr));
+            process.kill()
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////
+// Private Code
+
+struct Process {
     handle: Handle,
     last_status: Option<ExitStatus>,
 }
@@ -42,17 +61,21 @@ impl Process {
         }
     }
 
-    pub fn id(&self) -> u32 {
+    fn id(&self) -> u32 {
         unsafe { kernel32::GetProcessId(self.handle.raw()) as u32 }
     }
 
-    pub fn kill(&mut self) -> ShutdownMethod {
+    fn kill(&mut self) -> ShutdownMethod {
         if self.status().is_some() {
             return ShutdownMethod::AlreadyExited;
         }
-        let ret = unsafe { kernel32::GenerateConsoleCtrlEvent(1, self.id()) };
-        if ret == 0 {
-            debug!(
+
+        let ret = unsafe {
+            kernel32::GenerateConsoleCtrlEvent(winapi::wincon::CTRL_BREAK_EVENT, self.id())
+        };
+
+        if ret == 0 { // 0 = error
+            println!(
                 "Failed to send ctrl-break to pid {}: {}",
                 self.id(),
                 io::Error::last_os_error()
@@ -60,6 +83,7 @@ impl Process {
         }
 
         let stop_time = SteadyTime::now() + Duration::seconds(8);
+
         loop {
             if ret == 0 || SteadyTime::now() > stop_time {
                 let proc_table = build_proc_table();
@@ -70,33 +94,6 @@ impl Process {
             if self.status().is_some() {
                 return ShutdownMethod::GracefulTermination;
             }
-        }
-    }
-
-    pub fn wait(&mut self) -> Result<ExitStatus> {
-        unsafe {
-            let res = kernel32::WaitForSingleObject(self.handle.raw(), winapi::INFINITE);
-            if res != winapi::WAIT_OBJECT_0 {
-                return Err(Error::ExecWait(io::Error::last_os_error()));
-            }
-            let mut status = 0;
-            cvt(kernel32::GetExitCodeProcess(self.handle.raw(), &mut status))
-                .map_err(Error::ExecWait)?;
-            Ok(ExitStatus::from(status))
-        }
-    }
-
-    pub fn try_wait(&mut self) -> Result<Option<ExitStatus>> {
-        unsafe {
-            match kernel32::WaitForSingleObject(self.handle.raw(), 0) {
-                winapi::WAIT_OBJECT_0 => {}
-                winapi::WAIT_TIMEOUT => return Ok(None),
-                _ => return Err(Error::ExecWait(io::Error::last_os_error())),
-            }
-            let mut status = 0;
-            cvt(kernel32::GetExitCodeProcess(self.handle.raw(), &mut status))
-                .map_err(Error::ExecWait)?;
-            Ok(Some(ExitStatus::from(status)))
         }
     }
 
@@ -112,47 +109,6 @@ impl Process {
             }
             None => None,
         }
-    }
-}
-
-pub fn run(msg: protocol::Spawn) -> Result<Service> {
-    // Supervisors prior to version 0.53.0 pulled in beta versions of
-    // powershell. The official 6.0.0 version of powershell changed
-    // the name of the powershell binary to pwsh.exe. Here we will
-    // first attempt the latest binary name and fall back to the
-    // former name.
-    match spawn_pwsh("pwsh.exe", msg.clone()) {
-        Ok(service) => Ok(service),
-        Err(err) => {
-            if err.raw_os_error() == Some(winapi::ERROR_FILE_NOT_FOUND as i32) {
-                spawn_pwsh("powershell.exe", msg).map_err(Error::Spawn)
-            } else {
-                Err(Error::Spawn(err))
-            }
-        }
-    }
-}
-
-fn spawn_pwsh(ps_binary_name: &str, mut msg: protocol::Spawn) -> io::Result<Service> {
-    debug!("launcher is spawning {}", msg.get_binary());
-    let ps_cmd = format!("iex $(gc {} | out-string)", msg.get_binary());
-    let password = if msg.get_svc_password().is_empty() {
-        None
-    } else {
-        Some(msg.take_svc_password())
-    };
-    match Child::spawn(
-        ps_binary_name,
-        vec!["-NonInteractive", "-command", ps_cmd.as_str()],
-        msg.get_env(),
-        msg.get_svc_user(),
-        password,
-    ) {
-        Ok(child) => {
-            let process = Process::new(child.handle);
-            Ok(Service::new(msg, process, child.stdout, child.stderr))
-        }
-        Err(_) => Err(io::Error::last_os_error()),
     }
 }
 
@@ -203,14 +159,6 @@ fn build_proc_table() -> ProcessTable {
     table
 }
 
-fn cvt(i: i32) -> io::Result<i32> {
-    if i == 0 {
-        Err(io::Error::last_os_error())
-    } else {
-        Ok(i)
-    }
-}
-
 fn exit_code(handle: &Handle) -> Option<u32> {
     let mut exit_code: u32 = 0;
     unsafe {
@@ -233,17 +181,16 @@ fn terminate_process_descendants(table: &ProcessTable, pid: winapi::DWORD) {
         }
     }
     unsafe {
-        match handle_from_pid(pid) {
-            Some(h) => {
-                if kernel32::TerminateProcess(h, 1) == 0 {
-                    error!(
-                        "Failed to call TerminateProcess on pid {}: {}",
-                        pid,
-                        io::Error::last_os_error()
-                    );
-                }
+        if let Some(h) = handle_from_pid(pid) {
+            println!("About to terminate child process {:?}", h);
+            // 1 = the exit code the terminated process will have
+            if kernel32::TerminateProcess(h, 1) == 0 {
+                error!(
+                    "Failed to call TerminateProcess on pid {}: {}",
+                    pid,
+                    io::Error::last_os_error()
+                );
             }
-            None => {}
         }
     }
 }
