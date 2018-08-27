@@ -19,41 +19,17 @@ use prost_types::{DescriptorProto, FileDescriptorProto, FileDescriptorSet};
 type Module = Vec<String>;
 
 fn main() {
-    if env::var("CARGO_FEATURE_PROTOCOLS").is_ok() {
-        generate_protocols();
-    }
+    generate_protocols();
 }
 
 fn generate_protocols() {
     let mut config = prost_build::Config::new();
-    config.type_attribute(".", "#[derive(Serialize, Deserialize, Hash)]");
+    config.type_attribute(".", "#[derive(Serialize, Deserialize)]");
     config.type_attribute(".", "#[serde(rename_all = \"kebab-case\")]");
     config
         .compile_protos(&protocol_files(), &protocol_includes())
         .expect("protocols");
     compile_proto_impls(&protocol_files(), &protocol_includes()).expect("protocol-impls");
-    for file in generated_files() {
-        fs::rename(
-            &file,
-            format!(
-                "src/generated/{}",
-                file.file_name().unwrap().to_string_lossy()
-            ),
-        ).unwrap();
-    }
-}
-
-fn generated_files() -> Vec<PathBuf> {
-    let mut files = vec![];
-    for entry in fs::read_dir(env::var("OUT_DIR").unwrap()).unwrap() {
-        let file = entry.unwrap();
-        if file.file_name().to_str().unwrap().ends_with(".rs") {
-            if file.metadata().unwrap().is_file() {
-                files.push(file.path());
-            }
-        }
-    }
-    files
 }
 
 fn protocol_files() -> Vec<String> {

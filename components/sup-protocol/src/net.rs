@@ -17,8 +17,8 @@
 //!
 //! Note: See `protocols/net.proto` for type level documentation for generated types.
 
-include!("generated/sup.net.rs");
-include!("generated/sup.net.impl.rs");
+include!(concat!(env!("OUT_DIR"), "/sup.net.rs"));
+include!(concat!(env!("OUT_DIR"), "/sup.net.impl.rs"));
 
 use std::error;
 use std::fmt;

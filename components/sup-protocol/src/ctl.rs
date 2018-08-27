@@ -17,8 +17,8 @@
 //!
 //! Note: See `protocols/ctl.proto` for type level documentation for generated types.
 
-include!("generated/sup.ctl.rs");
-include!("generated/sup.ctl.impl.rs");
+include!(concat!(env!("OUT_DIR"), "/sup.ctl.rs"));
+include!(concat!(env!("OUT_DIR"), "/sup.ctl.impl.rs"));
 
 use std::fmt;
 use std::net::{Ipv4Addr, SocketAddr};

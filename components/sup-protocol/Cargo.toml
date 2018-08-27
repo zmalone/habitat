@@ -29,8 +29,3 @@ tempdir = "*"
 
 [dev-dependencies]
 toml = "*"
-
-[features]
-default = ["protocols"]
-protocols = []
-
