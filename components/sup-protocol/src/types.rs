@@ -20,7 +20,6 @@
 //!          vanilla Rust type counterparts that we define there.
 
 include!(concat!(env!("OUT_DIR"), "/sup.types.rs"));
-include!(concat!(env!("OUT_DIR"), "/sup.types.impl.rs"));
 
 use std::fmt;
 use std::str::FromStr;
@@ -28,7 +27,30 @@ use std::str::FromStr;
 use core;
 use core::package::{self, Identifiable};
 
+use message;
 use net::{self, ErrCode, NetErr};
+
+impl message::MessageStatic for ApplicationEnvironment {
+    const MESSAGE_ID: &'static str = "ApplicationEnvironment";
+}
+impl message::MessageStatic for PackageIdent {
+    const MESSAGE_ID: &'static str = "PackageIdent";
+}
+impl message::MessageStatic for ProcessStatus {
+    const MESSAGE_ID: &'static str = "ProcessStatus";
+}
+impl message::MessageStatic for ServiceBind {
+    const MESSAGE_ID: &'static str = "ServiceBind";
+}
+impl message::MessageStatic for ServiceCfg {
+    const MESSAGE_ID: &'static str = "ServiceCfg";
+}
+impl message::MessageStatic for ServiceGroup {
+    const MESSAGE_ID: &'static str = "ServiceGroup";
+}
+impl message::MessageStatic for ServiceStatus {
+    const MESSAGE_ID: &'static str = "ServiceStatus";
+}
 
 impl ServiceGroup {
     pub fn validate(value: &str) -> core::Result<()> {

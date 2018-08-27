@@ -18,7 +18,6 @@
 //! Note: See `protocols/net.proto` for type level documentation for generated types.
 
 include!(concat!(env!("OUT_DIR"), "/sup.net.rs"));
-include!(concat!(env!("OUT_DIR"), "/sup.net.impl.rs"));
 
 use std::error;
 use std::fmt;
@@ -26,7 +25,17 @@ use std::io;
 
 use core;
 
+use message;
+
 pub type NetResult<T> = Result<T, NetErr>;
+
+impl message::MessageStatic for NetOk {
+    const MESSAGE_ID: &'static str = "NetOk";
+}
+
+impl message::MessageStatic for NetErr {
+    const MESSAGE_ID: &'static str = "NetErr";
+}
 
 /// Helper function for quickly generating a `NetErr` from an `ErrCode` and message.
 pub fn err<T>(code: ErrCode, msg: T) -> NetErr

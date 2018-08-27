@@ -21,11 +21,7 @@ tokio = "*"
 tokio-io = "*"
 
 [build-dependencies]
-heck = "*"
-prost = "*"
 prost-build = "*"
-prost-types = "*"
-tempdir = "*"
 
 [dev-dependencies]
 toml = "*"
