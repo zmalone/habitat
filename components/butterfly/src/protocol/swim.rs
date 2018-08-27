@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-include!("../generated/butterfly.swim.rs");
+include!(concat!(env!("OUT_DIR"), "/butterfly.swim.rs"));
 
 pub use self::{membership::Health, swim::Payload as SwimPayload, swim::Type as SwimType};

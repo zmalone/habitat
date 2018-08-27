@@ -21,7 +21,7 @@ use serde::Serialize;
 
 use error::Result;
 
-include!("../generated/butterfly.common.rs");
+include!(concat!(env!("OUT_DIR"), "/butterfly.common.rs"));
 
 pub trait Message<T: ProstMessage + Default>:
     FromProto<T> + Clone + Into<T> + Serialize + Sized

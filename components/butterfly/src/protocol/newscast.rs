@@ -18,7 +18,7 @@ use rumor::service::Service as CService;
 use rumor::service_config::ServiceConfig as CServiceConfig;
 use rumor::service_file::ServiceFile as CServiceFile;
 
-include!("../generated/butterfly.newscast.rs");
+include!(concat!(env!("OUT_DIR"), "/butterfly.newscast.rs"));
 
 pub use self::{rumor::Payload as RumorPayload, rumor::Type as RumorType};
 
