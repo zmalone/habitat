@@ -1,38 +1,21 @@
-extern crate pkg_config;
-extern crate prost;
 extern crate prost_build;
 
-use std::env;
-use std::fs;
-use std::path::PathBuf;
-
+/// Automatically generate Rust code from our protobuf definitions at
+/// compile time.
+///
+/// Generated code is deposited in `OUT_DIR` and automatically
+/// `include!`-ed in our Rust modules, per standard Prost practice.
 fn main() {
-    generate_protocols();
-}
-
-fn generate_protocols() {
     let mut config = prost_build::Config::new();
     config.type_attribute(".", "#[derive(Serialize, Deserialize)]");
     config
-        .compile_protos(&protocol_files(), &protocol_includes())
-        .expect("Error compiling protobuf definitions");
-}
-
-fn protocol_includes() -> Vec<String> {
-    vec!["protocols".to_string()]
-}
-
-fn protocol_files() -> Vec<String> {
-    let mut files = vec![];
-    for entry in fs::read_dir("protocols").unwrap() {
-        let file = entry.unwrap();
-        // skip vim temp files
-        if file.file_name().to_str().unwrap().starts_with(".") {
-            continue;
-        }
-        if file.metadata().unwrap().is_file() {
-            files.push(file.path().to_string_lossy().into_owned());
-        }
-    }
-    files
+        .compile_protos(
+            &[
+                "protocols/common.proto",
+                "protocols/newscast.proto",
+                "protocols/swim.proto",
+            ],
+            &["protocols"],
+        )
+        .unwrap()
 }
