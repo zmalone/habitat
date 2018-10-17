@@ -29,6 +29,8 @@ threadpool = "*"
 toml = { version = "*", default-features = false }
 uuid = { version = "*", features = ["v4"] }
 zmq = { git = "https://github.com/erickt/rust-zmq", branch = "release/v0.8" }
+lmdb-zero = "*"
+bincode = "*"
 
 [dev-dependencies]
 habitat_butterfly_test = { path = "../butterfly-test" }

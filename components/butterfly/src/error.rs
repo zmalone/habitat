@@ -21,6 +21,7 @@ use std::result;
 use std::str;
 
 use habitat_core;
+use lmdb;
 use prost;
 use toml;
 use zmq;
@@ -48,6 +49,7 @@ pub enum Error {
     SocketSetWriteTimeout(io::Error),
     ZmqConnectError(zmq::Error),
     ZmqSendError(zmq::Error),
+    LmdbError(lmdb::Error),
 }
 
 impl fmt::Display for Error {
@@ -110,6 +112,7 @@ impl fmt::Display for Error {
             Error::ZmqSendError(ref err) => {
                 format!("Cannot send message through ZMQ socket: {}", err)
             }
+            Error::LmdbError(ref err) => format!("LDMB Error: {}", err),
         };
         write!(f, "{}", msg)
     }
@@ -143,7 +146,14 @@ impl error::Error for Error {
             Error::SocketSetWriteTimeout(_) => "Cannot set UDP socket write timeout",
             Error::ZmqConnectError(_) => "Cannot connect ZMQ socket",
             Error::ZmqSendError(_) => "Cannot send message through ZMQ socket",
+            Error::LmdbError(_) => "LMDB Error",
         }
+    }
+}
+
+impl From<lmdb::Error> for Error {
+    fn from(err: lmdb::Error) -> Error {
+        Error::LmdbError(err)
     }
 }
 

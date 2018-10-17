@@ -138,7 +138,7 @@ mod tests {
     use super::*;
     use error::Result;
     use protocol::{self, newscast};
-    use rumor::{Rumor, RumorKey, RumorType};
+    use rumor::{MergeResult, Rumor, RumorKey, RumorType};
     use uuid::Uuid;
 
     // TODO (CM): This FakeRumor implementation is copied from
@@ -172,8 +172,8 @@ mod tests {
             &self.id
         }
 
-        fn merge(&mut self, mut _other: FakeRumor) -> bool {
-            false
+        fn merge(&self, mut _other: FakeRumor) -> MergeResult<FakeRumor> {
+            MergeResult::StopSharing
         }
     }
 

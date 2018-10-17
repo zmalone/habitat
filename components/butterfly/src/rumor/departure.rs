@@ -19,14 +19,39 @@
 //! administrator reverses the decision.
 
 use std::cmp::Ordering;
+use std::{mem, slice};
+
+use lmdb::traits::{AsLmdbBytes, FromLmdbBytes};
 
 use error::{Error, Result};
 use protocol::{self, newscast, newscast::Rumor as ProtoRumor, FromProto};
-use rumor::{Rumor, RumorPayload, RumorType};
+use rumor::{MergeResult, Rumor, RumorPayload, RumorType};
 
+// Required for LMDB; don't do this, and things will go real bad.
+#[repr(C)]
 #[derive(Debug, Clone, Serialize)]
 pub struct Departure {
     pub member_id: String,
+}
+
+impl AsLmdbBytes for Departure {
+    fn as_lmdb_bytes(&self) -> &[u8] {
+        unsafe {
+            slice::from_raw_parts(
+                (self as *const Departure) as *const u8,
+                mem::size_of::<Departure>(),
+            )
+        }
+    }
+}
+
+impl FromLmdbBytes for Departure {
+    fn from_lmdb_bytes(bytes: &[u8]) -> ::std::result::Result<&Departure, String> {
+        let bytes_ptr: *const u8 = bytes.as_ptr();
+        let rumor_ptr: *const Departure = bytes_ptr as *const Departure;
+        let thing: &Departure = unsafe { &*rumor_ptr };
+        Ok(thing)
+    }
 }
 
 impl Departure {
@@ -65,11 +90,11 @@ impl From<Departure> for newscast::Departure {
 }
 
 impl Rumor for Departure {
-    fn merge(&mut self, other: Departure) -> bool {
+    fn merge(&self, other: Departure) -> MergeResult<Departure> {
         if *self >= other {
-            false
+            MergeResult::StopSharing
         } else {
-            true
+            MergeResult::ShareNew(other)
         }
     }
 
@@ -107,7 +132,7 @@ mod tests {
     use std::cmp::Ordering;
 
     use super::Departure;
-    use rumor::Rumor;
+    use rumor::{MergeResult, Rumor};
 
     fn create_departure(member_id: &str) -> Departure {
         Departure::new(member_id)
@@ -141,7 +166,7 @@ mod tests {
         let mut s1 = create_departure("mastodon");
         let s1_check = s1.clone();
         let s2 = create_departure("mastodon");
-        assert_eq!(s1.merge(s2), false);
+        assert_eq!(s1.merge(s2), MergeResult::StopSharing);
         assert_eq!(s1, s1_check);
     }
 }

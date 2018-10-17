@@ -57,9 +57,11 @@ extern crate rand;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate lmdb_zero as lmdb;
 #[cfg(test)]
 extern crate mktemp;
-#[cfg(test)]
+//#[cfg(test)]
+extern crate bincode;
 extern crate tempdir;
 extern crate time;
 extern crate toml;

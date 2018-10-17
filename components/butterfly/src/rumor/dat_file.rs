@@ -410,16 +410,9 @@ impl DatFile {
         W: Write,
     {
         let mut total = 0;
-        for member in store
-            .list
-            .read()
-            .expect("Rumor store lock poisoned")
-            .values()
-        {
-            for rumor in member.values() {
-                total += self.write_rumor(writer, rumor)?;
-            }
-        }
+        //store.with_all_rumors({
+        //    |rumor| total += self.write_rumor(writer, rumor).expect("poop");
+        //});
         Ok(total)
     }
 

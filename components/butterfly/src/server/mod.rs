@@ -44,8 +44,10 @@ use std::time::{Duration, Instant};
 
 use habitat_core::crypto::SymKey;
 use habitat_core::service::ServiceGroup;
+use lmdb;
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
+use tempdir::TempDir;
 
 use self::incarnation_store::IncarnationStore;
 use error::{Error, Result};
@@ -230,6 +232,7 @@ pub struct Server {
     dat_file: Arc<RwLock<Option<DatFile>>>,
     socket: Option<UdpSocket>,
     departed: Arc<AtomicBool>,
+    lmdb_env: Arc<lmdb::Environment>,
     // These are all here for testing support
     pause: Arc<AtomicBool>,
     pub trace: Arc<RwLock<Trace>>,
@@ -259,6 +262,7 @@ impl Clone for Server {
             data_path: self.data_path.clone(),
             dat_file: self.dat_file.clone(),
             departed: self.departed.clone(),
+            lmdb_env: self.lmdb_env.clone(),
             pause: self.pause.clone(),
             trace: self.trace.clone(),
             swim_rounds: self.swim_rounds.clone(),
@@ -308,6 +312,20 @@ impl Server {
                 // in the testing framework.
                 let myself = Myself::new(member, None);
 
+                let tmpdir = TempDir::new("rumorstorage").unwrap();
+
+                let mut flags = lmdb::open::Flags::empty();
+                flags.insert(lmdb::open::WRITEMAP);
+
+                // Create the LMDB environment, which will be used to
+                // persist all our data.
+                let lmdb_env = unsafe {
+                    let mut lmdb_env = lmdb::EnvBuilder::new()?;
+                    lmdb_env.set_mapsize(528000000)?;
+                    lmdb_env.set_maxdbs(500)?;
+                    Arc::new(lmdb_env.open(tmpdir.path().to_str().unwrap(), flags, 0o600)?)
+                };
+
                 Ok(Server {
                     name: Arc::new(name.unwrap_or(member_id.clone())),
                     // TODO (CM): could replace this with an accessor
@@ -317,18 +335,31 @@ impl Server {
                     member_list: MemberList::new(),
                     ring_key: Arc::new(ring_key),
                     rumor_heat: RumorHeat::default(),
-                    service_store: RumorStore::default(),
-                    service_config_store: RumorStore::default(),
-                    service_file_store: RumorStore::default(),
-                    election_store: RumorStore::default(),
-                    update_store: RumorStore::default(),
-                    departure_store: RumorStore::default(),
+                    service_store: RumorStore::new(String::from("service"), 0, lmdb_env.clone()),
+                    service_config_store: RumorStore::new(
+                        String::from("service_config"),
+                        0,
+                        lmdb_env.clone(),
+                    ),
+                    service_file_store: RumorStore::new(
+                        String::from("service_file"),
+                        0,
+                        lmdb_env.clone(),
+                    ),
+                    election_store: RumorStore::new(String::from("election"), 0, lmdb_env.clone()),
+                    update_store: RumorStore::new(String::from("update"), 0, lmdb_env.clone()),
+                    departure_store: RumorStore::new(
+                        String::from("departure"),
+                        0,
+                        lmdb_env.clone(),
+                    ),
                     swim_addr: Arc::new(RwLock::new(swim_socket_addr)),
                     gossip_addr: Arc::new(RwLock::new(gossip_socket_addr)),
                     suitability_lookup: Arc::new(suitability_lookup),
                     data_path: Arc::new(data_path.as_ref().map(|p| p.into())),
                     dat_file: Arc::new(RwLock::new(None)),
                     departed: Arc::new(AtomicBool::new(false)),
+                    lmdb_env: lmdb_env,
                     pause: Arc::new(AtomicBool::new(false)),
                     trace: Arc::new(RwLock::new(trace)),
                     swim_rounds: Arc::new(AtomicIsize::new(0)),
@@ -878,15 +909,16 @@ impl Server {
         let mut elections_to_restart: Vec<(String, u64)> = vec![];
         let mut update_elections_to_restart: Vec<(String, u64)> = vec![];
 
-        self.election_store.with_keys(|(service_group, rumors)| {
+        self.election_store.with_all_rumors(|election| {
+            let service_group = election.key();
             if self
                 .service_store
-                .contains_rumor(&service_group, self.member_id())
+                .contains_rumor(service_group, self.member_id())
             {
                 // This is safe; there is only one id for an election, and it is "election"
-                let election = rumors
-                    .get("election")
-                    .expect("Lost an election struct between looking it up and reading it.");
+                //let election = rumors
+                //    .get("election")
+                //    .expect("Lost an election struct between looking it up and reading it.");
                 // If we are finished, and the leader is dead, we should restart the election
                 if election.is_finished() && election.member_id == self.member_id() {
                     // If we are the leader, and we have lost quorum, we should restart the election
@@ -896,8 +928,7 @@ impl Server {
                              quorum: {:?}",
                             election
                         );
-                        elections_to_restart
-                            .push((String::from(&service_group[..]), election.term));
+                        elections_to_restart.push((String::from(service_group), election.term));
                     }
                 } else if election.is_finished() {
                     if self
@@ -909,22 +940,22 @@ impl Server {
                             self.member_id(),
                             election
                         );
-                        elections_to_restart
-                            .push((String::from(&service_group[..]), election.term));
+                        elections_to_restart.push((String::from(service_group), election.term));
                     }
                 }
             }
         });
 
-        self.update_store.with_keys(|(service_group, rumors)| {
+        self.update_store.with_all_rumors(|election| {
+            let service_group = election.key();
             if self
                 .service_store
                 .contains_rumor(&service_group, self.member_id())
             {
                 // This is safe; there is only one id for an election, and it is "election"
-                let election = rumors
-                    .get("election")
-                    .expect("Lost an update election struct between looking it up and reading it.");
+                //let election = rumors
+                //    .get("election")
+                //    .expect("Lost an update election struct between looking it up and reading it.");
                 // If we are finished, and the leader is dead, we should restart the election
                 if election.is_finished() && election.member_id == self.member_id() {
                     // If we are the leader, and we have lost quorum, we should restart the election
@@ -935,7 +966,7 @@ impl Server {
                             election
                         );
                         update_elections_to_restart
-                            .push((String::from(&service_group[..]), election.term));
+                            .push((String::from(service_group), election.term));
                     }
                 } else if election.is_finished() {
                     if self
@@ -948,7 +979,7 @@ impl Server {
                             election
                         );
                         update_elections_to_restart
-                            .push((String::from(&service_group[..]), election.term));
+                            .push((String::from(service_group), election.term));
                     }
                 }
             }

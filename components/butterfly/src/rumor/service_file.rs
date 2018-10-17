@@ -18,15 +18,18 @@
 
 use std::cmp::Ordering;
 use std::mem;
+use std::slice;
 use std::str::FromStr;
 
 use habitat_core::crypto::{default_cache_key_path, BoxKeyPair};
 use habitat_core::service::ServiceGroup;
+use lmdb::traits::{AsLmdbBytes, FromLmdbBytes};
 
 use error::{Error, Result};
 use protocol::{self, newscast, newscast::Rumor as ProtoRumor, FromProto};
-use rumor::{Rumor, RumorPayload, RumorType};
+use rumor::{MergeResult, Rumor, RumorPayload, RumorType};
 
+#[repr(C)]
 #[derive(Debug, Clone, Serialize)]
 pub struct ServiceFile {
     pub from_id: String,
@@ -35,6 +38,26 @@ pub struct ServiceFile {
     pub encrypted: bool,
     pub filename: String,
     pub body: Vec<u8>,
+}
+
+impl AsLmdbBytes for ServiceFile {
+    fn as_lmdb_bytes(&self) -> &[u8] {
+        unsafe {
+            slice::from_raw_parts(
+                (self as *const ServiceFile) as *const u8,
+                mem::size_of::<ServiceFile>(),
+            )
+        }
+    }
+}
+
+impl FromLmdbBytes for ServiceFile {
+    fn from_lmdb_bytes(bytes: &[u8]) -> ::std::result::Result<&ServiceFile, String> {
+        let bytes_ptr: *const u8 = bytes.as_ptr();
+        let rumor_ptr: *const ServiceFile = bytes_ptr as *const ServiceFile;
+        let thing: &ServiceFile = unsafe { &*rumor_ptr };
+        Ok(thing)
+    }
 }
 
 impl PartialOrd for ServiceFile {
@@ -137,12 +160,11 @@ impl From<ServiceFile> for newscast::ServiceFile {
 impl Rumor for ServiceFile {
     /// Follows a simple pattern; if we have a newer incarnation than the one we already have, the
     /// new one wins. So far, these never change.
-    fn merge(&mut self, mut other: ServiceFile) -> bool {
+    fn merge(&self, other: ServiceFile) -> MergeResult<ServiceFile> {
         if *self >= other {
-            false
+            MergeResult::StopSharing
         } else {
-            mem::swap(self, &mut other);
-            true
+            MergeResult::ShareNew(other)
         }
     }
 
@@ -167,7 +189,7 @@ mod tests {
     use habitat_core::service::ServiceGroup;
 
     use super::ServiceFile;
-    use rumor::Rumor;
+    use rumor::{MergeResult, Rumor};
 
     fn create_service_file(member_id: &str, filename: &str, body: &str) -> ServiceFile {
         let body_bytes: Vec<u8> = Vec::from(body);
@@ -223,12 +245,11 @@ mod tests {
 
     #[test]
     fn merge_chooses_the_higher_incarnation() {
-        let mut s1 = create_service_file("adam", "yep", "tcp-backlog = 128");
+        let s1 = create_service_file("adam", "yep", "tcp-backlog = 128");
         let mut s2 = create_service_file("adam", "yep", "tcp-backlog = 128");
         s2.incarnation = 1;
         let s2_check = s2.clone();
-        assert_eq!(s1.merge(s2), true);
-        assert_eq!(s1, s2_check);
+        assert_eq!(s1.merge(s2), MergeResult::ShareNew(s2_check));
     }
 
     #[test]
@@ -237,7 +258,7 @@ mod tests {
         s1.incarnation = 1;
         let s1_check = s1.clone();
         let s2 = create_service_file("adam", "yep", "tcp-backlog = 128");
-        assert_eq!(s1.merge(s2), false);
+        assert_eq!(s1.merge(s2), MergeResult::StopSharing);
         assert_eq!(s1, s1_check);
     }
 

@@ -17,10 +17,11 @@
 //! Service rumors declare that a given `Server` is running this Service.
 
 use std::cmp::Ordering;
-use std::mem;
 use std::result;
 use std::str::FromStr;
+use std::{mem, slice};
 
+use lmdb::traits::{AsLmdbBytes, FromLmdbBytes};
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 use toml;
@@ -30,8 +31,9 @@ use habitat_core::service::ServiceGroup;
 
 use error::{Error, Result};
 use protocol::{self, newscast, FromProto};
-use rumor::{Rumor, RumorPayload, RumorType};
+use rumor::{MergeResult, Rumor, RumorPayload, RumorType};
 
+#[repr(C)]
 #[derive(Debug, Clone)]
 pub struct Service {
     pub member_id: String,
@@ -41,6 +43,26 @@ pub struct Service {
     pub pkg: String,
     pub cfg: Vec<u8>,
     pub sys: SysInfo,
+}
+
+impl AsLmdbBytes for Service {
+    fn as_lmdb_bytes(&self) -> &[u8] {
+        unsafe {
+            slice::from_raw_parts(
+                (self as *const Service) as *const u8,
+                mem::size_of::<Service>(),
+            )
+        }
+    }
+}
+
+impl FromLmdbBytes for Service {
+    fn from_lmdb_bytes(bytes: &[u8]) -> ::std::result::Result<&Service, String> {
+        let bytes_ptr: *const u8 = bytes.as_ptr();
+        let rumor_ptr: *const Service = bytes_ptr as *const Service;
+        let thing: &Service = unsafe { &*rumor_ptr };
+        Ok(thing)
+    }
 }
 
 // Ensures that `cfg` is rendered as a map, and not an array of bytes
@@ -164,12 +186,11 @@ impl From<Service> for newscast::Service {
 impl Rumor for Service {
     /// Follows a simple pattern; if we have a newer incarnation than the one we already have, the
     /// new one wins. So far, these never change.
-    fn merge(&mut self, mut other: Service) -> bool {
+    fn merge(&self, other: Service) -> MergeResult<Service> {
         if *self >= other {
-            false
+            MergeResult::StopSharing
         } else {
-            mem::swap(self, &mut other);
-            true
+            MergeResult::ShareNew(other)
         }
     }
 
@@ -253,7 +274,7 @@ mod tests {
 
     use super::Service;
     use rumor::service::SysInfo;
-    use rumor::Rumor;
+    use rumor::{MergeResult, Rumor};
 
     fn create_service(member_id: &str) -> Service {
         let pkg = PackageIdent::from_str("core/neurosis/1.2.3/20161208121212").unwrap();
@@ -321,12 +342,11 @@ mod tests {
 
     #[test]
     fn merge_chooses_the_higher_incarnation() {
-        let mut s1 = create_service("adam");
+        let s1 = create_service("adam");
         let mut s2 = create_service("adam");
         s2.incarnation = 1;
         let s2_check = s2.clone();
-        assert_eq!(s1.merge(s2), true);
-        assert_eq!(s1, s2_check);
+        assert_eq!(s1.merge(s2), MergeResult::ShareNew(s2_check));
     }
 
     #[test]
@@ -335,7 +355,7 @@ mod tests {
         s1.incarnation = 1;
         let s1_check = s1.clone();
         let s2 = create_service("adam");
-        assert_eq!(s1.merge(s2), false);
+        assert_eq!(s1.merge(s2), MergeResult::StopSharing);
         assert_eq!(s1, s1_check);
     }
 
