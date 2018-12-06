@@ -38,8 +38,7 @@ steps:
           - CHEF_CI_GITHUB_TOKEN
 
   - label: "Build Bootstrap Bundle and push to :s3:"
-    command: /bin/true
-    skip: Not implemented yet
+    command: .buildkite/scripts/create_release_bundle.sh
     agents:
       queue: habitat-release
 
