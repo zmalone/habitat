@@ -56,7 +56,7 @@ steps:
       - hab install core/libarchive
       - hab install core/libsodium
       - hab install core/openssl
-      - hab install core/libzmq
+      - hab install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
