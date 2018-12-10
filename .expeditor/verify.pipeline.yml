@@ -3,7 +3,7 @@ steps:
   # Shellcheck!
   #
   - label: "Shellcheck :bash:"
-    command: 
+    command:
       - ./test/shellcheck.sh
     agents:
       queue: 'docker-privileged'
@@ -12,7 +12,8 @@ steps:
         image: "chefes/buildkite"
 
   - label: "[unit] hab"
-    command: 
+    command:
+      - hab install core/libarchive
       - cd components/hab && cargo test
     agents:
       queue: 'docker-privileged'
@@ -21,7 +22,8 @@ steps:
         image: "chefes/buildkite"
 
   - label: "[unit] builder-api-client"
-    command: 
+    command:
+      - hab install core/libarchive
       - cd components/builder-api-client && cargo test
     agents:
       queue: 'docker-privileged'
@@ -30,7 +32,8 @@ steps:
         image: "chefes/buildkite"
 
   - label: "[unit] butterfly"
-    command: 
+    command:
+      - hab install core/libsodium
       - cd components/butterfly && cargo test
     agents:
       queue: 'docker-privileged'
@@ -39,7 +42,8 @@ steps:
         image: "chefes/buildkite"
 
   - label: "[unit] common"
-    command: 
+    command:
+      - hab install core/libarchive
       - cd components/common && cargo test
     agents:
       queue: 'docker-privileged'
