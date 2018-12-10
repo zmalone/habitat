@@ -13,9 +13,9 @@ steps:
 
   - label: "[unit] builder-api-client"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -34,10 +34,10 @@ steps:
   - label: "[unit] butterfly"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - hab install core/zeromq
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
+      - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -56,9 +56,9 @@ steps:
 
   - label: "[unit] common"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -76,10 +76,11 @@ steps:
   - label: "[unit] eventsrv"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - hab install core/zeromq
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
+      - hab pkg install core/zeromq
+      - hab pkg install core/protobuf --binlink
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -99,10 +100,10 @@ steps:
   - label: "[unit] eventsrv-client"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - hab install core/zeromq
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
+      - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -121,9 +122,10 @@ steps:
 
   - label: "[unit] eventsrv-protocol"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
+      - hab pkg install core/protobuf --binlink
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -141,9 +143,9 @@ steps:
 
   - label: "[unit] hab"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -161,9 +163,9 @@ steps:
 
   - label: "[unit] launcher-client"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -181,9 +183,9 @@ steps:
 
   - label: "[unit] launcher-protocol"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -201,9 +203,9 @@ steps:
 
   - label: "[unit] pkg-export-docker"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -221,9 +223,9 @@ steps:
 
   - label: "[unit] pkg-export-helm"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -241,9 +243,9 @@ steps:
 
   - label: "[unit] pkg-export-kubernetes"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -261,9 +263,9 @@ steps:
 
   - label: "[unit] pkg-export-tar"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -282,10 +284,10 @@ steps:
   - label: "[unit] sup"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - hab install core/zeromq
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
+      - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -304,9 +306,9 @@ steps:
 
   - label: "[unit] sup-client"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -324,9 +326,9 @@ steps:
 
   - label: "[unit] sup-protocol"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
+      - hab pkg install core/libarchive
+      - hab pkg install core/libsodium
+      - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
