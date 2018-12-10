@@ -43,7 +43,7 @@ steps:
 
   - label: "[unit] common"
     command:
-      - ./test/setup_test_env.sh
+     - ./test/setup_test_env.sh
      - cd components/common && cargo test
     agents:
       queue: 'docker-privileged'
