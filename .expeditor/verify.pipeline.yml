@@ -8,3 +8,6 @@ steps:
       - ./test/shellcheck.sh
     agents:
       queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
