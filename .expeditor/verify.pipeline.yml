@@ -65,6 +65,7 @@ steps:
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - export OPENSSL_STATIC=true
+      - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/butterfly && cargo test
     agents:
       queue: 'docker-privileged'
