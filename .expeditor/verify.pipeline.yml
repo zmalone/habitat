@@ -13,16 +13,16 @@ steps:
 
   - label: "[unit] builder-api-client"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/builder-api-client && cargo test
     agents:
@@ -34,17 +34,17 @@ steps:
   - label: "[unit] butterfly"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
       - hab pkg install core/zeromq
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/butterfly && cargo test
@@ -56,16 +56,16 @@ steps:
 
   - label: "[unit] common"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - cd components/common && cargo test
     agents:
       queue: 'docker-privileged'
@@ -76,18 +76,18 @@ steps:
   - label: "[unit] eventsrv"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
       - hab pkg install core/zeromq
       - hab pkg install core/protobuf --binlink
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/eventsrv && cargo test
@@ -100,17 +100,17 @@ steps:
   - label: "[unit] eventsrv-client"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
       - hab pkg install core/zeromq
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/eventsrv-client && cargo test
@@ -122,17 +122,17 @@ steps:
 
   - label: "[unit] eventsrv-protocol"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
       - hab pkg install core/protobuf --binlink
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/eventsrv-protocol && cargo test
     agents:
@@ -143,16 +143,16 @@ steps:
 
   - label: "[unit] hab"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/hab && cargo test
     agents:
@@ -163,16 +163,16 @@ steps:
 
   - label: "[unit] launcher-client"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/launcher-client && cargo test
     agents:
@@ -183,16 +183,16 @@ steps:
 
   - label: "[unit] launcher-protocol"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/launcher-protocol && cargo test
     agents:
@@ -203,16 +203,16 @@ steps:
 
   - label: "[unit] pkg-export-docker"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/pkg-export-docker && cargo test
     agents:
@@ -223,16 +223,16 @@ steps:
 
   - label: "[unit] pkg-export-helm"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/pkg-export-helm && cargo test
     agents:
@@ -243,16 +243,16 @@ steps:
 
   - label: "[unit] pkg-export-kubernetes"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/pkg-export-kubernetes && cargo test
     agents:
@@ -263,16 +263,16 @@ steps:
 
   - label: "[unit] pkg-export-tar"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/pkg-export-tar && cargo test
     agents:
@@ -284,17 +284,17 @@ steps:
   - label: "[unit] sup"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
       - hab pkg install core/zeromq
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/sup && cargo test
@@ -306,16 +306,16 @@ steps:
 
   - label: "[unit] sup-client"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/sup-client && cargo test
     agents:
@@ -326,16 +326,16 @@ steps:
 
   - label: "[unit] sup-protocol"
     command:
-      - hab pkg install core/libarchive
-      - hab pkg install core/libsodium
-      - hab pkg install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - hab pkg install core/libarchive-musl
+      - hab pkg install core/libsodium-musl
+      - hab pkg install core/openssl-musl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive-musl)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive-musl)/include
       - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium-musl)/lib
       - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl-musl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl-musl)/include
       - export OPENSSL_STATIC=true
       - cd components/sup-protocol && cargo test
     agents:
