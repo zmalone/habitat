@@ -75,9 +75,11 @@ steps:
 
   - label: "[unit] eventsrv"
     command:
+      - apt-get update -y && apt-get install libzmq3-dev -y
       - hab install core/libarchive
       - hab install core/libsodium
       - hab install core/openssl
+      - hab install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -86,6 +88,7 @@ steps:
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - export OPENSSL_STATIC=true
+      - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/eventsrv && cargo test
     agents:
       queue: 'docker-privileged'
@@ -95,9 +98,11 @@ steps:
 
   - label: "[unit] eventsrv-client"
     command:
+      - apt-get update -y && apt-get install libzmq3-dev -y
       - hab install core/libarchive
       - hab install core/libsodium
       - hab install core/openssl
+      - hab install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -106,6 +111,7 @@ steps:
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - export OPENSSL_STATIC=true
+      - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/eventsrv-client && cargo test
     agents:
       queue: 'docker-privileged'
@@ -275,9 +281,11 @@ steps:
 
   - label: "[unit] sup"
     command:
+      - apt-get update -y && apt-get install libzmq3-dev -y
       - hab install core/libarchive
       - hab install core/libsodium
       - hab install core/openssl
+      - hab install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export LIBARCHIVE_STATIC=true
@@ -286,6 +294,7 @@ steps:
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - export OPENSSL_STATIC=true
+      - export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
       - cd components/sup && cargo test
     agents:
       queue: 'docker-privileged'
