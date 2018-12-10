@@ -14,6 +14,8 @@ steps:
   - label: "[unit] hab"
     command:
       - hab install core/libarchive
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)\lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)\include
       - cd components/hab && cargo test
     agents:
       queue: 'docker-privileged'
