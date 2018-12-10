@@ -4,8 +4,43 @@ steps:
   #
   - label: "Shellcheck :bash:"
     command: 
-      - ls -la
       - ./test/shellcheck.sh
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] hab"
+    command: 
+      - cd components/hab && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] builder-api-client"
+    command: 
+      - cd components/builder-api-client && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] butterfly"
+    command: 
+      - cd components/butterfly && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] common"
+    command: 
+      - cd components/common && cargo test
     agents:
       queue: 'docker-privileged'
     plugins:
