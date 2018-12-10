@@ -19,6 +19,7 @@ steps:
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - cd components/hab && cargo test
@@ -36,6 +37,7 @@ steps:
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - cd components/builder-api-client && cargo test
@@ -53,6 +55,7 @@ steps:
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - cd components/butterfly && cargo test
@@ -70,6 +73,7 @@ steps:
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - cd components/common && cargo test
