@@ -14,8 +14,13 @@ steps:
   - label: "[unit] hab"
     command:
       - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)\lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)\include
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)\lib
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)\lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)\include
       - cd components/hab && cargo test
     agents:
       queue: 'docker-privileged'
