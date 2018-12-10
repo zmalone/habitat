@@ -64,7 +64,7 @@ steps:
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export LIBARCHIVE_LDFLAGS="-L$(pkg_path_for zlib)/lib -lz -L$(pkg_path_for xz)/lib -llzma -L$(pkg_path_for bzip2)/lib -lbz2 -L$(pkg_path_for openssl)/lib -lssl -lcrypto"
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path zlib)/lib -lz -L$(hab pkg path xz)/lib -llzma -L$(hab pkg path bzip2)/lib -lbz2 -L$(hab pkg path openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
