@@ -11,26 +11,6 @@ steps:
       docker#v2.1.0:
         image: "chefes/buildkite"
 
-  - label: "[unit] hab"
-    command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export LIBARCHIVE_STATIC=true
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
-      - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
-      - export OPENSSL_STATIC=true
-      - cd components/hab && cargo test
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
-
   - label: "[unit] builder-api-client"
     command:
       - hab install core/libarchive
@@ -87,6 +67,266 @@ steps:
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
       - cd components/common && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] eventsrv"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/eventsrv && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] eventsrv-client"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/eventsrv-client && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] eventsrv-protocol"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/eventsrv-protocol && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] hab"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/hab && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] launcher-client"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/launcher-client && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] launcher-protocol"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/launcher-protocol && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] pkg-export-docker"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/pkg-export-docker && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] pkg-export-helm"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/pkg-export-helm && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] pkg-export-kubernetes"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/pkg-export-kubernetes && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] pkg-export-tar"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/pkg-export-tar && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] sup"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/sup && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] sup-client"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/sup-client && cargo test
+    agents:
+      queue: 'docker-privileged'
+    plugins:
+      docker#v2.1.0:
+        image: "chefes/buildkite"
+
+  - label: "[unit] sup-protocol"
+    command:
+      - hab install core/libarchive
+      - hab install core/libsodium
+      - hab install core/openssl
+      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
+      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_STATIC=true
+      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
+      - export SODIUM_STATIC=true
+      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
+      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - export OPENSSL_STATIC=true
+      - cd components/sup-protocol && cargo test
     agents:
       queue: 'docker-privileged'
     plugins:
