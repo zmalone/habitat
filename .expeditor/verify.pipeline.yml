@@ -13,15 +13,7 @@ steps:
 
   - label: "[unit] hab"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
-      - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - ./test/setup_test_env.sh
       - cd components/hab && cargo test
     agents:
       queue: 'docker-privileged'
@@ -31,15 +23,7 @@ steps:
 
   - label: "[unit] builder-api-client"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
-      - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - ./test/setup_test_env.sh
       - cd components/builder-api-client && cargo test
     agents:
       queue: 'docker-privileged'
@@ -49,15 +33,7 @@ steps:
 
   - label: "[unit] butterfly"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
-      - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
+      - ./test/setup_test_env.sh
       - cd components/butterfly && cargo test
     agents:
       queue: 'docker-privileged'
@@ -67,16 +43,8 @@ steps:
 
   - label: "[unit] common"
     command:
-      - hab install core/libarchive
-      - hab install core/libsodium
-      - hab install core/openssl
-      - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
-      - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
-      - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
-      - export SODIUM_STATIC=true
-      - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)/lib
-      - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)/include
-      - cd components/common && cargo test
+      - ./test/setup_test_env.sh
+     - cd components/common && cargo test
     agents:
       queue: 'docker-privileged'
     plugins:
