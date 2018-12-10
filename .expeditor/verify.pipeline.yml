@@ -3,6 +3,8 @@ steps:
   # Shellcheck!
   #
   - label: "Shellcheck :bash:"
-    command: pwd
+    command: 
+      - ls -la
+      - ./test/shellcheck.sh
     agents:
       queue: 'docker-privileged'
