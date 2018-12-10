@@ -21,6 +21,7 @@ steps:
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)\lib
       - export OPENSSL_LIB_DIR=$(hab pkg path core/openssl)\lib
       - export OPENSSL_INCLUDE_DIR=$(hab pkg path core/openssl)\include
+      - export OPENSSL_STATIC=true
       - cd components/hab && cargo test
     agents:
       queue: 'docker-privileged'
