@@ -53,7 +53,7 @@ steps:
 
   - label: "[unit] butterfly"
     command:
-      - apt-get update && apt-get install libzmq3-dev
+      - apt-get update -y && apt-get install libzmq3-dev -y
       - hab install core/libarchive
       - hab install core/libsodium
       - hab install core/openssl
