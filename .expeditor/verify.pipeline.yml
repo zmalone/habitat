@@ -13,11 +13,15 @@ steps:
 
   - label: "[unit] builder-api-client"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -34,12 +38,16 @@ steps:
   - label: "[unit] butterfly"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -80,6 +88,9 @@ steps:
   - label: "[unit] eventsrv"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
@@ -87,6 +98,7 @@ steps:
       - hab pkg install core/protobuf --binlink
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -104,12 +116,16 @@ steps:
   - label: "[unit] eventsrv-client"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -126,12 +142,16 @@ steps:
 
   - label: "[unit] eventsrv-protocol"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - hab pkg install core/protobuf --binlink
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -147,11 +167,15 @@ steps:
 
   - label: "[unit] hab"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -167,11 +191,15 @@ steps:
 
   - label: "[unit] launcher-client"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -187,11 +215,15 @@ steps:
 
   - label: "[unit] launcher-protocol"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -207,11 +239,15 @@ steps:
 
   - label: "[unit] pkg-export-docker"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -227,11 +263,15 @@ steps:
 
   - label: "[unit] pkg-export-helm"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -247,11 +287,15 @@ steps:
 
   - label: "[unit] pkg-export-kubernetes"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -267,11 +311,15 @@ steps:
 
   - label: "[unit] pkg-export-tar"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -288,12 +336,16 @@ steps:
   - label: "[unit] sup"
     command:
       - apt-get update -y && apt-get install libzmq3-dev -y
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - hab pkg install core/zeromq
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -310,11 +362,15 @@ steps:
 
   - label: "[unit] sup-client"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
@@ -330,11 +386,15 @@ steps:
 
   - label: "[unit] sup-protocol"
     command:
+      - hab pkg install core/zlib
+      - hab pkg install core/xz
+      - hab pkg install core/bzip2
       - hab pkg install core/libarchive
       - hab pkg install core/libsodium
       - hab pkg install core/openssl
       - export LIBARCHIVE_LIB_DIR=$(hab pkg path core/libarchive)/lib
       - export LIBARCHIVE_INCLUDE_DIR=$(hab pkg path core/libarchive)/include
+      - export LIBARCHIVE_LDFLAGS="-L$(hab pkg path core/zlib)/lib -lz -L$(hab pkg path core/xz)/lib -llzma -L$(hab pkg path core/bzip2)/lib -lbz2 -L$(hab pkg path core/openssl)/lib -lssl -lcrypto"
       - export LIBARCHIVE_STATIC=true
       - export SODIUM_LIB_DIR=$(hab pkg path core/libsodium)/lib
       - export SODIUM_STATIC=true
