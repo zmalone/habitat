@@ -1,9 +1,7 @@
 #!/bin/bash
 
-set -xeuo pipefail
+set -xeo pipefail
 
-# TODO: update to latest releng docker image, which has pkg-config in it
-apt-get update && apt-get install pkg-config
 hab pkg install core/bzip2
 hab pkg install core/libarchive
 hab pkg install core/libsodium
@@ -17,9 +15,9 @@ export OPENSSL_DIR="$(hab pkg path core/openssl)" # so the openssl crate knows w
 export OPENSSL_STATIC=true # so the openssl crate builds statically
 export LIBZMQ_PREFIX=$(hab pkg path core/zeromq)
 # now include openssl so it exists in the runtime library path when cargo test is run
-export LD_LIBRARY_PATH="$(hab pkg path core/libsodium)/lib"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(hab pkg path core/libsodium)/lib"
 # include these so that the cargo tests can bind to libarchive (which dynamically binds to xz, bzip, etc), openssl, and sodium at *runtime*
-export LIBRARY_PATH="$(hab pkg path core/bzip2)/lib:$(hab pkg path core/libsodium)/lib:$(hab pkg path core/openssl)/lib:$(hab pkg path core/xz)/lib"
+export LIBRARY_PATH="$LIBRARY_PATH:$(hab pkg path core/bzip2)/lib:$(hab pkg path core/libsodium)/lib:$(hab pkg path core/openssl)/lib:$(hab pkg path core/xz)/lib"
 # setup pkgconfig so the libarchive crate can use pkg-config to fine bzip2 and xz at *build* time
 export PKG_CONFIG_PATH="$(hab pkg path core/libarchive)/lib/pkgconfig:$(hab pkg path core/libsodium)/lib/pkgconfig:$(hab pkg path core/openssl)/lib/pkgconfig:$(hab pkg path core/zeromq)/lib/pkgconfig"
 
