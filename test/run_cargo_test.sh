@@ -21,5 +21,7 @@ export LIBRARY_PATH="$(hab pkg path core/bzip2)/lib:$(hab pkg path core/libsodiu
 # setup pkgconfig so the libarchive crate can use pkg-config to fine bzip2 and xz at *build* time
 export PKG_CONFIG_PATH="$(hab pkg path core/libarchive)/lib/pkgconfig:$(hab pkg path core/libsodium)/lib/pkgconfig:$(hab pkg path core/openssl)/lib/pkgconfig"
 
+ulimit -a
+
 cd "components/$1"
 cargo test --verbose
