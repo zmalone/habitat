@@ -2,159 +2,169 @@ steps:
   #
   # Shellcheck!
   #
-  - label: "Shellcheck :linux: :bash:"
-    skip: Waiting to fix
-    command:
-      - ./test/shellcheck.sh
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "Shellcheck :linux: :bash:"
+  #   skip: Waiting to fix
+  #   command:
+  #     - ./test/shellcheck.sh
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: builder-api-client"
-    command:
-      - ./test/run_cargo_test.sh builder-api-client
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: builder-api-client"
+  #   command:
+  #     - ./test/run_cargo_test.sh builder-api-client
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: butterfly"
-    skip: Waiting to fix
-    command:
-      - ./test/run_cargo_test.sh butterfly
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: butterfly"
+  #   skip: Waiting to fix
+  #   command:
+  #     - ./test/run_cargo_test.sh butterfly
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: common"
-    command:
-      - ./test/run_cargo_test.sh common
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: common"
+  #   command:
+  #     - ./test/run_cargo_test.sh common
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: eventsrv"
-    command:
-      - ./test/run_cargo_test.sh eventsrv
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: eventsrv"
+  #   command:
+  #     - ./test/run_cargo_test.sh eventsrv
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: eventsrv-client"
-    command:
-      - ./test/run_cargo_test.sh eventsrv-client
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: eventsrv-client"
+  #   command:
+  #     - ./test/run_cargo_test.sh eventsrv-client
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: eventsrv-protocol"
-    command:
-      - ./test/run_cargo_test.sh eventsrv-protocol
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: eventsrv-protocol"
+  #   command:
+  #     - ./test/run_cargo_test.sh eventsrv-protocol
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: hab"
-    command:
-      - ./test/run_cargo_test.sh hab
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: hab"
+  #   command:
+  #     - ./test/run_cargo_test.sh hab
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: launcher-client"
-    command:
-      - ./test/run_cargo_test.sh launcher-client
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: launcher-client"
+  #   command:
+  #     - ./test/run_cargo_test.sh launcher-client
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: launcher-protocol"
-    command:
-      - ./test/run_cargo_test.sh launcher-protocol
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: launcher-protocol"
+  #   command:
+  #     - ./test/run_cargo_test.sh launcher-protocol
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: pkg-export-docker"
-    skip: Waiting to fix
-    command:
-      - ./test/run_cargo_test.sh pkg-export-docker
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: pkg-export-docker"
+  #   skip: Waiting to fix
+  #   command:
+  #     - ./test/run_cargo_test.sh pkg-export-docker
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: pkg-export-helm"
-    command:
-      - ./test/run_cargo_test.sh pkg-export-helm
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: pkg-export-helm"
+  #   command:
+  #     - ./test/run_cargo_test.sh pkg-export-helm
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: pkg-export-kubernetes"
-    command:
-      - ./test/run_cargo_test.sh pkg-export-kubernetes
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: pkg-export-kubernetes"
+  #   command:
+  #     - ./test/run_cargo_test.sh pkg-export-kubernetes
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: pkg-export-tar"
-    command:
-      - ./test/run_cargo_test.sh pkg-export-tar
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: pkg-export-tar"
+  #   command:
+  #     - ./test/run_cargo_test.sh pkg-export-tar
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: sup"
-    skip: Waiting to fix
-    command:
-      - ./test/run_cargo_test.sh sup
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: sup"
+  #   skip: Waiting to fix
+  #   command:
+  #     - ./test/run_cargo_test.sh sup
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: sup-client"
-    command:
-      - ./test/run_cargo_test.sh sup-client
-    agents:
-      queue: 'docker-privileged'
-    plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+  # - label: "[unit] :linux: sup-client"
+  #   command:
+  #     - ./test/run_cargo_test.sh sup-client
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
 
-  - label: "[unit] :linux: sup-protocol"
+  # - label: "[unit] :linux: sup-protocol"
+  #   command:
+  #     - ./test/run_cargo_test.sh sup-protocol
+  #   agents:
+  #     queue: 'docker-privileged'
+  #   plugins:
+  #     docker#v2.1.0:
+  #       image: "chefes/buildkite"
+
+  - label: "[unit] :windows: builder-api-client"
     command:
-      - ./test/run_cargo_test.sh sup-protocol
+      - ./test/run_cargo_test.ps1 builder-api-client
     agents:
-      queue: 'docker-privileged'
+      queue: 'default-windows'
     plugins:
-      docker#v2.1.0:
-        image: "chefes/buildkite"
+      - docker#v2.1.0:
+          image: "chefes/windows-base:latest"
+          shell: [ "powershell", "-Command" ]
