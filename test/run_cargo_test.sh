@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -xeuo pipefail
 
 # TODO: update to latest releng docker image, which has pkg-config in it
 apt-get update && apt-get install pkg-config
