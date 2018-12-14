@@ -22,4 +22,4 @@ export LIBRARY_PATH="$(hab pkg path core/bzip2)/lib:$(hab pkg path core/libsodiu
 export PKG_CONFIG_PATH="$(hab pkg path core/libarchive)/lib/pkgconfig:$(hab pkg path core/libsodium)/lib/pkgconfig:$(hab pkg path core/openssl)/lib/pkgconfig"
 
 cd "components/$1"
-cargo test --lib --doc --verbose
+cargo test --lib --verbose
