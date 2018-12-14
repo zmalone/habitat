@@ -22,6 +22,6 @@ Invoke-Expression "./rustup-init.exe -y --default-toolchain stable-x86_64-pc-win
 $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 
 Write-Host "--- Running cargo test on $Component"
-Invoke-Expression "cd components/$Component && $cargo test --lib --verbose"
+Invoke-Expression "cd components/$Component && $cargo test --verbose"
 
 if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
