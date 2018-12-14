@@ -19,9 +19,7 @@ try {
 finally {
   [Net.ServicePointManager]::SecurityProtocol = $current_protocols
 }
-& pwd
-& dir
-& rustup-init.exe -y --default-toolchain stable-x86_64-pc-windows-msvc
+& ./rustup-init.exe -y --default-toolchain stable-x86_64-pc-windows-msvc
 
 Write-Host "--- Running cargo test on $Component"
 & cd components/$Component
