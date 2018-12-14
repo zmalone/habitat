@@ -7,7 +7,10 @@ param (
     [string]$Component
 )
 
+Set-PSDebug -trace 1
+
 $ErrorActionPreference="stop"
+
 $current_protocols = [Net.ServicePointManager]::SecurityProtocol
 try {
   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
