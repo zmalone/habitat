@@ -7,8 +7,6 @@ param (
     [string]$Component
 )
 
-Set-PSDebug -trace 1
-
 $ErrorActionPreference="stop"
 
 $current_protocols = [Net.ServicePointManager]::SecurityProtocol
@@ -27,3 +25,5 @@ $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 Write-Host "--- Running cargo test on $Component"
 & cd components/$Component
 & $cargo test --verbose
+
+if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
