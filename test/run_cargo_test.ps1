@@ -18,12 +18,10 @@ finally {
   [Net.ServicePointManager]::SecurityProtocol = $current_protocols
 }
 
-& ./rustup-init.exe -y --default-toolchain stable-x86_64-pc-windows-msvc
-
+Invoke-Expression "./rustup-init.exe -y --default-toolchain stable-x86_64-pc-windows-msvc"
 $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 
 Write-Host "--- Running cargo test on $Component"
-Invoke-Expression "cd components/$Component"
-Invoke-Expression "$cargo test --verbose"
+Invoke-Expression "cd components/$Component && $cargo test --lib --bin --verbose"
 
 if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}

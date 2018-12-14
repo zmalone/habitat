@@ -165,7 +165,7 @@ steps:
 
   - label: "[unit] :windows: butterfly"
     command:
-      - ./test/run_cargo_test.sh butterfly
+      - ./test/run_cargo_test.ps1 butterfly
     agents:
       queue: 'default-windows'
     plugins:
@@ -175,7 +175,7 @@ steps:
 
   - label: "[unit] :windows: common"
     command:
-      - ./test/run_cargo_test.sh common
+      - ./test/run_cargo_test.ps1 common
     agents:
       queue: 'default-windows'
     plugins:
@@ -185,7 +185,7 @@ steps:
 
   - label: "[unit] :windows: eventsrv"
     command:
-      - ./test/run_cargo_test.sh eventsrv
+      - ./test/run_cargo_test.ps1 eventsrv
     agents:
       queue: 'default-windows'
     plugins:
@@ -195,7 +195,7 @@ steps:
 
   - label: "[unit] :windows: eventsrv-client"
     command:
-      - ./test/run_cargo_test.sh eventsrv-client
+      - ./test/run_cargo_test.ps1 eventsrv-client
     agents:
       queue: 'default-windows'
     plugins:
@@ -205,7 +205,7 @@ steps:
 
   - label: "[unit] :windows: eventsrv-protocol"
     command:
-      - ./test/run_cargo_test.sh eventsrv-protocol
+      - ./test/run_cargo_test.ps1 eventsrv-protocol
     agents:
       queue: 'default-windows'
     plugins:
@@ -215,7 +215,7 @@ steps:
 
   - label: "[unit] :windows: hab"
     command:
-      - ./test/run_cargo_test.sh hab
+      - ./test/run_cargo_test.ps1 hab
     agents:
       queue: 'default-windows'
     plugins:
@@ -225,7 +225,7 @@ steps:
 
   - label: "[unit] :windows: launcher-client"
     command:
-      - ./test/run_cargo_test.sh launcher-client
+      - ./test/run_cargo_test.ps1 launcher-client
     agents:
       queue: 'default-windows'
     plugins:
@@ -235,7 +235,7 @@ steps:
 
   - label: "[unit] :windows: launcher-protocol"
     command:
-      - ./test/run_cargo_test.sh launcher-protocol
+      - ./test/run_cargo_test.ps1 launcher-protocol
     agents:
       queue: 'default-windows'
     plugins:
@@ -245,7 +245,7 @@ steps:
 
   - label: "[unit] :windows: pkg-export-docker"
     command:
-      - ./test/run_cargo_test.sh pkg-export-docker
+      - ./test/run_cargo_test.ps1 pkg-export-docker
     agents:
       queue: 'default-windows'
     plugins:
@@ -255,7 +255,7 @@ steps:
 
   - label: "[unit] :windows: pkg-export-helm"
     command:
-      - ./test/run_cargo_test.sh pkg-export-helm
+      - ./test/run_cargo_test.ps1 pkg-export-helm
     agents:
       queue: 'default-windows'
     plugins:
@@ -265,7 +265,7 @@ steps:
 
   - label: "[unit] :windows: pkg-export-kubernetes"
     command:
-      - ./test/run_cargo_test.sh pkg-export-kubernetes
+      - ./test/run_cargo_test.ps1 pkg-export-kubernetes
     agents:
       queue: 'default-windows'
     plugins:
@@ -275,7 +275,7 @@ steps:
 
   - label: "[unit] :windows: pkg-export-tar"
     command:
-      - ./test/run_cargo_test.sh pkg-export-tar
+      - ./test/run_cargo_test.ps1 pkg-export-tar
     agents:
       queue: 'default-windows'
     plugins:
@@ -285,7 +285,7 @@ steps:
 
   - label: "[unit] :windows: sup"
     command:
-      - ./test/run_cargo_test.sh sup
+      - ./test/run_cargo_test.ps1 sup
     agents:
       queue: 'default-windows'
     plugins:
@@ -295,7 +295,7 @@ steps:
 
   - label: "[unit] :windows: sup-client"
     command:
-      - ./test/run_cargo_test.sh sup-client
+      - ./test/run_cargo_test.ps1 sup-client
     agents:
       queue: 'default-windows'
     plugins:
@@ -305,7 +305,7 @@ steps:
 
   - label: "[unit] :windows: sup-protocol"
     command:
-      - ./test/run_cargo_test.sh sup-protocol
+      - ./test/run_cargo_test.ps1 sup-protocol
     agents:
       queue: 'default-windows'
     plugins:
