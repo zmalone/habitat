@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xueo pipefail
+set -ueo pipefail
 
 hab pkg install core/bzip2
 hab pkg install core/libarchive
@@ -20,8 +20,6 @@ export LD_LIBRARY_PATH="$(hab pkg path core/libsodium)/lib:$(hab pkg path core/z
 export LIBRARY_PATH="$(hab pkg path core/bzip2)/lib:$(hab pkg path core/libsodium)/lib:$(hab pkg path core/openssl)/lib:$(hab pkg path core/xz)/lib"
 # setup pkgconfig so the libarchive crate can use pkg-config to fine bzip2 and xz at *build* time
 export PKG_CONFIG_PATH="$(hab pkg path core/libarchive)/lib/pkgconfig:$(hab pkg path core/libsodium)/lib/pkgconfig:$(hab pkg path core/openssl)/lib/pkgconfig"
-
-ulimit -a
 
 cd "components/$1"
 cargo test --verbose
