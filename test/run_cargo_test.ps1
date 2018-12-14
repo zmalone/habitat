@@ -23,7 +23,7 @@ finally {
 $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 
 Write-Host "--- Running cargo test on $Component"
-& cd components/$Component
-& $cargo test --verbose
+Invoke-Expression "cd components/$Component"
+Invoke-Expression "$cargo test --verbose"
 
 if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
