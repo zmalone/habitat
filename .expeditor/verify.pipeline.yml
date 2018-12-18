@@ -162,7 +162,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: butterfly"
     command:
@@ -173,7 +172,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: common"
     command:
@@ -184,7 +182,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: eventsrv"
     command:
@@ -195,7 +192,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: eventsrv-client"
     command:
@@ -206,7 +202,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: eventsrv-protocol"
     command:
@@ -217,7 +212,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: hab"
     command:
@@ -228,7 +222,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: launcher-client"
     command:
@@ -239,7 +232,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: launcher-protocol"
     command:
@@ -250,7 +242,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: pkg-export-docker"
     command:
@@ -261,7 +252,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: pkg-export-helm"
     command:
@@ -272,7 +262,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: pkg-export-kubernetes"
     command:
@@ -283,7 +272,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: pkg-export-tar"
     command:
@@ -294,7 +282,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: sup"
     command:
@@ -305,7 +292,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: sup-client"
     command:
@@ -316,7 +302,6 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
 
   - label: "[unit] :windows: sup-protocol"
     command:
@@ -327,4 +312,3 @@ steps:
       - docker#v2.1.0:
           image: "chefes/windows-base:latest"
           shell: [ "powershell", "-Command" ]
-          always-pull: true
