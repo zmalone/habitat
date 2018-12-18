@@ -12,7 +12,7 @@ $ErrorActionPreference="stop"
 $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 
 Write-Host "--- Installing Visual Studio Tools"
-& hab.exe install core/visual-cpp-build-tools-2015
+& hab install core/visual-cpp-build-tools-2015
 
 # Doing this manually for the moment as POC
 $tools_path = Invoke-Expression "hab pkg path core/visual-cpp-build-tools-2015"
