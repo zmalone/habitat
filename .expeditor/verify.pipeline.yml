@@ -317,4 +317,4 @@ steps:
     command:
       - ./test/run_cargo_test.ps1 eventsvr
     agents:
-      queue: 'shaintest'
+      queue: 'windows-docker'

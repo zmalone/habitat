@@ -39,3 +39,8 @@ pwd
 # & $cargo build --verbose
 
 # if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+
+$env:Path="$env:Path;$env:userprofile\.cargo\bin"
+
+cargo --version
+# Invoke-RestMethod -usebasicparsing https://aka.ms/vs/15/release/vs_buildtools.exe -outfile vs_buildtools.exe
