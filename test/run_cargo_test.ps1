@@ -9,10 +9,7 @@ param (
 
 $ErrorActionPreference="stop"
 
-dir
-
-pwd
-# $cargo = "$env:userprofile\.cargo\bin\cargo.exe"
+$cargo = "$env:userprofile\.cargo\bin\cargo.exe"
 
 # Write-Host "--- Installing Visual Studio Tools"
 # & hab install core/visual-cpp-build-tools-2015
@@ -34,13 +31,17 @@ pwd
 # $env:UseEnv="true"
 # $env:Path="$env:Path;C:\hab\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\Microsoft Visual Studio 14.0\VC\bin\amd64;C:\h b\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRTaC:\hab\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\MSBuild\14.0\bin\amd64;C:\hab\pkgs\core\visual-cpp-build-;ools-2015\14.0.25420\20181108222024\Windows Kits\8.1\bin\x64"
 
-# Write-Host "--- Running cargo test on $Component"
-# & cd components/$Component
-# & $cargo build --verbose
+& $cargo --version
+
+Write-Host "--- Running cargo test on $Component"
+& cd components/$Component
+& $cargo build --verbose
 
 # if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 
-$env:Path="$env:Path;$env:userprofile\.cargo\bin"
+# $env:Path="$env:Path;$env:userprofile\.cargo\bin"
 
-cargo --version
+
+
+
 # Invoke-RestMethod -usebasicparsing https://aka.ms/vs/15/release/vs_buildtools.exe -outfile vs_buildtools.exe
