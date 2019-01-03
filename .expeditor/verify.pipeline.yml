@@ -153,168 +153,101 @@ steps:
   #     docker#v2.1.0:
   #       image: "chefes/buildkite"
 
+#################################################################
+
+
   # - label: "[unit] :windows: builder-api-client"
   #   command:
   #     - ./test/run_cargo_test.ps1 builder-api-client
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
-  # - label: "[unit] :windows: butterfly"
-  #   command:
-  #     - ./test/run_cargo_test.ps1 butterfly
-  #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  - label: "[unit] :windows: butterfly"
+    command:
+      - ./test/run_cargo_test.ps1 butterfly
+    agents:
+      queue: 'windows-docker'
 
   # - label: "[unit] :windows: common"
   #   command:
   #     - ./test/run_cargo_test.ps1 common
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: eventsrv"
   #   command:
   #     - ./test/run_cargo_test.ps1 eventsrv
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: eventsrv-client"
   #   command:
   #     - ./test/run_cargo_test.ps1 eventsrv-client
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: eventsrv-protocol"
   #   command:
   #     - ./test/run_cargo_test.ps1 eventsrv-protocol
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: hab"
   #   command:
   #     - ./test/run_cargo_test.ps1 hab
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: launcher-client"
   #   command:
   #     - ./test/run_cargo_test.ps1 launcher-client
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: launcher-protocol"
   #   command:
   #     - ./test/run_cargo_test.ps1 launcher-protocol
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
-  # - label: "[unit] :windows: pkg-export-docker"
-  #   command:
-  #     - ./test/run_cargo_test.ps1 pkg-export-docker
-  #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  - label: "[unit] :windows: pkg-export-docker"
+    command:
+      - ./test/run_cargo_test.ps1 pkg-export-docker
+    agents:
+      queue: 'windows-docker'
 
   # - label: "[unit] :windows: pkg-export-helm"
   #   command:
   #     - ./test/run_cargo_test.ps1 pkg-export-helm
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
-  # - label: "[unit] :windows: pkg-export-kubernetes"
-  #   command:
-  #     - ./test/run_cargo_test.ps1 pkg-export-kubernetes
-  #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  - label: "[unit] :windows: pkg-export-kubernetes"
+    command:
+      - ./test/run_cargo_test.ps1 pkg-export-kubernetes
+    agents:
+      queue: 'windows-docker'
 
   # - label: "[unit] :windows: pkg-export-tar"
   #   command:
   #     - ./test/run_cargo_test.ps1 pkg-export-tar
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
-  # - label: "[unit] :windows: sup"
-  #   command:
-  #     - ./test/run_cargo_test.ps1 sup
-  #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  - label: "[unit] :windows: sup"
+    command:
+      - ./test/run_cargo_test.ps1 sup
+    agents:
+      queue: 'windows-docker'
 
   # - label: "[unit] :windows: sup-client"
   #   command:
   #     - ./test/run_cargo_test.ps1 sup-client
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
+  #     queue: 'windows-docker'
 
   # - label: "[unit] :windows: sup-protocol"
   #   command:
   #     - ./test/run_cargo_test.ps1 sup-protocol
   #   agents:
-  #     queue: 'default-windows'
-  #   plugins:
-  #     - docker#v2.1.0:
-  #         image: "chefes/buildkite-windows:latest"
-  #         shell: [ "powershell", "-Command" ]
-
-  - label: "[unit] :windows: eventsvr"
-    command:
-      - ./test/run_cargo_test.ps1 eventsvr
-    agents:
-      queue: 'windows-docker'
+  #     queue: 'windows-docker'

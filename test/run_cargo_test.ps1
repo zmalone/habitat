@@ -8,40 +8,51 @@ param (
 )
 
 $ErrorActionPreference="stop"
+$env:RUSTUP_HOME="C:\rust\.rustup"
+$env:CARGO_HOME="C:\rust\.cargo"
+$env:Path="$env:Path;$env:CARGO_HOME\bin"
 
-$cargo = "$env:userprofile\.cargo\bin\cargo.exe"
+# $cargo = "C:\rust\.cargo\bin\cargo.exe"
 
-# Write-Host "--- Installing Visual Studio Tools"
-# & hab install core/visual-cpp-build-tools-2015
+Write-Host "--- Installing required prerequisites"
+hab pkg install core/cacerts
+hab pkg install core/libarchive
+hab pkg install core/libsodium
+hab pkg install core/openssl
+hab pkg install core/protobuf
+hab pkg install core/xz
+hab pkg install core/zeromq
+hab pkg install core/zlib
 
-# # Doing this manually for the moment as POC
-# $tools_path = Invoke-Expression "hab pkg path core/visual-cpp-build-tools-2015"
-# $env:VCTargetsPath="$tools_path\Program Files\MSBuild\Microsoft.Cpp\v4.0\v140"
-# $env:VcInstallDir="$tools_path\Program Files\Microsoft Visual Studio 14.0\VC"
-# $env:WindowsSdkDir_81="$tools_path\Windows Kits\8.1"
-# $env:CLTrackerSdkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:CLTrackerFrameworkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:LinkTrackerSdkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:LinkTrackerFrameworkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:LibTrackerSdkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:LibTrackerFrameworkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:RCTrackerSdkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:RCTrackerFrameworkPath="$tools_path\Program Files\MSBuild\14.0\bin\amd64"
-# $env:DisableRegistryUse="true"
-# $env:UseEnv="true"
-# $env:Path="$env:Path;C:\hab\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\Microsoft Visual Studio 14.0\VC\bin\amd64;C:\h b\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRTaC:\hab\pkgs\core\visual-cpp-build-tools-2015\14.0.25420\20181108222024\Program Files\MSBuild\14.0\bin\amd64;C:\hab\pkgs\core\visual-cpp-build-;ools-2015\14.0.25420\20181108222024\Windows Kits\8.1\bin\x64"
+# Set up some path variables for ease of use later
+$cacertsDir     = & hab pkg path core/cacerts
+$libarchiveDir  = & hab pkg path core/libarchive
+$libsodiumDir   = & hab pkg path core/libsodium
+$opensslDir     = & hab pkg path core/openssl
+$protobufDir    = & hab pkg path core/protobuf
+$xzDir          = & hab pkg path core/xz
+$zeromqDir      = & hab pkg path core/zeromq
+$zlibDir        = & hab pkg path core/zlib
 
-& $cargo --version
+# Set some required variables
+$env:SODIUM_LIB_DIR             = "$libsodiumDir\lib"
+$env:LIBARCHIVE_INCLUDE_DIR     = "$libarchiveDir\include"
+$env:LIBARCHIVE_LIB_DIR         = "$libarchiveDir\lib"
+$env:OPENSSL_LIBS               = 'ssleay32:libeay32'
+$env:OPENSSL_LIB_DIR            = "$opensslDir\lib"
+$env:OPENSSL_INCLUDE_DIR        = "$opensslDir\include"
+$env:LIBZMQ_PREFIX              = "$zeromqDir"
+$env:SSL_CERT_FILE              = "$cacertsDir\ssl\certs\cacert.pem"
+$env:SODIUM_STATIC              = "true"
+$env:OPENSSL_STATIC             = "true"
+$env:LD_LIBRARY_PATH            = "$env:LIBZMQ_PREFIX\lib;$env:SODIUM_LIB_DIR;$zlibDir\lib;$xzDir\lib"
+
+# Make sure protoc is on the path, we also need to make sure the zmq DLL (in \bin) is on the path,
+# because windows library pathing is weird.
+$env:Path="$env:Path;$protobufDir\bin;$env:LIBZMQ_PREFIX\bin"
 
 Write-Host "--- Running cargo test on $Component"
-& cd components/$Component
-& $cargo build --verbose
+cd components/$Component
+cargo test --verbose
 
-# if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-
-# $env:Path="$env:Path;$env:userprofile\.cargo\bin"
-
-
-
-
-# Invoke-RestMethod -usebasicparsing https://aka.ms/vs/15/release/vs_buildtools.exe -outfile vs_buildtools.exe
+if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
