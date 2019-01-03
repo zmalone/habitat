@@ -24,7 +24,7 @@ use habitat_butterfly::member::Health;
 
 #[test]
 fn two_members_meshed_confirm_one_member() {
-    let mut net = btest::SwimNet::new(2);
+     let mut net = btest::SwimNet::new(2);
     net.mesh();
     assert_wait_for_health_of!(net, 0, 1, Health::Alive);
     assert_wait_for_health_of!(net, 1, 0, Health::Alive);
@@ -144,6 +144,7 @@ fn six_members_unmeshed_allows_graceful_departure() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "integration_tests"), ignore)]
 fn fifty_members_meshed_confirm_one_member() {
     let mut net = btest::SwimNet::new(50);
     net.mesh();
