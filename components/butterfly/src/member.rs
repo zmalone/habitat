@@ -361,6 +361,26 @@ mod member_list {
     }
 }
 
+pub struct IterableGuard<'a, T>(std::sync::RwLockReadGuard<'a, T>);
+
+impl<'a> IterableGuard<'a, HashMap<UuidSimple, member_list::Entry>> {
+    pub fn from(rw_lock: &'a std::sync::RwLock<HashMap<UuidSimple, member_list::Entry>>) -> Self {
+        rw_lock.read().map(IterableGuard).unwrap()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Member> {
+        self.0
+            .values()
+            .map(|member_list::Entry { member, .. }| member)
+    }
+
+    pub fn memberships_iter(&self) -> impl Iterator<Item = (&Member, &Health)> {
+        self.0
+            .values()
+            .map(|member_list::Entry { member, health, .. }| (member, health))
+    }
+}
+
 /// Tracks lists of members, their health, and how long they have been
 /// suspect or confirmed.
 #[derive(Debug)]
@@ -699,6 +719,10 @@ impl MemberList {
         for member_list::Entry { member, .. } in self.read_entries().values() {
             with_closure(member);
         }
+    }
+
+    pub fn lock_members(&self) -> IterableGuard<HashMap<UuidSimple, member_list::Entry>> {
+        IterableGuard::from(&self.entries)
     }
 
     // This could be Result<T> instead, but there's only the one caller now

@@ -154,7 +154,7 @@ impl CensusRing {
             }
         });
 
-        member_list.with_members(|member| {
+        for member in member_list.lock_members().iter() {
             let health = member_list.health_of(&member).unwrap();
             for group in self.census_groups.values_mut() {
                 if let Some(census_member) = group.find_member_mut(&member.id) {
@@ -162,7 +162,7 @@ impl CensusRing {
                     census_member.update_from_health(health);
                 }
             }
-        });
+        }
     }
 
     fn update_from_election_store(&mut self, election_rumors: &RumorStore<ElectionRumor>) {

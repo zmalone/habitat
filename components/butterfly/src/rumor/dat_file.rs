@@ -365,10 +365,14 @@ impl DatFile {
         W: Write,
     {
         let mut total = 0;
-        member_list.with_memberships(|membership| {
+        for (member, health) in member_list.lock_members().memberships_iter() {
+            let membership = Membership {
+                member: member.clone(),
+                health: *health,
+            };
             total += self.write_member(writer, &membership)?;
-            Ok(total)
-        })
+        }
+        Ok(total)
     }
 
     fn write_member<W>(&self, writer: &mut W, membership: &Membership) -> Result<u64>
