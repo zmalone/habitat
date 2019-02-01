@@ -130,4 +130,4 @@ component=${1?component argument required}
 echo "--- Running clippy!"
 echo "Clippy rules: cargo clippy --all-targets --tests -- ${rules_string}"
 cd "components/$component" 
-"cargo clippy --all-targets --tests -- ${rules_string}"
+cargo clippy --all-targets --tests -- ${rules_string}
