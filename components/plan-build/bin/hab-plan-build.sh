@@ -965,7 +965,7 @@ _resolve_scaffolding_dependencies() {
       # package.
       sdeps=($(_get_deps_for "$resolved"))
       for sdep in "${sdeps[@]}"; do
-        scaff_build_deps+=($sdep)
+        scaff_build_deps+=("$sdep")
         scaff_build_deps_resolved+=($HAB_PKG_PATH/$sdep)
       done
     else
@@ -1016,7 +1016,7 @@ _resolve_build_dependencies() {
     _install_dependency "$dep"
     if resolved="$(_resolve_dependency "$dep")"; then
       build_line "Resolved build dependency '$dep' to $resolved"
-      pkg_build_deps_resolved+=($resolved)
+      pkg_build_deps_resolved+=("$resolved")
     else
       exit_with "Resolving '$dep' failed, should this be built first?" 1
     fi
@@ -1091,7 +1091,7 @@ _resolve_run_dependencies() {
     fi
     if resolved="$(_resolve_dependency "$dep")"; then
       build_line "Resolved dependency '$dep' to $resolved"
-      pkg_deps_resolved+=($resolved)
+      pkg_deps_resolved+=("$resolved")
     else
       exit_with "Resolving '$dep' failed, should this be built first?" 1
     fi

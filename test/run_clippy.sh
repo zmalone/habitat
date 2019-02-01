@@ -105,29 +105,29 @@ denied_lints=("clippy::assign_op_pattern" \
 # stick together unexamined lints
 for unexamined_lint in "${unexamined_lints[@]}"
 do
-  [[ ! -z $unexamined_lint ]] && rules_string+="-A ${unexamined_lint} "
+  [[ -n $unexamined_lint ]] && rules_string+="-A ${unexamined_lint} "
 done
 
 # stick together allowed lints
 for allowed_lint in "${allowed_lints[@]}"
 do
-  [[ ! -z $allowed_lint ]] && rules_string+="-A ${allowed_lint} "
+  [[ -n $allowed_lint ]] && rules_string+="-A ${allowed_lint} "
 done
 
 # stick together lints to fix
 for lint_to_fix in "${lints_to_fix[@]}"
 do
-  [[ ! -z $lint_to_fix ]] && rules_string+="-W ${lint_to_fix} "
+  [[ -n $lint_to_fix ]] && rules_string+="-W ${lint_to_fix} "
 done
 
 # stick together denied lints
 for denied_lint in "${denied_lints[@]}"
 do
-  [[ ! -z $denied_lint ]] && rules_string+="-D ${denied_lint} "
+  [[ -n $denied_lint ]] && rules_string+="-D ${denied_lint} "
 done
 
 component=${1?component argument required}
 echo "--- Running clippy!"
 echo "Clippy rules: cargo clippy --all-targets --tests -- ${rules_string}"
 cd "components/$component" 
-cargo clippy --all-targets --tests -- ${rules_string}
+"cargo clippy --all-targets --tests -- ${rules_string}"
