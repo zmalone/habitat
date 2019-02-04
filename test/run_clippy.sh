@@ -129,5 +129,7 @@ done
 component=${1?component argument required}
 echo "--- Running clippy!"
 echo "Clippy rules: cargo clippy --all-targets --tests -- ${rules_string}"
-cd "components/$component" 
+cd "components/$component"
+# If we include double quotes in this string, the invocation of cargo breaks
+# shellcheck disable=SC2086
 cargo clippy --all-targets --tests -- ${rules_string}

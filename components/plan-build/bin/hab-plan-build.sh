@@ -966,7 +966,7 @@ _resolve_scaffolding_dependencies() {
       mapfile -t sdeps < <(_get_deps_for "$resolved")
       for sdep in "${sdeps[@]}"; do
         scaff_build_deps+=("$sdep")
-        mapfile -t scaff_build_deps_resolved < <($HAB_PKG_PATH/$sdep)
+        mapfile -t scaff_build_deps_resolved < <("$HAB_PKG_PATH"/"$sdep")
       done
     else
       exit_with "Resolving '$dep' failed, should this be built first?" 1
