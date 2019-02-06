@@ -69,6 +69,7 @@ use habitat_core::{
         process::{self, Pid, Signal},
         signals::{self, SignalEvent},
     },
+    outputln,
     package::{Identifiable, PackageIdent, PackageInstall},
     service::ServiceGroup,
     util::ToI64,

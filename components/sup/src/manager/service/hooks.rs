@@ -20,6 +20,7 @@ use crate::common::templating::{
 };
 #[cfg(windows)]
 use crate::hcore::os::process::windows_child::ExitStatus;
+use habitat_core::outputln;
 use serde::Serialize;
 #[cfg(not(windows))]
 use std::process::ExitStatus;
