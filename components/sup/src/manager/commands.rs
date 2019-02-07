@@ -21,17 +21,15 @@ use crate::common::{
 use crate::ctl_gateway::CtlRequest;
 use crate::error::{Error, Result};
 use crate::hcore::{
-    fs::FS_ROOT_PATH,
     outputln,
-    package::metadata::PackageType,
-    package::{Identifiable, PackageIdent, PackageInstall, PackageTarget},
+    package::{Identifiable, PackageIdent, PackageTarget},
     service::ServiceGroup,
     ChannelIdent,
 };
 use crate::manager::{
     service::{
         spec::{IntoServiceSpec, ServiceSpec},
-        DesiredState, Pkg, ProcessState,
+        DesiredState, ProcessState,
     },
     ManagerConfig, ManagerState,
 };
