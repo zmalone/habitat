@@ -16,9 +16,7 @@ use std::collections::HashMap;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::sync::{
-    mpsc::{
-        channel, sync_channel, Receiver, SendError, Sender, SyncSender, TryRecvError, TrySendError,
-    },
+    mpsc::{channel, sync_channel, Receiver, Sender, SyncSender, TryRecvError, TrySendError},
     Arc, Mutex,
 };
 use std::thread::{self, Builder as ThreadBuilder};
@@ -138,17 +136,21 @@ impl UserConfigWatcher {
 
     /// Removes a service from the User Config Watcher, and sends a message to the watcher thread
     /// to stop running.
-    pub fn remove<T: Serviceable>(&mut self, service: &T) -> Result<(), SendError<()>> {
+    pub fn remove<T: Serviceable>(&mut self, service: &T) {
         if let Some(state) = self
             .states
             .lock()
             .expect("states lock was poisoned")
             .remove(service.name())
         {
-            state.stop_running.send(())?;
+            if let Err(e) = state.stop_running.send(()) {
+                debug!(
+                    "Error stopping user-config watcher thread for service {}: {:?}",
+                    service.name(),
+                    e
+                );
+            }
         }
-
-        Ok(())
     }
 
     /// Checks whether the watcher for the specified service has observed any events.
