@@ -278,6 +278,11 @@ impl EnvConfig for GatewayAuthToken {
 struct ReconciliationFlag(Arc<AtomicBool>);
 
 impl ReconciliationFlag {
+    /// Creates a new `ReconciliationFlag` set to `false`.
+    fn new() -> Self {
+        Self::default()
+    }
+
     /// Called after a service has finished some asynchronous
     /// operation to signal that we need to take a look at their spec
     /// file again to potentially take action.
@@ -492,7 +497,7 @@ impl Manager {
             sys: Arc::new(sys),
             http_disable: cfg.http_disable,
             busy_services: Arc::new(Mutex::new(HashSet::new())),
-            service_reconciliation_flag: ReconciliationFlag::default(),
+            service_reconciliation_flag: ReconciliationFlag::new(),
         })
     }
 
@@ -1789,6 +1794,27 @@ mod test {
     use super::*;
     use crate::protocol::STATE_PATH_PREFIX;
     use std::path::PathBuf;
+
+    mod reconciliation_flag {
+        use super::*;
+
+        #[test]
+        fn new_flag_is_false() {
+            let f = ReconciliationFlag::new();
+            assert!(!f.toggle_if_set(), "Should have been initialized as false!");
+        }
+
+        #[test]
+        fn toggle_if_set_only_returns_true_if_previously_set() {
+            let f = ReconciliationFlag::new();
+            f.set();
+            assert!(f.toggle_if_set(), "Should have been toggled, but wasn't!");
+            assert!(
+                !f.toggle_if_set(),
+                "Should no longer be toggled, after having been toggled previously!"
+            );
+        }
+    }
 
     #[test]
     fn manager_state_path_default() {
