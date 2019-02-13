@@ -382,7 +382,7 @@ pub struct Manager {
     // something else (maybe a HashMap?) in order to cleanly manage
     // the different operations.
     busy_services: Arc<Mutex<HashSet<PackageIdent>>>,
-    service_reconciliation_flag: ReconciliationFlag,
+    services_need_reconciliation: ReconciliationFlag,
 }
 
 impl Manager {
@@ -497,7 +497,7 @@ impl Manager {
             sys: Arc::new(sys),
             http_disable: cfg.http_disable,
             busy_services: Arc::new(Mutex::new(HashSet::new())),
-            service_reconciliation_flag: ReconciliationFlag::new(),
+            services_need_reconciliation: ReconciliationFlag::new(),
         })
     }
 
@@ -1163,7 +1163,7 @@ impl Manager {
             Arc::clone(&self.user_config_watcher),
             Arc::clone(&self.updater),
             Arc::clone(&self.busy_services),
-            self.service_reconciliation_flag.clone(),
+            self.services_need_reconciliation.clone(),
         )
     }
 
@@ -1173,7 +1173,7 @@ impl Manager {
         user_config_watcher: Arc<RwLock<UserConfigWatcher>>,
         updater: Arc<Mutex<ServiceUpdater>>,
         busy_services: Arc<Mutex<HashSet<PackageIdent>>>,
-        service_reconciliation_flag: ReconciliationFlag,
+        services_need_reconciliation: ReconciliationFlag,
     ) -> impl Future<Item = (), Error = ()> {
         // JW TODO: Update service rumor to remove service from
         // cluster
@@ -1193,7 +1193,7 @@ impl Manager {
         Self::wrap_async_service_operation(
             ident,
             busy_services,
-            service_reconciliation_flag,
+            services_need_reconciliation,
             stop_it,
         )
     }
@@ -1215,7 +1215,7 @@ impl Manager {
     fn wrap_async_service_operation<F>(
         ident: PackageIdent,
         busy_services: Arc<Mutex<HashSet<PackageIdent>>>,
-        service_reconciliation_flag: ReconciliationFlag,
+        services_need_reconciliation: ReconciliationFlag,
         fut: F,
     ) -> impl Future<Item = (), Error = ()>
     where
@@ -1246,7 +1246,7 @@ impl Manager {
                 .lock()
                 .expect("busy_services lock is poisoned")
                 .remove(&ident_2);
-            service_reconciliation_flag.set();
+            services_need_reconciliation.set();
             Ok(())
         })
     }
@@ -1258,7 +1258,7 @@ impl Manager {
     /// as well as whether or not we need to reexamine specs after
     /// finishing some asynchronous operation on a service.
     fn need_to_reconcile_spec_files(&mut self) -> bool {
-        self.spec_watcher.has_events() || self.service_reconciliation_flag.toggle_if_set()
+        self.spec_watcher.has_events() || self.services_need_reconciliation.toggle_if_set()
     }
 
     /// Determine if our on-disk spec files indicate that we should
