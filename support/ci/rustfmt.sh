@@ -9,7 +9,7 @@ export PATH=/opt/rust/bin:$PATH
 # TODO: fix this upstream, it looks like it's not saving correctly.
 sudo chown -R buildkite-agent /home/buildkite-agent
 
-rustup component add rustfmt
+sudo -E /opt/rust/bin/rustup component add rustfmt
 
 cargo_fmt="cargo fmt --all -- --check"
 echo "--- Running cargo fmt command: $cargo_fmt"
