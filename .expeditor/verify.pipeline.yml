@@ -369,9 +369,9 @@ steps:
 # still build. - Linux
 #######################################################################
 
-  - label: "[build] :linux: builder-api-client"
+  - label: "[build] :linux: hab"
     command:
-      - ./test/run_cargo_test.sh builder-api-client
+      - ./support/ci/build_a_thing.sh hab
     agents:
       queue: 'default-privileged'
     plugins:
