@@ -1,3 +1,8 @@
+expeditor:
+  defaults:
+    buildkite:
+      timeout_in_minutes: 30m
+
 steps:
 #   - label: "Shellcheck :linux: :bash:"
 #     skip: "Need to update the tests to pass"
@@ -500,6 +505,16 @@ steps:
       - ./support/ci/build_a_thing.sh sup
     agents:
       queue: 'default-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+
+  - label: "[build] :windows: bintray-publish"
+    command:
+      - ./support/ci/build_a_thing.ps1 bintray-publish
+    agents:
+      queue: 'single-use-windows-privileged'
     retry:
       automatic:
         limit: 1
