@@ -15,6 +15,9 @@ export HAB_CACHE_KEY_PATH
 HAB_CACHE_KEY_PATH="$JOB_TEMP_ROOT/keys"
 export HAB_STUDIOS_HOME
 HAB_STUDIOS_HOME="$JOB_TEMP_ROOT/studios"
+# use undocumented variables!
+export CACHE_ARTIFACT_PATH
+CACHE_ARTIFACT_PATH="$JOB_TEMP_ROOT/artifacts"
 
 hab origin key generate
 hab pkg build components/$component
