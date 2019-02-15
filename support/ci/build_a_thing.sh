@@ -21,3 +21,5 @@ FS_ROOT="$(mktemp -d /tmp/job-root-XXXXXX)"
 
 hab origin key generate
 hab pkg build components/$component
+
+ls -la "$FS_ROOT"
