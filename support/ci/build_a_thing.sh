@@ -13,9 +13,15 @@ export JOB_TEMP_ROOT
 JOB_TEMP_ROOT=$(mktemp -d /tmp/job-root-XXXXXX)
 export HAB_CACHE_KEY_PATH
 HAB_CACHE_KEY_PATH="$JOB_TEMP_ROOT/keys"
+export HAB_CACHE_SRC_PATH
+HAB_CACHE_SRC_PATH="$JOB_TEMP_ROOT/cache"
+export HAB_CACHE_ARTIFACT_PATH
+HAB_CACHE_ARTIFACT_PATH="$JOB_TEMP_ROOT/artifacts"
 export HAB_STUDIOS_HOME
 HAB_STUDIOS_HOME="$JOB_TEMP_ROOT/studios"
 export NO_ARTIFACT_PATH=true
 
 hab origin key generate
 hab pkg build -D components/$component
+
+ls -la "$JOB_TEMP_ROOT"
