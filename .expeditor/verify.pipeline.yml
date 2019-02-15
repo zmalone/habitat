@@ -369,41 +369,41 @@ steps:
 # still build. - Linux
 #######################################################################
 
-  - label: "[build] :linux: backline"
-    command:
-      - ./support/ci/build_a_thing.sh backline
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: backline"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh backline
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: bintray-publish"
-    command:
-      - ./support/ci/build_a_thing.sh bintray-publish
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: bintray-publish"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh bintray-publish
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: hab"
-    command:
-      - ./support/ci/build_a_thing.sh hab
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: hab"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh hab
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: launcher"
-    command:
-      - ./support/ci/build_a_thing.sh launcher
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: launcher"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh launcher
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
   - label: "[build] :linux: pkg-aci"
     command:
@@ -414,95 +414,95 @@ steps:
       automatic:
         limit: 1
 
-  - label: "[build] :linux: pkg-cfize"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-cfize
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-cfize"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-cfize
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-dockerize"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-dockerize
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-dockerize"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-dockerize
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-export-docker"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-export-docker
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-export-docker"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-export-docker
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-export-helm"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-export-helm
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-export-helm"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-export-helm
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-export-kubernetes"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-export-kubernetes
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-export-kubernetes"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-export-kubernetes
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-export-tar"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-export-tar
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-export-tar"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-export-tar
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: pkg-mesosize"
-    command:
-      - ./support/ci/build_a_thing.sh pkg-mesosize
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: pkg-mesosize"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh pkg-mesosize
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: plan-build"
-    command:
-      - ./support/ci/build_a_thing.sh plan-build
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: plan-build"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh plan-build
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: studio"
-    command:
-      - ./support/ci/build_a_thing.sh studio
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: studio"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh studio
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
-  - label: "[build] :linux: sup"
-    command:
-      - ./support/ci/build_a_thing.sh sup
-    agents:
-      queue: 'default-privileged'
-    retry:
-      automatic:
-        limit: 1
+  # - label: "[build] :linux: sup"
+  #   command:
+  #     - ./support/ci/build_a_thing.sh sup
+  #   agents:
+  #     queue: 'default-privileged'
+  #   retry:
+  #     automatic:
+  #       limit: 1
 
   # - label: "[unit] :linux: butterfly"
   #   command:
