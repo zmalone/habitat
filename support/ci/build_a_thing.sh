@@ -17,4 +17,4 @@ export HAB_STUDIOS_HOME
 HAB_STUDIOS_HOME="$JOB_TEMP_ROOT/studios"
 
 hab origin key generate
-hab pkg build -D components/$component
+hab pkg build components/$component
