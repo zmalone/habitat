@@ -374,10 +374,6 @@ steps:
       - ./support/ci/build_a_thing.sh hab
     agents:
       queue: 'default-privileged'
-    plugins:
-      docker#v3.0.1:
-        always-pull: true
-        image: "chefes/buildkite"
     retry:
       automatic:
         limit: 1
