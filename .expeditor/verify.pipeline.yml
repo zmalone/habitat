@@ -509,10 +509,74 @@ steps:
       automatic:
         limit: 1
 
+############## WINDERS
 
   - label: "[build] :windows: bintray-publish"
     command:
       - ./support/ci/build_a_thing.ps1 bintray-publish
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: hab"
+    command:
+      - ./support/ci/build_a_thing.ps1 hab
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: launcher"
+    command:
+      - ./support/ci/build_a_thing.ps1 launcher
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: pkg-export-docker"
+    command:
+      - ./support/ci/build_a_thing.ps1 pkg-export-docker
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: pkg-export-tar"
+    command:
+      - ./support/ci/build_a_thing.ps1 pkg-export-tar
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: plan-build-ps1"
+    command:
+      - ./support/ci/build_a_thing.ps1 plan-build-ps1
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: studio"
+    command:
+      - ./support/ci/build_a_thing.ps1 studio
+    agents:
+      queue: 'single-use-windows-privileged'
+    retry:
+      automatic:
+        limit: 1
+
+  - label: "[build] :windows: sup"
+    command:
+      - ./support/ci/build_a_thing.ps1 sup
     agents:
       queue: 'single-use-windows-privileged'
     retry:
