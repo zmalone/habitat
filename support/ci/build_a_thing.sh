@@ -11,4 +11,4 @@ component=${1?component argument required}
 # export PATH=/opt/rust/bin:$PATH
 # # TODO: fix this upstream, it looks like it's not saving correctly.
 # sudo chown -R buildkite-agent /home/buildkite-agent
-hab pkg build components/$component
+hab pkg build -D components/$component
