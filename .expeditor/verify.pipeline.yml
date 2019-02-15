@@ -377,10 +377,7 @@ steps:
     plugins:
       docker#v3.0.1:
         always-pull: true
-        user: "buildkite-agent"
-        group: "buildkite-agent"
         image: "chefes/buildkite"
-    timeout_in_minutes: 20
     retry:
       automatic:
         limit: 1
