@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xeou pipefail
+set -eou pipefail
 
 component=${1?component argument required}
 
@@ -15,7 +15,7 @@ export HAB_CACHE_KEY_PATH
 HAB_CACHE_KEY_PATH="$JOB_TEMP_ROOT/keys"
 export HAB_STUDIOS_HOME
 HAB_STUDIOS_HOME="$JOB_TEMP_ROOT/studios"
-export NO_ARTIFACT_PATH
+export NO_ARTIFACT_PATH=true
 
 hab origin key generate
 hab pkg build -D components/$component
