@@ -570,7 +570,10 @@ _assemble_runtime_path() {
       data="$(cat "$dep_prefix/PATH")"
       data="$(trim "$data")"
       while read -r entry; do
-        paths+=$(_return_or_append_to_set "$entry" "${paths[@]}")
+        # Disabling this because although it is an array, the output of the function
+        # is the complete array, which we want to replace whatever was previously set
+        # shellcheck disable=SC2178
+        paths=$(_return_or_append_to_set "$entry" "${paths[@]}")
       done <<< "$(echo "$data" | tr ':' '\n' | grep "^$dep_prefix")"
     fi
   done
@@ -963,7 +966,7 @@ _resolve_scaffolding_dependencies() {
       scaff_build_deps_resolved+=("$resolved")
       # Add each (fully qualified) direct run dependency of the scaffolding
       # package.
-      sdeps+=(_get_deps_for "$resolved")
+      sdeps=(_get_deps_for "$resolved")
       for sdep in "${sdeps[@]}"; do
         scaff_build_deps+=("$sdep")
         scaff_build_deps_resolved+=("$HAB_PKG_PATH"/"$sdep")
@@ -1038,10 +1041,10 @@ _set_build_tdeps_resolved() {
   # dependency could pull in `acme/binutils` for us, as an example. Any
   # duplicate entries are dropped to produce a proper set.
   for dep in "${pkg_build_deps_resolved[@]}"; do
-    tdeps+=$(_get_tdeps_for "$dep")
+    tdeps=$(_get_tdeps_for "$dep")
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
-      pkg_build_tdeps_resolved+=(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")
+      pkg_build_tdeps_resolved=(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")
     done
   done
 }
@@ -1103,10 +1106,16 @@ _resolve_run_dependencies() {
   # Append all non-direct (transitive) run dependencies for each direct run
   # dependency. Any duplicate entries are dropped to produce a proper set.
   for dep in "${pkg_deps_resolved[@]}"; do
-    tdeps+=$(_get_tdeps_for "$dep")
+    # Disabling this because although it is an array, the output of the function
+    # is the complete array, which we want to replace whatever was previously set
+    # shellcheck disable=SC2178
+    tdeps=$(_get_tdeps_for "$dep")
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
-      pkg_tdeps_resolved+=$(_return_or_append_to_set "$tdep" "${pkg_tdeps_resolved[@]}")
+      # Disabling this because although it is an array, the output of the function
+      # is the complete array, which we want to replace whatever was previously set
+      # shellcheck disable=SC2178
+      pkg_tdeps_resolved=$(_return_or_append_to_set "$tdep" "${pkg_tdeps_resolved[@]}")
     done
   done
 }
@@ -1137,7 +1146,10 @@ _populate_dependency_arrays() {
     "${pkg_build_deps_resolved[@]}"
   )
   for dep in "${pkg_tdeps_resolved[@]}" "${pkg_build_tdeps_resolved[@]}"; do
-    pkg_all_tdeps_resolved+=$(_return_or_append_to_set "$dep" "${pkg_all_tdeps_resolved[@]}")
+    # Disabling this because although it is an array, the output of the function
+    # is the complete array, which we want to replace whatever was previously set
+    # shellcheck disable=SC2178
+    pkg_all_tdeps_resolved=$(_return_or_append_to_set "$dep" "${pkg_all_tdeps_resolved[@]}")
   done
 }
 
@@ -1480,7 +1492,10 @@ _set_build_path() {
       data="$(cat "$dep_prefix/PATH")"
       data="$(trim "$data")"
       while read -r entry; do
-        paths+=$(_return_or_append_to_set "$entry" "${paths[@]}")
+        # Disabling this because although it is an array, the output of the function
+        # is the complete array, which we want to replace whatever was previously set
+        # shellcheck disable=SC2178
+        paths=$(_return_or_append_to_set "$entry" "${paths[@]}")
       done <<< "$(echo "$data" | tr ':' '\n' | grep "^$dep_prefix")"
     fi
   done
