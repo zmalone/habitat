@@ -953,8 +953,7 @@ _resolve_scaffolding_dependencies() {
   scaff_build_deps=()
   scaff_build_deps_resolved=()
 
-  # shellcheck disable=2066
-  for dep in "${pkg_scaffolding}"; do
+  for dep in ${pkg_scaffolding}; do
     _install_dependency "$dep"
     # Add scaffolding package to the list of scaffolding build deps
     scaff_build_deps+=("$dep")
