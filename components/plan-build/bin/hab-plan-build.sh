@@ -953,6 +953,7 @@ _resolve_scaffolding_dependencies() {
   scaff_build_deps=()
   scaff_build_deps_resolved=()
 
+  # shellcheck disable=2066
   for dep in "${pkg_scaffolding}"; do
     _install_dependency "$dep"
     # Add scaffolding package to the list of scaffolding build deps
@@ -962,7 +963,7 @@ _resolve_scaffolding_dependencies() {
       scaff_build_deps_resolved+=("$resolved")
       # Add each (fully qualified) direct run dependency of the scaffolding
       # package.
-      read -r -a sdeps <<< "(_get_deps_for "$resolved")"
+      read -r -a sdeps <<< "$(_get_deps_for "$resolved")"
       for sdep in "${sdeps[@]}"; do
         scaff_build_deps+=("$sdep")
         scaff_build_deps_resolved+=("$HAB_PKG_PATH/$sdep")
@@ -1040,7 +1041,7 @@ _set_build_tdeps_resolved() {
     read -r -a tdeps <<< "$(_get_tdeps_for "$dep")"
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
-      read -r -a pkg_build_tdeps_resolved <<< "(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")"
+      read -r -a pkg_build_tdeps_resolved <<< "$(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")"
     done
   done
 }
