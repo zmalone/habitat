@@ -953,7 +953,6 @@ _resolve_scaffolding_dependencies() {
   scaff_build_deps=()
   scaff_build_deps_resolved=()
 
-  # shellcheck disable=2066
   for dep in "${pkg_scaffolding}"; do
     _install_dependency "$dep"
     # Add scaffolding package to the list of scaffolding build deps
@@ -963,10 +962,10 @@ _resolve_scaffolding_dependencies() {
       scaff_build_deps_resolved+=("$resolved")
       # Add each (fully qualified) direct run dependency of the scaffolding
       # package.
-      sdeps=(_get_deps_for "$resolved")
+      read -r -a sdeps <<< "(_get_deps_for "$resolved")"
       for sdep in "${sdeps[@]}"; do
         scaff_build_deps+=("$sdep")
-        scaff_build_deps_resolved+=("$HAB_PKG_PATH"/"$sdep")
+        scaff_build_deps_resolved+=("$HAB_PKG_PATH/$sdep")
       done
     else
       exit_with "Resolving '$dep' failed, should this be built first?" 1
@@ -1038,10 +1037,10 @@ _set_build_tdeps_resolved() {
   # dependency could pull in `acme/binutils` for us, as an example. Any
   # duplicate entries are dropped to produce a proper set.
   for dep in "${pkg_build_deps_resolved[@]}"; do
-    tdeps=$(_get_tdeps_for "$dep")
+    read -r -a tdeps <<< "$(_get_tdeps_for "$dep")"
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
-      pkg_build_tdeps_resolved=(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")
+      read -r -a pkg_build_tdeps_resolved <<< "(_return_or_append_to_set "$tdep" "${pkg_build_tdeps_resolved[@]}")"
     done
   done
 }
@@ -1103,7 +1102,7 @@ _resolve_run_dependencies() {
   # Append all non-direct (transitive) run dependencies for each direct run
   # dependency. Any duplicate entries are dropped to produce a proper set.
   for dep in "${pkg_deps_resolved[@]}"; do
-    tdeps=$(_get_tdeps_for "$dep")
+    read -r -a tdeps <<< "$(_get_tdeps_for "$dep")"
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
       read -r -a pkg_tdeps_resolved <<< "$(_return_or_append_to_set "$tdep" "${pkg_tdeps_resolved[@]}")"
