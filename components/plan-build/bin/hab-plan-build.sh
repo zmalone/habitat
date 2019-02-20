@@ -570,10 +570,7 @@ _assemble_runtime_path() {
       data="$(cat "$dep_prefix/PATH")"
       data="$(trim "$data")"
       while read -r entry; do
-        # Disabling this because although it is an array, the output of the function
-        # is the complete array, which we want to replace whatever was previously set
-        # shellcheck disable=SC2178
-        paths=$(_return_or_append_to_set "$entry" "${paths[@]}")
+        read -r -a paths <<< "$(_return_or_append_to_set "$entry" "${paths[@]}")"
       done <<< "$(echo "$data" | tr ':' '\n' | grep "^$dep_prefix")"
     fi
   done
@@ -1106,16 +1103,10 @@ _resolve_run_dependencies() {
   # Append all non-direct (transitive) run dependencies for each direct run
   # dependency. Any duplicate entries are dropped to produce a proper set.
   for dep in "${pkg_deps_resolved[@]}"; do
-    # Disabling this because although it is an array, the output of the function
-    # is the complete array, which we want to replace whatever was previously set
-    # shellcheck disable=SC2178
-    tdeps=$(_get_tdeps_for "$dep")
+    read -r -a tdeps <<< "$(_get_tdeps_for "$dep")"
     for tdep in "${tdeps[@]}"; do
       tdep="$HAB_PKG_PATH/$tdep"
-      # Disabling this because although it is an array, the output of the function
-      # is the complete array, which we want to replace whatever was previously set
-      # shellcheck disable=SC2178
-      pkg_tdeps_resolved=$(_return_or_append_to_set "$tdep" "${pkg_tdeps_resolved[@]}")
+      read -r -a pkg_tdeps_resolved <<< "$(_return_or_append_to_set "$tdep" "${pkg_tdeps_resolved[@]}")"
     done
   done
 }
@@ -1146,10 +1137,7 @@ _populate_dependency_arrays() {
     "${pkg_build_deps_resolved[@]}"
   )
   for dep in "${pkg_tdeps_resolved[@]}" "${pkg_build_tdeps_resolved[@]}"; do
-    # Disabling this because although it is an array, the output of the function
-    # is the complete array, which we want to replace whatever was previously set
-    # shellcheck disable=SC2178
-    pkg_all_tdeps_resolved=$(_return_or_append_to_set "$dep" "${pkg_all_tdeps_resolved[@]}")
+    read -r -a pkg_all_tdeps_resolved <<< "$(_return_or_append_to_set "$dep" "${pkg_all_tdeps_resolved[@]}")"
   done
 }
 
@@ -1492,10 +1480,7 @@ _set_build_path() {
       data="$(cat "$dep_prefix/PATH")"
       data="$(trim "$data")"
       while read -r entry; do
-        # Disabling this because although it is an array, the output of the function
-        # is the complete array, which we want to replace whatever was previously set
-        # shellcheck disable=SC2178
-        paths=$(_return_or_append_to_set "$entry" "${paths[@]}")
+        read -r -a paths <<< "$(_return_or_append_to_set "$entry" "${paths[@]}")"
       done <<< "$(echo "$data" | tr ':' '\n' | grep "^$dep_prefix")"
     fi
   done
